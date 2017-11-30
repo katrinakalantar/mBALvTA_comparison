@@ -1,0 +1,35 @@
+Category,Species,Genus,Score1,Score2,Score3,NT Species Z,NT Genus Z,NT Species rM,NT Genus rM,NR Species Z,NR Genus Z,NR Species rM,NR Genus rM
+Mammalia,Pongo pygmaeus ( 9600 ),Pongo ( 9599 ),0,0,0,15.83,0.11,0.03,0.10,0.00,0.00,0.00,0.00
+Mammalia,Nomascus leucogenys ( 61853 ),Nomascus ( 325165 ),0,0,0,0.73,0.73,0.03,0.03,0.00,0.00,0.00,0.00
+Mammalia,Gorilla gorilla ( 9593 ),Gorilla ( 9592 ),0,0,0,0.20,0.20,0.26,0.26,0.00,0.00,0.00,0.00
+Mammalia,Cercocebus atys ( 9531 ),Cercocebus ( 9529 ),0,0,0,0.41,0.41,0.07,0.07,0.00,0.00,0.00,0.00
+Bacteria,Nitratifractor salsuginis ( 269261 ),Nitratifractor ( 269260 ),0,0,0,0.30,0.30,0.03,0.03,0.00,0.00,0.00,0.00
+Environmental samples,uncultured bacterium ( 77133 ),No genus ( -1 ),0,0,0,-0.32,0.00,0.03,0.00,0.00,0.00,0.00,0.00
+Unclassified Phage,Streptococcus phage 040922 ( 870470 ),No genus ( -1 ),0,0,0,4.36,0.00,0.03,0.00,0.00,0.00,0.00,0.00
+Mammalia,Pongo abelii ( 9601 ),Pongo ( 9599 ),0,0,0,-0.03,0.11,0.07,0.10,0.00,0.00,0.00,0.00
+Bacteria,Delftia acidovorans ( 80866 ),Delftia ( 80865 ),0,0,0,-0.11,-0.11,0.03,0.03,0.00,0.00,0.00,0.00
+Bacteria,Acinetobacter baumannii ( 470 ),Acinetobacter ( 469 ),0,0,0,-0.12,-0.13,0.03,0.03,0.00,-0.13,0.00,0.03
+Mammalia,Chlorocebus sabaeus ( 60711 ),Chlorocebus ( 392815 ),0,0,0,-0.07,-0.08,0.10,0.10,0.00,0.00,0.00,0.00
+Bacteria,Streptococcus sp. VT 162 ( 1419814 ),Streptococcus ( 1301 ),0,0,0,-0.14,-0.18,0.03,1.27,0.00,-0.23,0.00,0.33
+Bacteria,Prevotella sp. oral taxon 299 ( 652716 ),Prevotella ( 838 ),0,0,0,-0.11,-0.22,0.03,0.26,0.00,-0.15,0.00,1.14
+Bacteria,Tannerella forsythia ( 28112 ),Tannerella ( 195950 ),0,0,0,-0.16,-0.16,0.03,0.03,0.00,0.00,0.00,0.00
+Bacteria,Haemophilus influenzae ( 727 ),Haemophilus ( 724 ),0,0,0,-0.15,-0.19,0.03,0.03,0.00,0.00,0.00,0.00
+Bacteria,Streptococcus oralis ( 1303 ),Streptococcus ( 1301 ),0,0,0,-0.20,-0.18,0.03,1.27,0.00,-0.23,0.00,0.33
+Bacteria,Bacteroides salanitronis ( 376805 ),Bacteroides ( 816 ),0,0,0,-0.22,-0.18,0.03,0.03,0.00,0.00,0.00,0.00
+Bacteria,Barnesiella viscericola ( 397865 ),Barnesiella ( 397864 ),0,0,0,-0.21,-0.21,0.03,0.03,0.00,0.00,0.00,0.00
+Bacteria,Pseudomonas sp. TKP ( 1415630 ),Pseudomonas ( 286 ),0,0,0,-0.16,-0.29,0.03,0.03,0.00,-0.39,0.00,0.03
+Bacteria,Porphyromonas gingivalis ( 837 ),Porphyromonas ( 836 ),0,0,0,-0.16,-0.18,0.07,0.07,0.00,0.00,0.00,0.00
+Bacteria,Prevotella intermedia ( 28131 ),Prevotella ( 838 ),0,0,0,-0.27,-0.22,0.03,0.26,0.00,-0.15,0.00,1.14
+Propionbacterium acnes,Propionibacterium acnes ( 1747 ),Propionibacterium ( 1743 ),0,0,0,-0.27,-0.27,0.03,0.03,0.00,0.00,0.00,0.00
+Bacteria,Prevotella dentalis ( 52227 ),Prevotella ( 838 ),0,0,0,-0.17,-0.22,0.07,0.26,0.00,-0.15,0.00,1.14
+Bacteria,Psychrobacter sp. PRwf-1 ( 349106 ),Psychrobacter ( 497 ),0,0,0,-0.30,-0.27,0.03,0.03,0.00,0.00,0.00,0.00
+Mammalia,Macaca mulatta ( 9544 ),Macaca ( 9539 ),0,0,0,-0.30,-0.29,0.03,0.07,0.00,0.00,0.00,0.00
+Mammalia,Homo sapiens ( 9606 ),Homo ( 9605 ),0,0,0,-0.14,-0.14,0.20,0.20,0.18,0.18,0.03,0.03
+Bacteria,Thiobacillus denitrificans ( 36861 ),Thiobacillus ( 919 ),0,0,0,-0.33,-0.34,0.03,0.03,0.00,0.00,0.00,0.00
+Bacteria,Amycolatopsis methanolica ( 1814 ),Amycolatopsis ( 1813 ),0,0,0,-0.35,-0.34,0.03,0.03,0.00,0.00,0.00,0.00
+Mammalia,Macaca fascicularis ( 9541 ),Macaca ( 9539 ),0,0,0,0.68,-0.29,0.03,0.07,0.00,0.00,0.00,0.00
+Bacteria,Prevotella melaninogenica ( 28132 ),Prevotella ( 838 ),0,0,0,-0.25,-0.22,0.13,0.26,0.00,-0.15,0.00,1.14
+Bacteria,Streptococcus mitis ( 28037 ),Streptococcus ( 1301 ),0,0,0,-0.15,-0.18,0.23,1.27,-0.19,-0.23,0.13,0.33
+Bacteria,Streptococcus pseudopneumoniae ( 257758 ),Streptococcus ( 1301 ),0,0,0,-0.15,-0.18,0.52,1.27,-0.05,-0.23,0.07,0.33
+Bacteria,Streptococcus pneumoniae ( 1313 ),Streptococcus ( 1301 ),0,0,0,-0.18,-0.18,0.46,1.27,-0.18,-0.23,0.13,0.33
+Bacteria,Fusobacterium nucleatum ( 851 ),Fusobacterium ( 848 ),0,0,0,-0.16,-0.16,0.68,0.68,-0.29,-0.35,0.13,0.13

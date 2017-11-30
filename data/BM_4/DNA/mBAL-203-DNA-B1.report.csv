@@ -1,0 +1,15 @@
+Category,Species,Genus,Score1,Score2,Score3,NT Species Z,NT Genus Z,NT Species rM,NT Genus rM,NR Species Z,NR Genus Z,NR Species rM,NR Genus rM
+Mammalia,Gorilla gorilla ( 9593 ),Gorilla ( 9592 ),0,0,0,0.49,0.49,0.48,0.48,0.00,0.00,0.00,0.00
+Mammalia,Pongo abelii ( 9601 ),Pongo ( 9599 ),0,0,0,0.71,0.69,0.22,0.22,0.00,0.00,0.00,0.00
+Mammalia,Chlorocebus sabaeus ( 60711 ),Chlorocebus ( 392815 ),0,0,0,-0.03,-0.04,0.11,0.11,0.00,0.00,0.00,0.00
+Mammalia,Cercocebus atys ( 9531 ),Cercocebus ( 9529 ),0,0,0,-0.10,-0.10,0.03,0.03,0.00,0.00,0.00,0.00
+Eukaryotes,Spirometra erinaceieuropaei ( 99802 ),Spirometra ( 46580 ),0,0,0,-0.14,-0.14,0.03,0.03,0.00,0.00,0.00,0.00
+Fungi,Candida albicans ( 5476 ),Candida ( 1535326 ),0,0,0,0.00,-0.23,0.06,0.06,-0.09,-0.21,0.03,0.03
+Bacteria,Klebsiella pneumoniae ( 573 ),Klebsiella ( 570 ),0,0,0,-0.14,-0.17,0.03,0.03,0.00,-0.12,0.00,0.03
+Mammalia,Macaca nemestrina ( 9545 ),Macaca ( 9539 ),0,0,0,0.08,-0.31,0.03,0.03,0.00,0.00,0.00,0.00
+Mammalia,Papio anubis ( 9555 ),Papio ( 9554 ),0,0,0,-0.16,-0.16,0.03,0.03,0.00,0.00,0.00,0.00
+Mammalia,Homo sapiens ( 9606 ),Homo ( 9605 ),0,0,0,-0.07,-0.07,0.25,0.25,0.00,0.00,0.00,0.00
+Mammalia,Pan paniscus ( 9597 ),Pan ( 9596 ),0,0,0,-0.20,-0.20,0.03,0.03,0.00,0.00,0.00,0.00
+Bacteria,Kocuria rhizophila ( 72000 ),Kocuria ( 57493 ),0,0,0,-0.20,-0.23,0.03,0.03,0.00,-0.27,0.00,0.03
+Bacteria,Ralstonia pickettii ( 329 ),Ralstonia ( 48736 ),0,0,0,-0.36,-0.35,0.03,0.03,0.00,0.00,0.00,0.00
+Bacteria,Stenotrophomonas maltophilia ( 40324 ),Stenotrophomonas ( 40323 ),0,0,0,-0.31,-0.32,0.37,0.37,-0.36,-0.36,0.06,0.06

@@ -1,0 +1,21 @@
+Category,Species,Genus,Score1,Score2,Score3,NT Species Z,NT Genus Z,NT Species rM,NT Genus rM,NR Species Z,NR Genus Z,NR Species rM,NR Genus rM
+Caudovirales (dsDNA phages),Staphylococcus phage 42E ( 320837 ),3alikevirus ( 1623273 ),564,5,5,100.00,100.00,0.06,0.06,0.00,0.00,0.00,0.00
+Mammalia,Colobus angolensis ( 54131 ),Colobus ( 9570 ),1,0,0,4.21,4.21,0.06,0.06,0.00,0.00,0.00,0.00
+Mammalia,Homo sapiens ( 9606 ),Homo ( 9605 ),0,0,0,0.05,0.05,0.34,0.34,0.00,0.00,0.00,0.00
+Unclassified Phage,Staphylococcus phage phi2958PVL ( 430796 ),No genus ( -1 ),0,5,0,100.00,0.00,0.06,0.00,0.00,0.00,0.00,0.00
+Caudovirales (dsDNA phages),Staphylococcus phage phiNM3 ( 387909 ),No genus ( -1 ),0,0,0,1.36,0.00,0.06,0.00,0.00,0.00,0.00,0.00
+Caudovirales (dsDNA phages),Staphylococcus phage SMSAP5 ( 1168612 ),No genus ( -1 ),0,5,0,100.00,0.00,0.06,0.00,0.00,0.00,0.00,0.00
+Mammalia,Pongo abelii ( 9601 ),Pongo ( 9599 ),0,0,0,-0.07,-0.08,0.06,0.06,0.00,0.00,0.00,0.00
+Mammalia,Chlorocebus sabaeus ( 60711 ),Chlorocebus ( 392815 ),0,0,0,-0.18,-0.19,0.06,0.06,0.00,0.00,0.00,0.00
+Bacteria,Staphylococcus haemolyticus ( 1283 ),Staphylococcus ( 1279 ),0,0,-1,-0.21,-0.26,0.06,2.77,0.00,-0.32,0.00,0.85
+Bacteria,Pseudomonas pseudoalcaligenes ( 330 ),Pseudomonas ( 286 ),0,0,0,-0.18,-0.29,0.06,0.06,0.00,0.00,0.00,0.00
+Bacteria,Mesorhizobium opportunistum ( 593909 ),Mesorhizobium ( 68287 ),0,0,0,-0.32,-0.19,0.06,0.06,0.00,0.00,0.00,0.00
+Mammalia,Macaca mulatta ( 9544 ),Macaca ( 9539 ),0,0,0,-0.28,-0.24,0.06,0.17,0.00,0.00,0.00,0.00
+Mammalia,Macaca nemestrina ( 9545 ),Macaca ( 9539 ),0,0,0,0.52,-0.24,0.06,0.17,0.00,0.00,0.00,0.00
+Propionbacterium acnes,Propionibacterium acnes ( 1747 ),Propionibacterium ( 1743 ),0,0,0,-0.27,-0.27,0.11,0.11,0.00,0.00,0.00,0.00
+Bacteria,Haemophilus parainfluenzae ( 729 ),Haemophilus ( 724 ),0,0,0,-0.22,-0.18,0.06,0.06,-0.44,-0.24,0.06,0.06
+Bacteria,Streptococcus anginosus ( 1328 ),Streptococcus ( 1301 ),0,0,0,-0.19,-0.18,0.28,0.28,0.00,-0.23,0.00,0.06
+Bacteria,Staphylococcus epidermidis ( 1282 ),Staphylococcus ( 1279 ),0,0,-1,-0.24,-0.26,0.06,2.77,-0.43,-0.32,0.06,0.85
+Mammalia,Macaca fascicularis ( 9541 ),Macaca ( 9539 ),0,0,0,1.49,-0.24,0.06,0.17,0.00,0.00,0.00,0.00
+Bacteria,Veillonella parvula ( 29466 ),Veillonella ( 29465 ),0,0,0,-0.15,-0.15,2.09,2.09,-0.13,-0.22,0.34,0.56
+Bacteria,Staphylococcus aureus ( 1280 ),Staphylococcus ( 1279 ),0,0,-1,-0.25,-0.26,2.65,2.77,-0.32,-0.32,0.73,0.85

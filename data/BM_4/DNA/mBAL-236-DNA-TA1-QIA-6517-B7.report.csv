@@ -1,0 +1,74 @@
+Category,Species,Genus,Score1,Score2,Score3,NT Species Z,NT Genus Z,NT Species rM,NT Genus rM,NR Species Z,NR Genus Z,NR Species rM,NR Genus rM
+Mammalia,Pongo pygmaeus ( 9600 ),Pongo ( 9599 ),9,7,0,59.71,1.30,0.12,0.36,0.00,0.00,0.00,0.00
+Mammalia,Homo sapiens ( 9606 ),Homo ( 9605 ),4,2,2,1.72,1.72,1.61,1.61,0.00,0.00,0.00,0.00
+Bacteria,Plesiomonas shigelloides ( 703 ),Plesiomonas ( 702 ),4,0,0,8.30,8.30,0.06,0.06,0.00,0.00,0.00,0.00
+Mammalia,Cercocebus atys ( 9531 ),Cercocebus ( 9529 ),1,0,0,2.77,2.77,0.24,0.24,0.00,0.00,0.00,0.00
+Mammalia,Pongo abelii ( 9601 ),Pongo ( 9599 ),0,0,0,0.77,1.30,0.24,0.36,0.00,0.00,0.00,0.00
+Mammalia,Balaenoptera acutorostrata ( 9767 ),Balaenoptera ( 9766 ),0,0,0,1.88,1.88,0.06,0.06,0.00,0.00,0.00,0.00
+Mammalia,Gorilla gorilla ( 9593 ),Gorilla ( 9592 ),0,0,0,0.49,0.49,0.48,0.48,0.00,0.00,0.00,0.00
+Mammalia,Macaca fascicularis ( 9541 ),Macaca ( 9539 ),0,2,0,9.66,0.02,0.30,0.71,0.00,0.00,0.00,0.00
+Mammalia,Microtus ochrogaster ( 79684 ),Microtus ( 10053 ),0,0,0,0.42,0.42,0.06,0.06,0.00,0.00,0.00,0.00
+Mammalia,Chlorocebus sabaeus ( 60711 ),Chlorocebus ( 392815 ),0,0,0,0.15,0.13,0.18,0.18,0.00,0.00,0.00,0.00
+Bacteria,Carboxydothermus hydrogenoformans ( 129958 ),Carboxydothermus ( 129957 ),0,0,0,0.13,0.13,0.06,0.06,0.00,0.00,0.00,0.00
+Eukaryotes,Onchocerca flexuosa ( 387005 ),Onchocerca ( 6281 ),0,0,0,0.55,0.02,0.06,0.06,0.00,0.00,0.00,0.00
+Artificial Sequences,synthetic construct ( 32630 ),No genus ( -1 ),0,0,0,-0.20,0.00,0.12,0.00,-0.16,0.00,0.06,0.00
+Bacteria,mixed culture bacterium AX_gF3SD01_17 ( 663110 ),No genus ( -1 ),0,5,0,100.00,0.00,0.06,0.00,0.00,0.00,0.00,0.00
+Unclassified Phage,Enterobacteria phage CP-1639 ( 291401 ),No genus ( -1 ),0,0,0,1.92,0.00,0.06,0.00,0.00,0.00,0.00,0.00
+Artificial Sequences,Cloning vector pECSBAC4 ( 406716 ),No genus ( -1 ),0,3,0,55.70,0.00,0.06,0.00,0.00,0.00,0.00,0.00
+Artificial Sequences,Broad host range expression vector pQLICE ( 417992 ),No genus ( -1 ),0,0,0,0.03,0.00,0.06,0.00,0.00,0.00,0.00,0.00
+Other sequences (vectors),Plasmid ColV-K30 ( 2457 ),No genus ( -1 ),0,5,0,100.00,0.00,0.06,0.00,0.00,0.00,0.00,0.00
+Environmental samples,uncultured bacterium ( 77133 ),No genus ( -1 ),0,0,0,-0.32,0.00,0.59,0.00,0.00,0.00,0.00,0.00
+Environmental samples,uncultured bacterium Contig486 ( 1393582 ),No genus ( -1 ),0,0,0,3.95,0.00,0.06,0.00,0.00,0.00,0.00,0.00
+Bacteria,bacterium EBAD30 ( 1195821 ),No genus ( -1 ),0,0,0,-0.28,0.00,0.06,0.00,0.00,0.00,0.00,0.00
+Environmental samples,uncultured bacterium Contig1169 ( 1393390 ),No genus ( -1 ),0,1,0,18.04,0.00,0.06,0.00,0.00,0.00,0.00,0.00
+Bacteria,Yersinia pestis ( 632 ),Yersinia ( 629 ),0,0,0,0.01,-0.22,0.18,0.18,0.00,0.00,0.00,0.00
+Bacteria,Escherichia albertii ( 208962 ),Escherichia ( 561 ),0,0,-17,0.03,-0.07,0.24,73.93,0.00,-0.16,0.00,4.52
+Mammalia,Pan paniscus ( 9597 ),Pan ( 9596 ),0,0,0,-0.10,-0.10,0.06,0.06,0.00,0.00,0.00,0.00
+Bacteria,Edwardsiella tarda ( 636 ),Edwardsiella ( 635 ),0,0,0,-0.11,-0.11,0.06,0.06,0.00,0.00,0.00,0.00
+Mammalia,Macaca mulatta ( 9544 ),Macaca ( 9539 ),0,0,0,-0.11,0.02,0.42,0.71,0.00,0.00,0.00,0.00
+Bacteria,Corynebacterium xerosis ( 1725 ),Corynebacterium ( 1716 ),0,0,-1,-0.09,-0.23,0.06,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Streptococcus suis ( 1307 ),Streptococcus ( 1301 ),0,0,0,-0.17,-0.18,0.06,0.06,0.00,0.00,0.00,0.00
+Bacteria,Citrobacter rodentium ( 67825 ),Citrobacter ( 544 ),0,0,0,-0.06,-0.17,0.18,1.13,0.00,-0.19,0.00,0.12
+Bacteria,Mycobacterium smegmatis ( 1772 ),Mycobacterium ( 1763 ),0,0,0,-0.16,-0.21,0.06,0.06,0.00,0.00,0.00,0.00
+Bacteria,Salmonella bongori ( 54736 ),Salmonella ( 590 ),0,0,0,-0.15,-0.25,0.06,0.71,0.00,-0.33,0.00,0.18
+Bacteria,Corynebacterium terpenotabidum ( 89154 ),Corynebacterium ( 1716 ),0,0,-1,-0.19,-0.23,0.06,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Corynebacterium ulcerans ( 65058 ),Corynebacterium ( 1716 ),0,0,-1,-0.19,-0.23,0.06,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Shigella sonnei ( 624 ),Shigella ( 620 ),0,0,-2,-0.11,-0.13,0.18,8.68,0.00,-0.13,0.00,0.36
+Bacteria,Klebsiella variicola ( 244366 ),Klebsiella ( 570 ),0,0,0,-0.14,-0.16,0.12,1.61,0.00,-0.12,0.00,0.30
+Mammalia,Papio anubis ( 9555 ),Papio ( 9554 ),0,0,0,-0.15,-0.15,0.12,0.12,0.00,0.00,0.00,0.00
+Bacteria,Pseudomonas sp. TKP ( 1415630 ),Pseudomonas ( 286 ),0,0,0,-0.16,-0.29,0.06,0.12,0.00,-0.39,0.00,0.06
+Bacteria,Citrobacter amalonaticus ( 35703 ),Citrobacter ( 544 ),0,0,0,-0.31,-0.17,0.06,1.13,0.00,-0.19,0.00,0.12
+Bacteria,Corynebacterium efficiens ( 152794 ),Corynebacterium ( 1716 ),0,0,-1,-0.27,-0.23,0.06,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Corynebacterium falsenii ( 108486 ),Corynebacterium ( 1716 ),0,0,-1,-0.30,-0.23,0.06,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Corynebacterium urealyticum ( 43771 ),Corynebacterium ( 1716 ),0,0,-1,-0.31,-0.23,0.06,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Corynebacterium maris ( 575200 ),Corynebacterium ( 1716 ),0,0,-1,-0.17,-0.23,0.12,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Corynebacterium ureicelerivorans ( 401472 ),Corynebacterium ( 1716 ),0,0,-1,-0.34,-0.23,0.06,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Corynebacterium imitans ( 156978 ),Corynebacterium ( 1716 ),0,0,-1,-0.36,-0.23,0.06,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Citrobacter freundii ( 546 ),Citrobacter ( 544 ),0,0,0,-0.25,-0.17,0.12,1.13,0.00,-0.19,0.00,0.12
+Bacteria,Corynebacterium resistens ( 258224 ),Corynebacterium ( 1716 ),0,0,-1,-0.14,-0.23,0.12,3.98,-0.16,-0.15,0.06,3.98
+Bacteria,Corynebacterium argentoratense ( 42817 ),Corynebacterium ( 1716 ),0,0,-1,-0.20,-0.23,0.12,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Pseudomonas putida ( 303 ),Pseudomonas ( 286 ),0,0,0,-0.40,-0.29,0.06,0.12,0.00,-0.39,0.00,0.06
+Bacteria,Shigella dysenteriae ( 622 ),Shigella ( 620 ),0,0,-2,-0.10,-0.13,0.48,8.68,-0.09,-0.13,0.06,0.36
+Bacteria,Corynebacterium humireducens ( 1223514 ),Corynebacterium ( 1716 ),0,0,-1,-0.18,-0.23,0.18,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Rhodococcus opacus ( 37919 ),Rhodococcus ( 1827 ),0,0,0,-0.37,-0.33,0.06,0.06,0.00,0.00,0.00,0.00
+Bacteria,Corynebacterium atypicum ( 191610 ),Corynebacterium ( 1716 ),0,0,-1,-0.28,-0.23,0.12,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Citrobacter koseri ( 545 ),Citrobacter ( 544 ),0,0,0,-0.04,-0.17,0.77,1.13,-0.13,-0.19,0.12,0.12
+Bacteria,Corynebacterium vitaeruminis ( 38305 ),Corynebacterium ( 1716 ),0,0,-1,-0.23,-0.23,0.12,3.98,-0.10,-0.15,0.12,3.98
+Bacteria,Serratia marcescens ( 615 ),Serratia ( 613 ),0,0,0,-0.34,-0.42,0.06,0.18,0.00,0.00,0.00,0.00
+Bacteria,Escherichia fergusonii ( 564 ),Escherichia ( 561 ),0,0,-17,-0.08,-0.07,0.77,73.93,0.47,-0.16,0.06,4.52
+Bacteria,Leifsonia xyli ( 1575 ),Leifsonia ( 110932 ),0,0,0,-0.39,-0.40,0.06,0.06,0.00,0.00,0.00,0.00
+Bacteria,Corynebacterium doosanense ( 1121358 ),Corynebacterium ( 1716 ),0,0,-1,-0.36,-0.23,0.12,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Corynebacterium jeikeium ( 38289 ),Corynebacterium ( 1716 ),0,0,-1,-0.37,-0.23,0.12,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Corynebacterium casei ( 160386 ),Corynebacterium ( 1716 ),0,0,-1,-0.33,-0.23,0.18,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Serratia proteamaculans ( 28151 ),Serratia ( 613 ),0,0,0,-0.29,-0.42,0.12,0.18,0.00,0.00,0.00,0.00
+Bacteria,Corynebacterium diphtheriae ( 1717 ),Corynebacterium ( 1716 ),0,0,-1,-0.25,-0.23,0.24,3.98,-0.15,-0.15,0.06,3.98
+Bacteria,Corynebacterium camporealensis ( 161896 ),Corynebacterium ( 1716 ),0,0,-1,-0.25,-0.23,0.36,3.98,-0.09,-0.15,0.06,3.98
+Bacteria,Shigella boydii ( 621 ),Shigella ( 620 ),0,0,-2,-0.11,-0.13,1.90,8.68,-0.07,-0.13,0.12,0.36
+Bacteria,Klebsiella pneumoniae ( 573 ),Klebsiella ( 570 ),0,0,0,-0.12,-0.16,1.49,1.61,-0.10,-0.12,0.30,0.30
+Bacteria,Corynebacterium aurimucosum ( 169292 ),Corynebacterium ( 1716 ),0,0,-1,-0.26,-0.23,0.77,3.98,-0.21,-0.15,0.06,3.98
+Bacteria,Corynebacterium singulare ( 161899 ),Corynebacterium ( 1716 ),0,0,-1,-0.34,-0.23,0.71,3.98,0.00,-0.15,0.00,3.98
+Bacteria,Salmonella enterica ( 28901 ),Salmonella ( 590 ),0,0,0,-0.25,-0.25,0.65,0.71,-0.33,-0.33,0.18,0.18
+Bacteria,Shigella flexneri ( 623 ),Shigella ( 620 ),0,-1,-2,-0.16,-0.13,6.13,8.68,-0.16,-0.13,0.18,0.36
+Escherichia coli,Escherichia coli ( 562 ),Escherichia ( 561 ),0,-5,-17,-0.07,-0.07,72.91,73.93,-0.15,-0.16,3.93,4.52
+Caudovirales (dsDNA phages),Phage 21 ( 10743 ),Lambdalikevirus ( 186765 ),-1,15,0,87.41,-0.09,0.18,0.18,0.00,0.00,0.00,0.00
+Bacteria,Corynebacterium renale ( 1724 ),Corynebacterium ( 1716 ),-1,7,-1,31.03,-0.23,0.24,3.98,0.00,-0.15,0.00,3.98

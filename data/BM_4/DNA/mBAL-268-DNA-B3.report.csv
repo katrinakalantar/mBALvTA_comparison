@@ -1,0 +1,35 @@
+Category,Species,Genus,Score1,Score2,Score3,NT Species Z,NT Genus Z,NT Species rM,NT Genus rM,NR Species Z,NR Genus Z,NR Species rM,NR Genus rM
+Bacteria,Pseudomonas aeruginosa ( 287 ),Pseudomonas ( 286 ),691,1769,330,2.98,0.41,541.62,544.30,1.44,0.20,108.13,159.04
+Viruses,Pseudomonas phage Pf1 ( 10871 ),Inovirus ( 10861 ),150,15,1,99.00,9.64,0.16,0.16,0.00,0.00,0.00,0.00
+Caudovirales (dsDNA phages),Stenotrophomonas phage Smp131 ( 1168563 ),P2likevirus ( 140410 ),63,46,0,99.00,1.36,0.47,0.47,0.00,0.00,0.00,0.00
+Bacteria,Pseudomonas sp. M18 ( 228095 ),Pseudomonas ( 286 ),6,15,330,100.00,0.41,0.16,544.30,0.00,0.20,0.00,159.04
+Bacteria,Pseudomonas composti ( 658457 ),Pseudomonas ( 286 ),6,15,330,99.00,0.41,0.16,544.30,0.00,0.20,0.00,159.04
+Bacteria,Stenotrophomonas maltophilia ( 40324 ),Stenotrophomonas ( 40323 ),4,20,1,0.22,0.21,113.83,113.98,-0.19,-0.19,25.45,26.08
+Bacteria,Dehalogenimonas lykanthroporepellens ( 552810 ),Dehalogenimonas ( 670486 ),3,0,0,4.57,4.57,0.16,0.16,0.00,0.00,0.00,0.00
+Mammalia,Homo sapiens ( 9606 ),Homo ( 9605 ),0,0,0,0.02,0.02,0.32,0.32,1.81,1.81,0.16,0.16
+Mammalia,Cercocebus atys ( 9531 ),Cercocebus ( 9529 ),0,0,0,1.68,1.68,0.16,0.16,0.00,0.00,0.00,0.00
+Mammalia,Gorilla gorilla ( 9593 ),Gorilla ( 9592 ),0,0,0,0.70,0.70,0.63,0.63,0.00,0.00,0.00,0.00
+Bacteria,Pseudomonas cichorii ( 36746 ),Pseudomonas ( 286 ),0,0,330,-0.09,0.41,0.16,544.30,0.63,0.20,0.16,159.04
+Eukaryotes,Spirometra erinaceieuropaei ( 99802 ),Spirometra ( 46580 ),0,0,0,0.19,0.19,0.16,0.16,0.00,0.00,0.00,0.00
+Caudovirales (dsDNA phages),Stenotrophomonas phage S1 ( 573591 ),No genus ( -1 ),0,0,0,0.06,0.00,0.16,0.00,0.00,0.00,0.00,0.00
+Artificial Sequences,synthetic construct ( 32630 ),No genus ( -1 ),0,0,0,-0.18,0.00,1.42,0.00,0.00,0.00,0.00,0.00
+Caudovirales (dsDNA phages),Pseudomonas phage phi297 ( 1129145 ),No genus ( -1 ),0,0,0,-0.26,0.00,0.16,0.00,0.00,0.00,0.00,0.00
+Viruses,SEN virus ( 136966 ),No genus ( -1 ),0,31,0,99.00,0.00,0.32,0.00,0.00,0.00,0.00,0.00
+Bacteria,Pseudomonas alkylphenolia ( 237609 ),Pseudomonas ( 286 ),0,0,330,-0.11,0.41,0.16,544.30,0.00,0.20,0.00,159.04
+Bacteria,Methylibium petroleiphilum ( 105560 ),Methylibium ( 316612 ),0,0,0,-0.25,-0.25,0.16,0.16,0.00,0.00,0.00,0.00
+Propionbacterium acnes,Propionibacterium acnes ( 1747 ),Propionibacterium ( 1743 ),0,0,0,-0.27,-0.27,0.16,0.16,0.00,0.00,0.00,0.00
+Bacteria,Stenotrophomonas rhizophila ( 216778 ),Stenotrophomonas ( 40323 ),0,0,1,-0.37,0.21,0.16,113.98,0.00,-0.19,0.00,26.08
+Bacteria,Ensifer adhaerens ( 106592 ),Ensifer ( 106591 ),0,0,0,-0.31,-0.31,0.16,0.16,0.00,0.00,0.00,0.00
+Bacteria,Pseudomonas mosselii ( 78327 ),Pseudomonas ( 286 ),0,0,330,-0.25,0.41,0.16,544.30,0.00,0.20,0.00,159.04
+Mammalia,Pantholops hodgsonii ( 59538 ),Pantholops ( 59537 ),0,0,0,-0.33,-0.33,0.16,0.16,0.00,0.00,0.00,0.00
+Bacteria,Methylobacterium sp. 4-46 ( 426117 ),Methylobacterium ( 407 ),0,0,0,-0.35,-0.32,0.16,0.16,0.00,0.00,0.00,0.00
+Bacteria,Burkholderia cepacia ( 292 ),Burkholderia ( 32008 ),0,0,0,-0.34,-0.34,0.16,0.16,0.00,0.00,0.00,0.00
+Bacteria,Pseudomonas mendocina ( 300 ),Pseudomonas ( 286 ),0,0,330,-0.30,0.41,0.16,544.30,0.00,0.20,0.00,159.04
+Bacteria,Pseudomonas knackmussii ( 65741 ),Pseudomonas ( 286 ),0,0,330,-0.32,0.41,0.16,544.30,0.00,0.20,0.00,159.04
+Bacteria,Brachybacterium faecium ( 43669 ),Brachybacterium ( 43668 ),0,0,0,-0.36,-0.38,0.16,0.16,0.00,0.00,0.00,0.00
+Bacteria,Pseudomonas chlororaphis ( 587753 ),Pseudomonas ( 286 ),0,0,330,-0.34,0.41,0.16,544.30,0.00,0.20,0.00,159.04
+Bacteria,Azotobacter vinelandii ( 354 ),Azotobacter ( 352 ),0,0,0,-0.30,-0.32,0.32,0.32,0.00,0.00,0.00,0.00
+Bacteria,Pseudomonas resinovorans ( 53412 ),Pseudomonas ( 286 ),0,0,330,-0.29,0.41,0.32,544.30,0.00,0.20,0.00,159.04
+Bacteria,Sinorhizobium fredii ( 380 ),Sinorhizobium ( 28105 ),0,0,0,-0.34,-0.38,0.32,0.32,0.00,0.00,0.00,0.00
+Bacteria,Pseudomonas denitrificans ( 43306 ),Pseudomonas ( 286 ),0,0,330,-0.13,0.41,1.11,544.30,0.00,0.20,0.00,159.04
+Bacteria,Achromobacter xylosoxidans ( 85698 ),Achromobacter ( 222 ),0,0,-1,-0.27,-0.27,2.06,2.06,-0.31,-0.31,0.63,0.63

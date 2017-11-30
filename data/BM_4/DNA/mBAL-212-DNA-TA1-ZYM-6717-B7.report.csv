@@ -1,0 +1,16 @@
+Category,Species,Genus,Score1,Score2,Score3,NT Species Z,NT Genus Z,NT Species rM,NT Genus rM,NR Species Z,NR Genus Z,NR Species rM,NR Genus rM
+Fungi,Schizosaccharomyces pombe ( 4896 ),Schizosaccharomyces ( 4895 ),109,49,5,21.04,2.22,2.34,2.34,0.00,0.00,0.00,0.00
+Bacteria,Roseibacterium elongatum ( 159346 ),Roseibacterium ( 159345 ),19,6,6,2.88,2.88,2.34,2.34,0.00,0.00,0.00,0.00
+Mammalia,Homo sapiens ( 9606 ),Homo ( 9605 ),16,6,6,2.69,2.69,2.34,2.34,0.00,0.00,0.00,0.00
+Bacteria,Rhodocyclaceae bacterium PG1-Ca6 ( 1565605 ),No genus ( -1 ),0,2,0,0.86,0.00,2.34,0.00,0.00,0.00,0.00,0.00
+Caudovirales (dsDNA phages),Staphylococcus phage tp310-2 ( 445516 ),No genus ( -1 ),0,468,0,100.00,0.00,4.68,0.00,0.00,0.00,0.00,0.00
+Bacteria,Burkholderia thailandensis ( 57975 ),Burkholderia ( 32008 ),0,0,0,-0.04,-0.33,2.34,2.34,0.00,0.00,0.00,0.00
+Bacteria,Pseudomonas resinovorans ( 53412 ),Pseudomonas ( 286 ),0,0,-1,0.05,-0.28,2.34,7.02,0.00,0.00,0.00,0.00
+Bacteria,Shigella flexneri ( 623 ),Shigella ( 620 ),0,0,0,-0.18,-0.14,2.34,2.34,0.00,0.00,0.00,0.00
+Bacteria,Azospirillum lipoferum ( 193 ),Azospirillum ( 191 ),0,0,0,-0.11,-0.24,2.34,2.34,0.00,0.00,0.00,0.00
+Bacteria,Sphingomonas sanxanigenens ( 397260 ),Sphingomonas ( 13687 ),0,0,0,-0.25,-0.14,2.34,2.34,0.00,0.00,0.00,0.00
+Bacteria,Ramlibacter tataouinensis ( 94132 ),Ramlibacter ( 174951 ),0,0,0,-0.26,-0.26,2.34,2.34,0.00,0.00,0.00,0.00
+Bacteria,Streptococcus mitis ( 28037 ),Streptococcus ( 1301 ),0,-1,-2,-0.13,-0.18,7.02,7.02,-0.05,-0.21,4.68,4.68
+Bacteria,Pseudomonas aeruginosa ( 287 ),Pseudomonas ( 286 ),0,0,-1,-0.17,-0.28,4.68,7.02,0.00,0.00,0.00,0.00
+Bacteria,Streptomyces coelicolor ( 1902 ),Streptomyces ( 1883 ),-2,6,-1,2.81,-0.46,2.34,2.34,0.00,0.00,0.00,0.00
+Bacteria,Staphylococcus aureus ( 1280 ),Staphylococcus ( 1279 ),-7,45,-12,1.04,-0.16,39.79,39.79,0.21,-0.17,21.06,21.06

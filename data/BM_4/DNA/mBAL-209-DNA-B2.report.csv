@@ -1,0 +1,51 @@
+Category,Species,Genus,Score1,Score2,Score3,NT Species Z,NT Genus Z,NT Species rM,NT Genus rM,NR Species Z,NR Genus Z,NR Species rM,NR Genus rM
+Bacteria,Haemophilus influenzae ( 727 ),Haemophilus ( 724 ),7779,1624,1357,8.16,5.02,148.03,148.49,8.31,4.13,50.24,53.92
+Caudovirales (dsDNA phages),Haemophilus phage HP1 ( 10690 ),Hpunalikevirus ( 1196844 ),2253,22,28,99.00,99.00,0.23,0.29,0.00,0.00,0.00,0.00
+Viruses,Torque teno mini virus ALH8 ( 1535291 ),Betatorquevirus ( 687332 ),1151,12,93,15.97,2.13,0.06,0.92,100.00,100.00,0.11,0.11
+Caudovirales (dsDNA phages),Haemophilus phage HP2 ( 157239 ),Hpunalikevirus ( 1196844 ),569,5,28,100.00,99.00,0.06,0.29,0.00,0.00,0.00,0.00
+Viruses,Torque teno mini virus 3 ( 687371 ),Betatorquevirus ( 687332 ),12,5,93,100.00,2.13,0.06,0.92,0.00,100.00,0.00,0.11
+Viruses,Torque teno mini virus 4 ( 687372 ),Betatorquevirus ( 687332 ),12,5,93,100.00,2.13,0.06,0.92,0.00,100.00,0.00,0.11
+Viruses,Torque teno mini virus 7 ( 687375 ),Betatorquevirus ( 687332 ),8,3,93,32.93,2.13,0.11,0.92,0.00,100.00,0.00,0.11
+Viruses,Torque teno mini virus 5 ( 687373 ),Betatorquevirus ( 687332 ),7,3,93,21.62,2.13,0.17,0.92,0.00,100.00,0.00,0.11
+Bacteria,Pasteurella multocida ( 747 ),Pasteurella ( 745 ),6,1,2,0.02,-0.01,0.57,0.57,8.24,4.73,0.17,0.34
+Viruses,Torque teno mini virus ALA22 ( 1535290 ),Betatorquevirus ( 687332 ),3,1,93,3.26,2.13,0.46,0.92,0.00,100.00,0.00,0.11
+Mammalia,Nomascus leucogenys ( 61853 ),Nomascus ( 325165 ),1,0,0,3.47,3.47,0.11,0.11,0.00,0.00,0.00,0.00
+Mammalia,Colobus angolensis ( 54131 ),Colobus ( 9570 ),1,0,0,4.30,4.30,0.06,0.06,0.00,0.00,0.00,0.00
+Mammalia,Homo sapiens ( 9606 ),Homo ( 9605 ),0,0,0,0.89,0.89,0.98,0.98,0.00,0.00,0.00,0.00
+Bacteria,Fibrobacter succinogenes ( 833 ),Fibrobacter ( 832 ),0,0,0,0.46,0.46,0.06,0.06,0.00,0.00,0.00,0.00
+Mammalia,Cercocebus atys ( 9531 ),Cercocebus ( 9529 ),0,0,0,0.30,0.30,0.06,0.06,0.00,0.00,0.00,0.00
+Viruses,Human herpesvirus 4 ( 10376 ),Lymphocryptovirus ( 10375 ),0,0,0,0.28,0.28,0.06,0.06,0.00,0.00,0.00,0.00
+Mammalia,Chlorocebus sabaeus ( 60711 ),Chlorocebus ( 392815 ),0,0,0,0.13,0.11,0.17,0.17,0.00,0.00,0.00,0.00
+Mammalia,Gorilla gorilla ( 9593 ),Gorilla ( 9592 ),0,0,0,0.09,0.09,0.17,0.17,0.00,0.00,0.00,0.00
+Viruses,uncultured virus ( 340016 ),No genus ( -1 ),0,0,0,1.61,0.00,0.06,0.00,0.00,0.00,0.00,0.00
+Viruses,Torque teno virus ( 68887 ),No genus ( -1 ),0,4,0,7.06,0.00,0.57,0.00,0.00,0.00,0.00,0.00
+Viruses,TTV-like mini virus ( 93678 ),No genus ( -1 ),0,2,0,-0.10,0.00,0.06,0.00,45.96,0.00,0.06,0.00
+Environmental samples,uncultured bacterium ( 77133 ),No genus ( -1 ),0,0,0,-0.32,0.00,0.06,0.00,0.00,0.00,0.00,0.00
+Eukaryotes,Spirometra erinaceieuropaei ( 99802 ),Spirometra ( 46580 ),0,0,0,-0.07,-0.07,0.06,0.06,0.00,0.00,0.00,0.00
+Bacteria,Bibersteinia trehalosi ( 47735 ),Bibersteinia ( 476528 ),0,0,0,-0.12,-0.12,0.06,0.06,0.00,0.00,0.00,0.00
+Bacteria,Shigella boydii ( 621 ),Shigella ( 620 ),0,0,0,-0.12,-0.14,0.06,0.17,0.00,0.00,0.00,0.00
+Bacteria,Mannheimia haemolytica ( 75985 ),Mannheimia ( 75984 ),0,0,0,-0.13,-0.15,0.06,0.11,0.00,0.00,0.00,0.00
+Bacteria,Mannheimia varigena ( 85404 ),Mannheimia ( 75984 ),0,0,0,-0.15,-0.15,0.06,0.11,0.00,0.00,0.00,0.00
+Bacteria,Comamonas testosteroni ( 285 ),Comamonas ( 283 ),0,0,0,-0.15,-0.15,0.06,0.06,0.00,0.00,0.00,0.00
+Bacteria,Delftia acidovorans ( 80866 ),Delftia ( 80865 ),0,0,0,-0.11,-0.11,0.11,0.11,0.00,0.00,0.00,0.00
+Mammalia,Papio anubis ( 9555 ),Papio ( 9554 ),0,0,0,-0.16,-0.16,0.06,0.06,0.00,0.00,0.00,0.00
+Bacteria,Shewanella baltica ( 62322 ),Shewanella ( 22 ),0,0,0,-0.23,-0.18,0.06,0.06,0.00,-0.41,0.00,0.06
+Acidovorax,Acidovorax sp. JS42 ( 232721 ),Acidovorax ( 12916 ),0,0,0,-0.19,-0.25,0.06,0.11,0.00,0.00,0.00,0.00
+Bacteria,Shigella flexneri ( 623 ),Shigella ( 620 ),0,0,0,-0.19,-0.14,0.11,0.17,0.00,0.00,0.00,0.00
+Bacteria,Staphylococcus epidermidis ( 1282 ),Staphylococcus ( 1279 ),0,0,0,-0.24,-0.26,0.06,0.06,0.00,0.00,0.00,0.00
+Fungi,Malassezia globosa ( 76773 ),Malassezia ( 55193 ),0,0,0,-0.28,-0.24,0.06,0.06,0.00,0.00,0.00,0.00
+Bacteria,Streptococcus mitis ( 28037 ),Streptococcus ( 1301 ),0,0,-4,-0.15,-0.17,0.06,10.35,-0.19,-0.22,0.06,3.97
+Bacteria,Corynebacterium sp. ATCC 6931 ( 1487956 ),Corynebacterium ( 1716 ),0,0,0,-0.30,-0.23,0.06,0.06,0.00,-0.16,0.00,0.06
+Mammalia,Macaca nemestrina ( 9545 ),Macaca ( 9539 ),0,0,0,0.54,-0.13,0.06,0.40,0.00,0.00,0.00,0.00
+Acidovorax,Acidovorax ebreus ( 721785 ),Acidovorax ( 12916 ),0,0,0,-0.28,-0.25,0.06,0.11,0.00,0.00,0.00,0.00
+Bacteria,Neisseria gonorrhoeae ( 485 ),Neisseria ( 482 ),0,0,0,-0.42,-0.25,0.06,0.23,0.00,-0.34,0.00,0.06
+Mammalia,Macaca mulatta ( 9544 ),Macaca ( 9539 ),0,0,0,-0.17,-0.13,0.29,0.40,0.00,0.00,0.00,0.00
+Bacteria,Nocardiopsis dassonvillei ( 2014 ),Nocardiopsis ( 2013 ),0,0,0,-0.32,-0.38,0.06,0.06,0.00,-0.34,0.00,0.06
+Bacteria,Thioalkalivibrio nitratireducens ( 186931 ),Thioalkalivibrio ( 106633 ),0,0,0,-0.35,-0.37,0.06,0.06,0.00,0.00,0.00,0.00
+Bacteria,Streptococcus pseudopneumoniae ( 257758 ),Streptococcus ( 1301 ),0,0,-4,-0.16,-0.17,0.34,10.35,0.00,-0.22,0.00,3.97
+Bacteria,Aeromonas media ( 651 ),Aeromonas ( 642 ),0,0,0,-0.42,-0.34,0.06,0.06,-0.12,-0.34,0.06,0.06
+Mammalia,Macaca fascicularis ( 9541 ),Macaca ( 9539 ),0,0,0,1.52,-0.13,0.06,0.40,0.00,0.00,0.00,0.00
+Bacteria,Neisseria meningitidis ( 487 ),Neisseria ( 482 ),0,0,0,-0.40,-0.25,0.17,0.23,0.00,-0.34,0.00,0.06
+Propionbacterium acnes,Propionibacterium acnes ( 1747 ),Propionibacterium ( 1743 ),0,0,0,-0.26,-0.27,1.32,1.32,0.00,0.00,0.00,0.00
+Bacteria,Streptococcus pneumoniae ( 1313 ),Streptococcus ( 1301 ),0,-2,-4,-0.16,-0.17,9.94,10.35,-0.11,-0.22,3.68,3.97
+Bacteria,Haemophilus parainfluenzae ( 729 ),Haemophilus ( 724 ),0,0,1357,-0.17,5.02,0.46,148.49,-0.43,4.13,0.06,53.92
