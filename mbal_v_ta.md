@@ -1,5 +1,7 @@
 MBAL vs. TA comparison
 ================
+Katrina Kalantar
+2017-12-01
 
 Comparison of DNA Microbes
 --------------------------
@@ -1309,6 +1311,8 @@ for( i in rownames(metadata)){
     ## [1] "Enterobacter ( 547 )"
     ## [1] "Enterobacter ( 547 )"
 
+Output plots
+
 ``` r
 if(generate_pdfs){
   pdf('./output/pathogens_identified.pdf',width=8, height=6)
@@ -1318,7 +1322,7 @@ colnames(relative_numbers) <- IDs
 barplot(relative_numbers, col=c("gray80","navyblue","gray50"),main="Microbes Identified in DNA-seq by TA and/or mBAL",legend=TRUE,cex.main=.8,ylab="# of Pathogens Cultured",xlab="Patient ID",cex.axis=.6)
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-59-2.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-60-1.png)
 
 ``` r
 # dev.off()
@@ -1355,7 +1359,7 @@ par(mar=c(10,3,2,2))
 barplot(t(t(relative_numbers)/colSums(relative_numbers)), col=c("gray80","navyblue","gray60"),las=2)
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-59-3.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-60-2.png)
 
 A priori microbes
 
@@ -1404,7 +1408,7 @@ print(wilcox.test(all_microbe_data[c("Rothia ( 32207 )"),as.character(unlist(met
 stripchart(list(all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=alpha(colorset1,.5),main="Neisseria ( 482 )")
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-60-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-61-1.png)
 
 ``` r
 print(wilcox.test(all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value)
@@ -1463,7 +1467,7 @@ print(wilcox.test(group1.TA.microbes.norm[c("Rothia ( 32207 )"),],group1.MBAL.mi
 stripchart(list(group1.TA.microbes.norm[c("Neisseria ( 482 )"),],group1.MBAL.microbes.norm[c("Neisseria ( 482 )"),]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=1.2,col=colorset1,main="Neisseria ( 482 )")
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-63-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-64-1.png)
 
 ``` r
 print(wilcox.test(group1.TA.microbes.norm[c("Neisseria ( 482 )"),],group1.MBAL.microbes.norm[c("Neisseria ( 482 )"),])$p.value)
