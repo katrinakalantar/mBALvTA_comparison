@@ -27,7 +27,8 @@ burden <- colSums(all_microbe_data)
 
 ``` r
 # TOTAL BURDEN (all TA v all mBAL)
-print(wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1,2,3,4),]["TA_DNAseq_filename"]))],burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(1,2,3,4),]["mBAL_DNAseq_filename"]))])$p.value[1])
+print(wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1,2,3,4),]["TA_DNAseq_filename"]))],
+                  burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(1,2,3,4),]["mBAL_DNAseq_filename"]))])$p.value[1])
 ```
 
     ## [1] 0.2797732
@@ -35,7 +36,8 @@ print(wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadat
 Difference in burden between G1 TA and G1 mBAL
 
 ``` r
-print(wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1),]["TA_DNAseq_filename"]))],burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(1),]["mBAL_DNAseq_filename"]))])$p.value)
+print(wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1),]["TA_DNAseq_filename"]))],
+                  burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(1),]["mBAL_DNAseq_filename"]))])$p.value)
 ```
 
     ## [1] 0.1872684
@@ -43,27 +45,28 @@ print(wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadat
 Difference in burden btwn G4 TA and G4 mBAL
 
 ``` r
-print(wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(4),]["TA_DNAseq_filename"]))],burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(4),]["mBAL_DNAseq_filename"]))])$p.value)
+print(wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(4),]["TA_DNAseq_filename"]))],
+                  burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(4),]["mBAL_DNAseq_filename"]))])$p.value)
 ```
 
     ## [1] 0.842836
 
+**Evaluating the difference in burden between group 1 and group 4 patients, within sample type**
+
 Difference in burden btwn G1 TA and G4 TA
 
 ``` r
-wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1),]["TA_DNAseq_filename"]))],burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(4),]["TA_DNAseq_filename"]))])$p.value
+wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1),]["TA_DNAseq_filename"]))],
+            burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(4),]["TA_DNAseq_filename"]))])$p.value
 ```
 
     ## [1] 0.02141274
 
-``` r
-#stripchart(list(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1),]["TA_DNAseq_filename"]))],burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(4),]["TA_DNAseq_filename"]))]),method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2)
-```
-
 Difference in burden btwn G1 mBAL and G4 mBAL
 
 ``` r
-wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1),]["mBAL_DNAseq_filename"]))],burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(4),]["mBAL_DNAseq_filename"]))])$p.value
+wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1),]["mBAL_DNAseq_filename"]))],
+            burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(4),]["mBAL_DNAseq_filename"]))])$p.value
 ```
 
     ## [1] 0.3728121
@@ -86,7 +89,7 @@ print(summary(burden[names(burden) %in% as.character(unlist(metadata[metadata$ef
     ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
     ##     0.47     5.39    26.89  1791.82   146.35 76324.15
 
-#### Create data splits to be used in subsequent analysis.
+### Create data splits to be used in subsequent analysis.
 
 Separate MBAL and TA into dataframes, normalize the microbial data into proportions, and separate out group 1.
 
@@ -95,7 +98,7 @@ MBAL <- as.character(unname(unlist(metadata[c("mBAL_DNAseq_filename")])))  # sep
 TA <- as.character(unname(unlist(metadata[c("TA_DNAseq_filename")])))
 MBAL.microbes <- all_microbe_data[,colnames(all_microbe_data) %in% MBAL]  
 TA.microbes <- all_microbe_data[,colnames(all_microbe_data) %in% TA]
-MBAL.microbes.norm <-  t(t(MBAL.microbes)/colSums(MBAL.microbes))   # normalise (Total Sum Scaling) -> generate proportions
+MBAL.microbes.norm <-  t(t(MBAL.microbes)/colSums(MBAL.microbes))   # normalize (Total Sum Scaling) -> generate proportions
 TA.microbes.norm <- t(t(TA.microbes)/colSums(TA.microbes))
  
 # Isolate Group 1 Data
@@ -109,8 +112,10 @@ group1.TA.microbes.norm <- t(t(group1.TA.microbes)/colSums(group1.TA.microbes))
 
 ### Phylum-level analysis:
 
+Iterate over all pairs of mBAL and TA samples from individuals to generate the community similarity metrics at the phylum level. Initial output: a barchart of phyla represented in each sample. The bar charts are separated by "group" - group 1 in the first two rows, group 2 in the second...etc.
+
 ``` r
-PhyProp <- read.csv("./data/phylum_proportions.csv",sep='\t',row.names=1)
+PhyProp <- read.csv("./data/phylum_proportions.csv",sep='\t',row.names=1)  # read in the phylum proportion data (generated externally by TaxonomyWalking)
 PhyProp[is.na(PhyProp)]<-0
 PhyProp <- PhyProp[order(rowSums(PhyProp),decreasing=F),]
 
@@ -201,14 +206,15 @@ if(generate_pdfs){
 # dev.off()
 ```
 
-**PHYLUM-LEVEL PEARSON CORRELATION**
+**PHYLUM-LEVEL PEARSON CORRELATION** : We evaluate the pearson correlation between mBAL and TA samples from the same individual.
 
 ``` r
 if(generate_pdfs){
   pdf('./output/phylum.pearson.pdf',height=5, width=5)  
 }
 names(full_correlations) <- c("Group 1","Group 2", "Group 3", "Group 4")
-stripchart(full_correlations,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,main="Pearson Correlation by Patient Group",xlab="Patient Group", ylab="Pearson Correlation")
+stripchart(full_correlations,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,
+           main="Pearson Correlation by Patient Group",xlab="Patient Group", ylab="Pearson Correlation")
 ```
 
 ![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-13-1.png)
@@ -216,19 +222,6 @@ stripchart(full_correlations,method='jitter',jitter=.1,vertical=T,col=alpha('nav
 ``` r
 # dev.off()
 ```
-
-Difference in the phylum-level pearson correlation between infxn and no infxn:
-
-``` r
-wilcox.test(full_correlations[[1]],full_correlations[[4]])
-```
-
-    ## 
-    ##  Wilcoxon rank sum test
-    ## 
-    ## data:  full_correlations[[1]] and full_correlations[[4]]
-    ## W = 152, p-value = 0.001739
-    ## alternative hypothesis: true location shift is not equal to 0
 
 Overall correlation is variable
 
@@ -242,15 +235,28 @@ Overall correlation is variable
 
     ## [1] "sd pearson corr over group 1:  0.0804087227611593"
 
-**PHYLUM-LVEL BRAY-CURTIS**
+Difference in the phylum-level pearson correlation between group 1 and group 4 individuals:
+
+``` r
+wilcox.test(full_correlations[[1]],full_correlations[[4]])
+```
+
+    ## 
+    ##  Wilcoxon rank sum test
+    ## 
+    ## data:  full_correlations[[1]] and full_correlations[[4]]
+    ## W = 152, p-value = 0.001739
+    ## alternative hypothesis: true location shift is not equal to 0
+
+**PHYLUM-LVEL BRAY-CURTIS** : We evaluate the Bray-curtis community similarity metric between mBAL and TA samples from the same individual.
 
 ``` r
 if(generate_pdfs){
   pdf('./output/phylum.bc.pdf',height=5, width=5)  
 }
-# there is a significant difference in the phylum-level BC dist between infxn and no infxn
 names(full_bc) <- c("Group 1","Group 2", "Group 3", "Group 4")
-stripchart(full_bc,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,main="Bray Curtis Similarity by Patient Group",xlab="Patient Group", ylab="Bray Curtis Similarity")
+stripchart(full_bc,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,
+           main="Bray Curtis Similarity by Patient Group",xlab="Patient Group", ylab="Bray Curtis Similarity")
 ```
 
 ![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-17-1.png)
@@ -258,17 +264,6 @@ stripchart(full_bc,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6)
 ``` r
 # dev.off()
 ```
-
-``` r
-wilcox.test(full_bc[[1]],full_bc[[4]])
-```
-
-    ## 
-    ##  Wilcoxon rank sum test
-    ## 
-    ## data:  full_bc[[1]] and full_bc[[4]]
-    ## W = 27, p-value = 0.001421
-    ## alternative hypothesis: true location shift is not equal to 0
 
 Overall BC is variable
 
@@ -282,11 +277,25 @@ But BC in group 1 is much higher than correlation in group 4
 
     ## [1] "sd BC over group1 :  0.157649843597298"
 
-**PHYLUM-LEVEL SIMPSONS DIVERSITY**
+There is a significant difference in the phylum-level bray-curtis dist between group 1 and group 4
 
 ``` r
-# there is no significant difference in the phylum-level simpsons diversity comparing TA to mBAL in any group
-print(wilcox.test(full_simpsons[[1]],full_simpsons[[2]]))
+wilcox.test(full_bc[[1]],full_bc[[4]])
+```
+
+    ## 
+    ##  Wilcoxon rank sum test
+    ## 
+    ## data:  full_bc[[1]] and full_bc[[4]]
+    ## W = 27, p-value = 0.001421
+    ## alternative hypothesis: true location shift is not equal to 0
+
+**PHYLUM-LEVEL SIMPSONS DIVERSITY** : Here we evaluate the simpsons diversity index (SDI, alpha diversity) for each sample type from each individual. We expect that SDI will be similar across sample type for the same patient.
+
+``` r
+# there is no significant difference in the phylum-level simpsons diversity 
+# comparing TA to mBAL in any group
+print(wilcox.test(full_simpsons[[1]],full_simpsons[[2]]))  # mBAL v. TA Group 1
 ```
 
     ## 
@@ -297,7 +306,7 @@ print(wilcox.test(full_simpsons[[1]],full_simpsons[[2]]))
     ## alternative hypothesis: true location shift is not equal to 0
 
 ``` r
-print(wilcox.test(full_simpsons[[3]],full_simpsons[[4]]))
+print(wilcox.test(full_simpsons[[3]],full_simpsons[[4]]))  # mBAL v. TA Group 2 
 ```
 
     ## 
@@ -308,7 +317,7 @@ print(wilcox.test(full_simpsons[[3]],full_simpsons[[4]]))
     ## alternative hypothesis: true location shift is not equal to 0
 
 ``` r
-print(wilcox.test(full_simpsons[[5]],full_simpsons[[6]]))
+print(wilcox.test(full_simpsons[[5]],full_simpsons[[6]]))  # mBAL v. TA Group 3
 ```
 
     ## 
@@ -319,7 +328,7 @@ print(wilcox.test(full_simpsons[[5]],full_simpsons[[6]]))
     ## alternative hypothesis: true location shift is not equal to 0
 
 ``` r
-print(wilcox.test(full_simpsons[[7]],full_simpsons[[8]]))
+print(wilcox.test(full_simpsons[[7]],full_simpsons[[8]]))  # mBAL v. TA Group 4
 ```
 
     ## 
@@ -330,7 +339,8 @@ print(wilcox.test(full_simpsons[[7]],full_simpsons[[8]]))
     ## alternative hypothesis: true location shift is not equal to 0
 
 ``` r
-print(wilcox.test(c(full_simpsons[[1]],full_simpsons[[3]],full_simpsons[[5]],full_simpsons[[7]]),c(full_simpsons[[2]],full_simpsons[[4]],full_simpsons[[6]],full_simpsons[[8]])))
+print(wilcox.test(c(full_simpsons[[1]],full_simpsons[[3]],full_simpsons[[5]],full_simpsons[[7]]),
+                  c(full_simpsons[[2]],full_simpsons[[4]],full_simpsons[[6]],full_simpsons[[8]])))
 ```
 
     ## 
@@ -340,8 +350,9 @@ print(wilcox.test(c(full_simpsons[[1]],full_simpsons[[3]],full_simpsons[[5]],ful
     ## W = 1155, p-value = 0.9854
     ## alternative hypothesis: true location shift is not equal to 0
 
+There is a significant difference in phylum-level simpsons diversity comparing G1 to G4 in mBAL (p = )
+
 ``` r
-# there is a significant difference in phylum-level simpsons diversity comparing G1 to G4 in mBAL (p =)
 print(wilcox.test(full_simpsons[[1]],full_simpsons[[7]]))
 ```
 
@@ -352,8 +363,9 @@ print(wilcox.test(full_simpsons[[1]],full_simpsons[[7]]))
     ## W = 16, p-value = 0.0001035
     ## alternative hypothesis: true location shift is not equal to 0
 
+The significance in phylum-level simpsons diversity between G1 and G4 in TA is not maintained (p = )
+
 ``` r
-# the significance in phylum-level simpsons diversity between G1 and G4 in TA is not maintained (p = .07)
 print(wilcox.test(full_simpsons[[2]],full_simpsons[[8]]))
 ```
 
@@ -373,7 +385,7 @@ boxplot(full_simpsons,cex.axis=.5,main="Simpsons Diversity by Sample Type and Pa
 stripchart(full_simpsons,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=1,add=T)
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-22-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-24-1.png)
 
 ``` r
 # dev.off()
@@ -403,11 +415,11 @@ stripchart(full_simpsons,method='jitter',jitter=.1,vertical=T,col=alpha('navyblu
 
     ## [1] 0.2753845
 
-**PHYLUM-LEVEL RICHNESS**
+**PHYLUM-LEVEL RICHNESS** : We evaluate the phylum richness per sample type per patient, expecting no difference in richness between sample types from the same individual.
 
 ``` r
 # there is no significant difference in the phylum-level richness diversity comparing TA to mBAL in any group
-print(wilcox.test(full_richness[[1]],full_richness[[2]]))
+print(wilcox.test(full_richness[[1]],full_richness[[2]]))  # mBAL v. TA Group 1
 ```
 
     ## 
@@ -418,7 +430,7 @@ print(wilcox.test(full_richness[[1]],full_richness[[2]]))
     ## alternative hypothesis: true location shift is not equal to 0
 
 ``` r
-print(wilcox.test(full_richness[[3]],full_richness[[4]]))
+print(wilcox.test(full_richness[[3]],full_richness[[4]]))  # mBAL v. TA Group 1
 ```
 
     ## 
@@ -429,7 +441,7 @@ print(wilcox.test(full_richness[[3]],full_richness[[4]]))
     ## alternative hypothesis: true location shift is not equal to 0
 
 ``` r
-print(wilcox.test(full_richness[[5]],full_richness[[6]]))
+print(wilcox.test(full_richness[[5]],full_richness[[6]]))  # mBAL v. TA Group 1
 ```
 
     ## 
@@ -440,7 +452,7 @@ print(wilcox.test(full_richness[[5]],full_richness[[6]]))
     ## alternative hypothesis: true location shift is not equal to 0
 
 ``` r
-print(wilcox.test(full_richness[[7]],full_richness[[8]]))
+print(wilcox.test(full_richness[[7]],full_richness[[8]]))  # mBAL v. TA Group 1
 ```
 
     ## 
@@ -451,7 +463,8 @@ print(wilcox.test(full_richness[[7]],full_richness[[8]]))
     ## alternative hypothesis: true location shift is not equal to 0
 
 ``` r
-print(wilcox.test(c(full_richness[[1]],full_richness[[3]],full_richness[[5]],full_richness[[7]]),c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])))
+print(wilcox.test(c(full_richness[[1]],full_richness[[3]],full_richness[[5]],full_richness[[7]]),
+                  c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])))
 ```
 
     ## 
@@ -461,8 +474,9 @@ print(wilcox.test(c(full_richness[[1]],full_richness[[3]],full_richness[[5]],ful
     ## W = 1135, p-value = 0.9027
     ## alternative hypothesis: true location shift is not equal to 0
 
+There is NO significant difference in phylum-level richness diversity comparing G1 to G4 in mBAL
+
 ``` r
-# there is NO significant difference in phylum-level richness diversity comparing G1 to G4 in mBAL 
 print(wilcox.test(full_richness[[1]],full_richness[[7]]))
 ```
 
@@ -473,8 +487,9 @@ print(wilcox.test(full_richness[[1]],full_richness[[7]]))
     ## W = 65, p-value = 0.2255
     ## alternative hypothesis: true location shift is not equal to 0
 
+There is NO significant difference in phylum-level richness diversity comparing G1 to G4 in TA
+
 ``` r
-# there is NO significant difference in phylum-level richness diversity comparing G1 to G4 in TA
 print(wilcox.test(full_richness[[2]],full_richness[[8]]))
 ```
 
@@ -485,16 +500,18 @@ print(wilcox.test(full_richness[[2]],full_richness[[8]]))
     ## W = 76, p-value = 0.507
     ## alternative hypothesis: true location shift is not equal to 0
 
+mBAL richness summary
+
 ``` r
-#mBAL richness summary
 print(summary(c(full_richness[[1]],full_richness[[3]],full_richness[[5]],full_richness[[7]])))
 ```
 
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
     ##   1.000   3.750   5.000   5.562   6.000  22.000
 
+TA richness summary
+
 ``` r
-# TA richness summary
 print(summary(c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])))
 ```
 
@@ -510,7 +527,7 @@ boxplot(full_richness,cex.axis=.5,main="Richness by Sample Type and Patient Grou
 stripchart(full_richness,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=1,add=T)
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-25-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-31-1.png)
 
 ``` r
 # dev.off()
@@ -541,6 +558,10 @@ stripchart(full_richness,method='jitter',jitter=.1,vertical=T,col=alpha('navyblu
     ## [1] 3.21455
 
 **MICROBES THAT ARE STATISTICALLY DIFFERENT BETWEEN GROUP 1 AND GROUP 4**
+
+Using a Wilcox Rank Sum test with microbial proportions for each microbe in Group 1 patients as compared to Group 4 patients, we test whether the proportions are significantly different for each phylum. Caveat: This does include both TA and and mBAL samples from Group 1 in comparison with both TA and mBAL samples from Group 2, so if we assume that the two sample types were equivalent (regardless of previous analysis), then we are essentially duplicating the number of values for each microbe.
+
+Note: "Other" refers to the set of all microbes that were found at proportion &lt; .01. These microbes were all grouped into the "other" category on a per-patient basis. Literature has previously indicated that Bacteroidetes and Actinobacteria are more abundant in the natural lung microbiota, while their is an overgrowth of Proteobacteria in the case of infection - thereby displacing Bacteroidetes, Acintobacteria, and other natural lung flora.
 
 ``` r
 # there are significant differences in phylum-level proportions in Bacteroidetes, Actinobacteria, and Proteobacteria.
@@ -593,7 +614,7 @@ as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[metadat
     ## [1] 0.2444328
     ## [1] 0.2355633
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-27-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-33-1.png)
 
     ## [1] "Proteobacteria"
     ## [1] 0.002672723
@@ -601,6 +622,8 @@ as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[metadat
     ## [1] 0.03262561
 
 **MICROBES THAT ARE STATISTICALLY DIFFERENT BETWEEN TA AND MBAL**
+
+Using a Wilcox Rank Sum test with microbial proportions for each microbe in TA and mBAL samples, we test whether they are significantly different. This tests the pre-exisitng notion that TA samples are enriched for common oral flora.
 
 ``` r
 par(mfrow=c(1,5))
@@ -632,9 +655,13 @@ for(i in rownames(PhyProp)){
     ## [1] "Basidiomycota"
     ## [1] 0.02663082
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-28-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-34-1.png)
 
 ### REPLICATE PHYLUM WITH GENUS DATA
+
+Ultimately, we are interested in genus-level comparisons. Clinical diagnoses are made at the species- and strain-level, but our analysis of NGS data from airway samples has been limited to genus-level comparison due to technical challenges in calling species-level microbial hits (with strong confidence and accuracy). To avoid these issues, we collapse all hits to the genus-level. Thus, comparing the genus-level similarity between samples is important for understanding the impact it would have on ongoing projects.
+
+Iterate over all pairs of mBAL and TA samples from individuals to generate the community similarity metrics at the genus level. Initial output: a barchart of genera represented in each sample. The bar charts are separated by "group" - group 1 in the first two rows, group 2 in the second...etc.
 
 ``` r
 all_microbe_data.microbes.norm <- t(t(all_microbe_data)/colSums(all_microbe_data))
@@ -720,13 +747,13 @@ full_richness[[j+1+(j-1)]] <- ta_richness
 }
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-29-1.png)![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-29-2.png)![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-29-3.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-35-1.png)![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-35-2.png)![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-35-3.png)
 
 ``` r
 # dev.off()
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-29-4.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-35-4.png)
 
 Replicated the barplot including the legend.
 
@@ -739,7 +766,7 @@ if(generate_pdfs){
 # dev.off()
 ```
 
-Difference in the genus-level pearson correlation between infxn and no infxn
+**GENUS-LEVEL PEARSON CORRELATION** : We evaluate the pearson correlation between mBAL and TA samples from the same individual.
 
 ``` r
 if(generate_pdfs){
@@ -749,11 +776,10 @@ names(full_correlations) <- c("Group 1","Group 2", "Group 3", "Group 4")
 stripchart(full_correlations,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,main="Pearson Correlation by Patient Group",xlab="Patient Group", ylab="Pearson Correlation")
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-31-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-37-1.png)
 
 ``` r
 # dev.off()
-wilcox.test(full_correlations[[1]],full_correlations[[4]])
 ```
 
 Overall correlation is variable
@@ -780,6 +806,19 @@ But correlation in group 1 is much higher than correlation in group 4
 
     ## [1] "sd pearson corr over group 4:  0.357840906747363"
 
+Difference in the genus-level pearson correlation between Group 1 and Group 4 individuals.
+
+``` r
+wilcox.test(full_correlations[[1]],full_correlations[[4]])
+```
+
+    ## 
+    ##  Wilcoxon rank sum test
+    ## 
+    ## data:  full_correlations[[1]] and full_correlations[[4]]
+    ## W = 158, p-value = 0.0004773
+    ## alternative hypothesis: true location shift is not equal to 0
+
 Summary of Pearson Correlation
 
 ``` r
@@ -789,7 +828,7 @@ print(summary(unlist(full_correlations)))
     ##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
     ## -0.006301  0.584947  0.905905  0.735696  0.996067  0.999978
 
-**GENUS-LEVEL BRAY-CURTIST DISTANCE**
+**GENUS-LEVEL BRAY-CURTIST DISTANCE** : We evaluate the Bray-curtis community similarity metric between mBAL and TA samples from the same individual.
 
 ``` r
 if(generate_pdfs){
@@ -800,19 +839,11 @@ names(full_bc) <- c("Group 1","Group 2", "Group 3", "Group 4")
 stripchart(full_bc,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,main="Bray Curtis Similarity by Patient Group",xlab="Patient Group", ylab="Bray Curtis Similarity")
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-35-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-42-1.png)
 
 ``` r
 # dev.off()
-wilcox.test(full_bc[[1]],full_bc[[4]])
 ```
-
-    ## 
-    ##  Wilcoxon rank sum test
-    ## 
-    ## data:  full_bc[[1]] and full_bc[[4]]
-    ## W = 23, p-value = 0.0006006
-    ## alternative hypothesis: true location shift is not equal to 0
 
 Overall Bray-Curtis is variable
 
@@ -838,6 +869,19 @@ But Bray-Curtis in group 1 is much higher than correlation in group 4
 
     ## [1] "sd pearson corr over group 4:  0.30343342242816"
 
+There is a significant difference in the genus-level bray-curtis dist between group 1 and group 4
+
+``` r
+wilcox.test(full_bc[[1]],full_bc[[4]])
+```
+
+    ## 
+    ##  Wilcoxon rank sum test
+    ## 
+    ## data:  full_bc[[1]] and full_bc[[4]]
+    ## W = 23, p-value = 0.0006006
+    ## alternative hypothesis: true location shift is not equal to 0
+
 Summary of bray curtis
 
 ``` r
@@ -847,7 +891,7 @@ print(summary(unlist(full_bc)))
     ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
     ## 0.006363 0.066407 0.273748 0.393007 0.711772 1.000000
 
-**GENUS-LEVEL JACCARD SIMILARITY**
+**GENUS-LEVEL JACCARD SIMILARITY** : We evalaute the genus-level jaccad similarity between sample types from the same individual.
 
 ``` r
 if(generate_pdfs){
@@ -858,19 +902,11 @@ names(full_jaccard) <- c("Group 1","Group 2", "Group 3", "Group 4")
 stripchart(full_jaccard,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,main="Jaccard Similarity by Patient Group",xlab="Patient Group", ylab="Jaccard Similarity")
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-39-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-47-1.png)
 
 ``` r
 # dev.off()
-wilcox.test(full_jaccard[[1]],full_jaccard[[4]])
 ```
-
-    ## 
-    ##  Wilcoxon rank sum test
-    ## 
-    ## data:  full_jaccard[[1]] and full_jaccard[[4]]
-    ## W = 23, p-value = 0.0006006
-    ## alternative hypothesis: true location shift is not equal to 0
 
 Overall jaccard is variable
 
@@ -896,6 +932,19 @@ But jaccard in group 1 is much higher than correlation in group 4
 
     ## [1] "sd jaccard over group 4:  0.268042869186135"
 
+Difference in jaccard similarity between Group 1 and Group 4 individuals:
+
+``` r
+wilcox.test(full_jaccard[[1]],full_jaccard[[4]])
+```
+
+    ## 
+    ##  Wilcoxon rank sum test
+    ## 
+    ## data:  full_jaccard[[1]] and full_jaccard[[4]]
+    ## W = 23, p-value = 0.0006006
+    ## alternative hypothesis: true location shift is not equal to 0
+
 Summary of jaccard
 
 ``` r
@@ -905,7 +954,7 @@ print(summary(unlist(full_jaccard)))
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
     ## 0.01265 0.12454 0.42981 0.48823 0.83156 1.00000
 
-**GENUS-LEVEL SIMPSONS DIVERSITY**
+**GENUS-LEVEL SIMPSONS DIVERSITY** : Here we evaluate the simpsons diversity index (SDI, alpha diversity) for each sample type from each individual. We expect that SDI will be similar across sample type for the same patient.
 
 Difference in the genus-level simpsons diversity comparing TA to mBAL in any group
 
@@ -1002,7 +1051,7 @@ boxplot(full_simpsons,cex.axis=.5,main="Simpsons Diversity by Sample Type and Pa
 stripchart(full_simpsons,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=1,add=T)
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-48-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-57-1.png)
 
 ``` r
 # dev.off()
@@ -1032,7 +1081,7 @@ stripchart(full_simpsons,method='jitter',jitter=.1,vertical=T,col=alpha('navyblu
 
     ## [1] 0.2205107
 
-**GENUS-LEVEL RICHNESS**
+**GENUS-LEVEL RICHNESS** : We evaluate the phylum richness per sample type per patient, expecting no difference in richness between sample types from the same individual.
 
 There is no significant difference in the genus-level richness comparing TA to mBAL in any single group
 
@@ -1085,7 +1134,7 @@ stripchart(list(c(full_richness[[1]],full_richness[[3]],full_richness[[5]],full_
            xlab="Patient Group", ylab="Pearson Correlation")
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-51-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-60-1.png)
 
 It appears that this difference in richness is driven by an outlier...
 
@@ -1111,7 +1160,7 @@ print(wilcox.test(new_values,c(full_richness[[2]],full_richness[[4]],full_richne
 stripchart(list(new_values,c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])),method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,main="Richness by Patient Group",xlab="Patient Group", ylab="Richness")
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-52-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-61-1.png)
 
 There is NO significant difference in genus-level richness diversity comparing G1 to G4 in mBAL
 
@@ -1150,7 +1199,7 @@ boxplot(full_richness,cex.axis=.5,main="Richness by Sample Type and Patient Grou
 stripchart(full_richness,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=1,add=T)
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-57-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-66-1.png)
 
 ``` r
 # dev.off()
@@ -1180,7 +1229,7 @@ stripchart(full_richness,method='jitter',jitter=.1,vertical=T,col=alpha('navyblu
 
     ## [1] 3.34279
 
-#### Get stats for Group 1 Patients
+#### Evaluate the presence/absence of clinically-confirmed pathogens in Group 1 Patients
 
 **MINIMALIST VERSION**
 
@@ -1292,7 +1341,7 @@ for( i in rownames(metadata)){
 }
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-59-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-68-1.png)
 
     ## [1] "Haemophilus ( 724 )"
     ## [1] "Staphylococcus ( 1279 )"
@@ -1322,7 +1371,7 @@ colnames(relative_numbers) <- IDs
 barplot(relative_numbers, col=c("gray80","navyblue","gray50"),main="Microbes Identified in DNA-seq by TA and/or mBAL",legend=TRUE,cex.main=.8,ylab="# of Pathogens Cultured",xlab="Patient ID",cex.axis=.6)
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-60-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-69-1.png)
 
 ``` r
 # dev.off()
@@ -1359,7 +1408,7 @@ par(mar=c(10,3,2,2))
 barplot(t(t(relative_numbers)/colSums(relative_numbers)), col=c("gray80","navyblue","gray60"),las=2)
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-60-2.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-69-2.png)
 
 A priori microbes
 
@@ -1408,7 +1457,7 @@ print(wilcox.test(all_microbe_data[c("Rothia ( 32207 )"),as.character(unlist(met
 stripchart(list(all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=alpha(colorset1,.5),main="Neisseria ( 482 )")
 ```
 
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-61-1.png)
+![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-70-1.png)
 
 ``` r
 print(wilcox.test(all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value)
@@ -1424,53 +1473,3 @@ print(wilcox.test(all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(me
 #### PREVIOUS CODE
 
 Get stats for all patients
-
-``` r
-colorset1 <- c('#0F726F','#B01833')
-
-par(mfrow=c(1,6))
-stripchart(list(group1.TA.microbes.norm[c("Prevotella ( 838 )"),],group1.MBAL.microbes.norm[c("Prevotella ( 838 )"),]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=1.2,col=colorset1,main="Prevotella ( 838 )")
-print(wilcox.test(group1.TA.microbes.norm[c("Prevotella ( 838 )"),],group1.MBAL.microbes.norm[c("Prevotella ( 838 )"),])$p.value)
-```
-
-    ## [1] 0.7832496
-
-``` r
-stripchart(list(group1.TA.microbes.norm[c("Veillonella ( 29465 )"),],group1.MBAL.microbes.norm[c("Veillonella ( 29465 )"),]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=1.2,col=colorset1,main="Veillonella ( 29465 )")
-print(wilcox.test(group1.TA.microbes.norm[c("Veillonella ( 29465 )"),],group1.MBAL.microbes.norm[c("Veillonella ( 29465 )"),])$p.value)
-```
-
-    ## [1] 0.74826
-
-``` r
-stripchart(list(group1.TA.microbes.norm[c("Streptococcus ( 1301 )"),],group1.MBAL.microbes.norm[c("Streptococcus ( 1301 )"),]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=1.2,col=colorset1,main="Streptococcus ( 1301 )")
-print(wilcox.test(group1.TA.microbes.norm[c("Streptococcus ( 1301 )"),],group1.MBAL.microbes.norm[c("Streptococcus ( 1301 )"),])$p.value)
-```
-
-    ## [1] 0.8188512
-
-``` r
-stripchart(list(group1.TA.microbes.norm[c("Fusobacterium ( 848 )"),],group1.MBAL.microbes.norm[c("Fusobacterium ( 848 )"),]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=1.2,col=colorset1,main="Fusobacterium ( 848 )")
-print(wilcox.test(group1.TA.microbes.norm[c("Fusobacterium ( 848 )"),],group1.MBAL.microbes.norm[c("Fusobacterium ( 848 )"),])$p.value)
-```
-
-    ## [1] 0.5045715
-
-``` r
-stripchart(list(group1.TA.microbes.norm[c("Rothia ( 32207 )"),],group1.MBAL.microbes.norm[c("Rothia ( 32207 )"),]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=1.2,col=colorset1,main="Rothia ( 32207 )")
-print(wilcox.test(group1.TA.microbes.norm[c("Rothia ( 32207 )"),],group1.MBAL.microbes.norm[c("Rothia ( 32207 )"),])$p.value)
-```
-
-    ## [1] 1
-
-``` r
-stripchart(list(group1.TA.microbes.norm[c("Neisseria ( 482 )"),],group1.MBAL.microbes.norm[c("Neisseria ( 482 )"),]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=1.2,col=colorset1,main="Neisseria ( 482 )")
-```
-
-![](mbal_v_ta_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-64-1.png)
-
-``` r
-print(wilcox.test(group1.TA.microbes.norm[c("Neisseria ( 482 )"),],group1.MBAL.microbes.norm[c("Neisseria ( 482 )"),])$p.value)
-```
-
-    ## [1] 0.9825471
