@@ -1,87 +1,163 @@
 ---
 title: "MBAL vs. TA comparison"
 author: "Katrina Kalantar"
-date: "`r format(Sys.Date())`"
+date: '`r format(Sys.Date())`'
 output:
   github_document: default
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
 library(scales)
 library(vegan)
+library(knitr)
 library(viridis)
+library(ggplot2)
+library(kableExtra)
 
 generate_pdfs = FALSE
 ```
 
-## Comparison of DNA Microbes
 
-#### Import the microbe data and metadata.
+
+
+
+**Relevant Definitions:**
+
+**mBAL:** mini broncheolar alveolar lavage
+
+**TA:** tracheal aspirate
+
+**LRTI:** lower respiratory tract infection
+
+**PNA-pos:** Pneumonia positive
+
+**PNA-neg:** Pneumonia negative
+
+
+**ABSTRACT:** 
+Pneumonia causes more deaths each year in the United States than any other type of infectious disease. The ability to accurately detect etiologic pathogens and distinguish them from background commensal microbiota is essential for guiding optimal antimicrobial treatments. In patients requiring mechanical ventilation, less invasive tracheal aspirate sampling (TA) has historically been considered inferior to mini-bronchial alveolar lavage/telescoping catheter (mBAL) specimen collection due to the potential for oropharyngeal microbiota contamination. This idea has been challenged, however, by studies demonstrating a lack of clinically significant differences between sample types, and a greater acceptance of TA sampling is now reflected in recent updates to clinical practice guidelines.4 Despite the broad potential implications of this shift in diagnostic sampling approach, relatively little information exists regarding microbial composition differences between mBAL and TA specimens, and the potential implications of such differences for clinical diagnostic testing. 
+
+
+***
+
+
+### Import the microbe data and metadata.
+
+The microbial counts per individual were generated as follows:
+
+Detection of host transcripts and airway microbes leveraged a custom bioinformatics pipeline that incorporated quality filtering using PRICESeqfilter and removal of host sequences by alignment against a database of the human genome (NCBI GRC h38) and Pan troglodytes (UCSC PanTro4) using the STAR aligner. Additional filtering was performed using Bowtie2 to remove non-fungal eukaryotes, cloning vectors and phiX phage. The identities of the remaining microbial reads were determined by querying the NCBI nucleotide (NT) and non-redundant protein (NR) databases using GSNAP-L and RAPSEARCH2, respectively. Microbial alignments detected by RNA-Seq and DNA-Seq were aggregated to the genus-level.
+
+Then, the NT genus rpM counts were merged across all samples. Metadata describing the sample and patient relationships, as well as dividing patients into four groups was imported as .csv.
 
 ```{r}
 #IMPORT DATA
-#.csv of all microbes by TA/mBAL sample ID
-all_microbe_data <- read.csv('./data/BM_4/merged_genusrpm.tsv', sep='\t', header=TRUE, row.names=1)
+#.csv of all microbes by TA/mBAL sample ID #012618/
+all_microbe_data <- read.csv('./data/020718/BM_4/merged_genusrpm.tsv', sep='\t', header=TRUE, row.names=1)
 
-#read in metadata
-metadata <- read.csv('./data/tavmbal_metadata_noviruses.tsv', sep='\t', row.names=1)
+#read in metadata #012618/
+metadata <- read.csv('./data/020718/tavmbal_metadata_noviruses.tsv', sep='\t', row.names=1)
 ```
 
-### Differences in BURDEN OF MICROBIAL GENERA between TA and mBAL
+
+The raw microbe data appeared as follows (showing the first 20 rows): 
+```{r, echo = FALSE}
+kable(head(all_microbe_data, n=20), "markdown" ) #%>% 
+  #kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  #scroll_box(width = "900px", height = "200px")
+```
+ 
+
+And the metadata was:
+```{r, echo = FALSE}
+kable(metadata, "markdown") #%>% 
+  #kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  #scroll_box(width = "900px", height = "200px")
+```
+
+***
+
+### Cohort Summary 
+
+The initial cohort contained 52 adults 21 to over 89 years of age who were admitted to the intensive care unit with acute respiratory failure. Matched mBAL and TA specimens were obtained from each patient. For analysis purposes, all patients patients were stratified post-collection across four groups according to their likelihood of having a lower respiratory tract infection. 
+
+Two-physician adjudication was used to identify subjects with culture-confirmed bacterial pneumonia (PNA-pos, n = 15) based on retrospective medical record review (blinded to mNGS results) using the United States Centers for Disease Control surveillance case definition of pneumonia.
+ 
+Adjudication is noted in the analysis under the following categories:
+
+Group 1 = "PNA-pos", Definite bacterial pneumonia
+
+Group 2 = Probable Lower Respiratory Tract Infection, but negative clinical microbiology
+
+Group 3 = Unknown
+
+Group 4 = "PNA-neg", Definitely no LRTI, with clear alternative explanation for acute respiratory failure
+
+
+The distribution of patients is as follows:
+
+```{r, echo = FALSE, fig.height=4, fig.width=6}
+barplot(table(metadata$effective_group), col=c("darkred","red","gray40","blue"),
+        main = 'Number of Patients per Group', xlab='Group',ylab='# of Patients')
+kable(table(metadata$effective_group), "markdown") %>% 
+  kable_styling(bootstrap_options = c("striped"), full_width = F, position = "float_right")
+```
+
+***
+
+### Comparison of DNA Microbial Burden
+
+#### No differences in Burden of microbial genera between TA and mBAL
 ```{r}
 burden <- colSums(all_microbe_data) 
 ```
 
 **Microbial burden**, as measured by the total microbial alignments by genus per million reads sequenced (rpM), did not significantly differ between TA and mBAL when using whole genome DNA sequencing: WGS, Wilcoxon rank sum p =
-```{r}
-# TOTAL BURDEN (all TA v all mBAL)
-print(wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1,2,3,4),]["TA_DNAseq_filename"]))],
-                  burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(1,2,3,4),]["mBAL_DNAseq_filename"]))])$p.value[1])
-```
-
-Difference in burden between G1 TA and G1 mBAL
-```{r}
+```{r, include=FALSE}
+#Difference in burden between G1 TA and G1 mBAL
 print(wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1),]["TA_DNAseq_filename"]))],
                   burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(1),]["mBAL_DNAseq_filename"]))])$p.value)
 
-```
-
-Difference in burden btwn G4 TA and G4 mBAL
-```{r}
+#Difference in burden btwn G4 TA and G4 mBAL
 print(wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(4),]["TA_DNAseq_filename"]))],
                   burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(4),]["mBAL_DNAseq_filename"]))])$p.value)
-```
 
-**Evaluating the difference in burden between group 1 and group 4 patients, within sample type** 
-
-Difference in burden btwn G1 TA and G4 TA
-```{r}
+#**Evaluating the difference in burden between group 1 and group 4 patients, within sample type** 
+#Difference in burden btwn G1 TA and G4 TA
 wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1),]["TA_DNAseq_filename"]))],
             burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(4),]["TA_DNAseq_filename"]))])$p.value
-```
 
-Difference in burden btwn G1 mBAL and G4 mBAL
-```{r}
+#Difference in burden btwn G1 mBAL and G4 mBAL
 wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1),]["mBAL_DNAseq_filename"]))],
             burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(4),]["mBAL_DNAseq_filename"]))])$p.value
 
 ```
 
 Summary of burden in TA:
-```{r}
-print(summary(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1,2,3,4),]["TA_DNAseq_filename"]))]))
+```{r, echo=FALSE}
+kable(t(as.matrix(summary(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1,2,3,4),]["TA_DNAseq_filename"]))]))),"markdown") %>%
+  kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),full_width=F)
 ```
 
 Summary of burden in mBAL:
-```{r}
-print(summary(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1,2,3,4),]["mBAL_DNAseq_filename"]))]))
+```{r, echo=FALSE}
+kable(t(as.matrix(summary(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1,2,3,4),]["mBAL_DNAseq_filename"]))]))),"markdown") %>%
+  kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),full_width=F)
 ```
 
+```{r, echo=FALSE}
+# TOTAL BURDEN (all TA v all mBAL)
+wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1,2,3,4),]["TA_DNAseq_filename"]))],
+                  burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group  %in% c(1,2,3,4),]["mBAL_DNAseq_filename"]))])$p.value[1]
+```
 
-### Create data splits to be used in subsequent analysis.
+***
+
+### Analysis of microbial community proportions
+
+#### Create data splits, normalize microbe counts by Total Sum Scaling, and remove low-level microbes < 1% of total reads.
 Separate MBAL and TA into dataframes, normalize the microbial data into proportions, and separate out group 1.
 
 ```{r}
@@ -99,346 +175,46 @@ group1.MBAL.microbes <- all_microbe_data[,colnames(all_microbe_data) %in% group1
 group1.MBAL.microbes.norm <- t(t(group1.MBAL.microbes)/colSums(group1.MBAL.microbes))
 group1.TA.microbes <- all_microbe_data[,colnames(all_microbe_data) %in% group1.TA]
 group1.TA.microbes.norm <- t(t(group1.TA.microbes)/colSums(group1.TA.microbes))
+
+all_microbe_data.microbes.norm <- t(t(all_microbe_data)/colSums(all_microbe_data)) # normalize (TSS)
+write.csv(all_microbe_data.microbes.norm, "./output/TableS2.tsv", sep="\t", quote=FALSE) # save file for publication
+all_microbe_data_orig <- all_microbe_data.microbes.norm  # re-assign variable so we have a copy with non-normalized values
+all_microbe_data.microbes.norm[all_microbe_data.microbes.norm<.01] <- 0  # remove microbes present at < 1% abundance
+new <- rbind(all_microbe_data.microbes.norm, c(1-colSums(all_microbe_data.microbes.norm)))  # add "Other" category
+rownames(new) <- c(rownames(all_microbe_data.microbes.norm),"Other")  # adjust row names
+all_microbe_data <- new  
+
 ```
 
-
-### Phylum-level analysis: 
-
-Iterate over all pairs of mBAL and TA samples from individuals to generate the community similarity metrics at the phylum level.
-Initial output: a barchart of phyla represented in each sample. The bar charts are separated by "group" - group 1 in the first two rows, group 2 in the second...etc.
-
-```{r,fig.width=12,fig.height=6}
-
-PhyProp <- read.csv("./data/phylum_proportions.csv",sep='\t',row.names=1)  # read in the phylum proportion data (generated externally by TaxonomyWalking)
-PhyProp[is.na(PhyProp)]<-0
-PhyProp <- PhyProp[order(rowSums(PhyProp),decreasing=F),]
-
-mbal_phyla <- PhyProp[,colnames(PhyProp) %in% MBAL]
-#barplot(as.matrix(mbal_phyla),col=rainbow(10),las=2)
-ta_phyla <- PhyProp[,colnames(PhyProp) %in% TA]
-
-if(generate_pdfs){
-  pdf('./output/phylum_analysis.pdf',width=16,height=6)
-}
-
-full_correlations <- vector("list",length=4)
-full_bc <- vector("list",length=4)
-full_simpsons <- vector("list",length=8) #separate by TA and mBAL for each group
-full_richness <- vector("list",length=8)
-for(j in c(1,2,3,4)){
-  
-  correlations <- c()
-  bc_dist <- c()
-  ta_sdi <- c()
-  mbal_sdi <- c()
-  names <- c()
-  mbal_richness <- c()
-  ta_richness <- c()
-  par(mfrow=c(2,8))
-  
-  for( i in rownames(metadata)){
-  mbal_filename <- as.character(metadata[rownames(metadata) == i,]$mBAL_DNAseq_filename)
-  ta_filename <- as.character(metadata[rownames(metadata) == i,]$TA_DNAseq_filename)
-  
-  if(!is.na(metadata[rownames(metadata) == i,]$effective_group)){
-    
-    if(metadata[rownames(metadata) == i,]$effective_group == j){
-    
-      # print(mbal_filename)
-      # print(ta_filename)
-      
-      # phylum barplot
-      barplot(as.matrix(PhyProp[,c(mbal_filename,ta_filename)]),col=plasma(10),cex.axis = .6,main=i,names.arg = c("mBAL","TA"))#,legend=TRUE)
-      
-      # pearson correlation - 1 per patient
-      correlations <- c(correlations,cor(PhyProp[,c(mbal_filename)],PhyProp[,c(ta_filename)]))
-      
-      # bray-curtis distance - 1 per patient
-      bray_curtis_dist <- vegdist(t(as.matrix(PhyProp[,c(mbal_filename,ta_filename)])), 
-                                  method="bray", binary=FALSE, diag=FALSE, upper=TRUE, na.rm = FALSE)
-      bc_dist <- c(bc_dist, bray_curtis_dist[1])
-      
-      # SDI - 1 per sample ( 2 per patient )
-      ta_sdi <- c(ta_sdi,diversity(PhyProp[,c(ta_filename)],index="simpson") )
-      mbal_sdi <- c(mbal_sdi, diversity(PhyProp[,c(mbal_filename)],index="simpson"))
-      
-      # richness - 1 per sample ( 2 per patient )
-      mbal_richness <- c(mbal_richness, length(PhyProp[,c(mbal_filename)][PhyProp[,c(mbal_filename)]>0]))
-      ta_richness <- c(ta_richness, length(PhyProp[,c(ta_filename)][PhyProp[,c(ta_filename)]>0]))
-      
-      names <- c(names,rownames(metadata[rownames(metadata) == i,]))
-    }  
-  }
-}
-full_correlations[[j]] <- correlations
-full_bc[[j]] <- bc_dist
-full_simpsons[[j + (j-1)]] <- mbal_sdi
-full_simpsons[[j+1+(j-1)]] <- ta_sdi
-
-full_richness[[j + (j-1)]] <- mbal_richness
-full_richness[[j+1+(j-1)]] <- ta_richness
-
-}
-
-# dev.off()  
-```
-
-Repeat the barplot with legend.
-```{r,results="hide"}
-if(generate_pdfs){
-  pdf('./output/phylum_analysis.legend.pdf')  
-  barplot(as.matrix(PhyProp[,c(mbal_filename,ta_filename)]),col=plasma(10),cex.axis = .6,main=i,names.arg = c("mBAL","TA"),legend=TRUE)
-}
-# genus barplot
-# dev.off()
-```
-
-**PHYLUM-LEVEL PEARSON CORRELATION** : We evaluate the pearson correlation between mBAL and TA samples from the same individual.
-
-```{r,results="hide"}
-if(generate_pdfs){
-  pdf('./output/phylum.pearson.pdf',height=5, width=5)  
-}
-names(full_correlations) <- c("Group 1","Group 2", "Group 3", "Group 4")
-stripchart(full_correlations,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,
-           main="Pearson Correlation by Patient Group",xlab="Patient Group", ylab="Pearson Correlation")
-# dev.off()
-```
-
-Overall correlation is variable
-```{r, echo=FALSE}
-print(paste("mean pearson correlation over all group: ",mean(unlist(full_correlations))))
-print(paste("sd pearson corr over all groups: ",sd(unlist(full_correlations))))
-```
-
-...but correlation in group 1 is much higher than correlation in group 4
-```{r, echo=FALSE}
-print(paste("mean pearson correlation over group1: ",mean(full_correlations[[1]])))
-print(paste("sd pearson corr over group 1: ",sd(full_correlations[[1]])))
-```
-
-Difference in the phylum-level pearson correlation between group 1 and group 4 individuals:
+Set colors to be used in genus-abundance barplots
 ```{r}
-wilcox.test(full_correlations[[1]],full_correlations[[4]])
-```
-
-**PHYLUM-LVEL BRAY-CURTIS** : We evaluate the Bray-curtis community similarity metric between mBAL and TA samples from the same individual.
-```{r,results="hide"}
-if(generate_pdfs){
-  pdf('./output/phylum.bc.pdf',height=5, width=5)  
-}
-names(full_bc) <- c("Group 1","Group 2", "Group 3", "Group 4")
-stripchart(full_bc,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,
-           main="Bray Curtis Similarity by Patient Group",xlab="Patient Group", ylab="Bray Curtis Similarity")
-# dev.off()
-```
-
-Overall BC is variable
-```{r, echo=FALSE}
-print(paste("mean BC over all group: ",mean(unlist(full_bc))))
-print(paste("sd BC over all groups: ",sd(unlist(full_bc))))
-```
-
-But BC in group 1 is much higher than correlation in group 4
-```{r, echo=FALSE}
-print(paste("mean BC over group1: ",mean(full_bc[[1]])))
-print(paste("sd BC over group1 : ",sd(full_bc[[1]])))
-```
-
-There is a significant difference in the phylum-level bray-curtis dist between group 1 and group 4
-```{r}
-wilcox.test(full_bc[[1]],full_bc[[4]])
-```
-
-**PHYLUM-LEVEL SIMPSONS DIVERSITY** : Here we evaluate the simpsons diversity index (SDI, alpha diversity) for each sample type from each individual. We expect that SDI will be similar across sample type for the same patient.
-```{r}
-# there is no significant difference in the phylum-level simpsons diversity 
-# comparing TA to mBAL in any group
-print(wilcox.test(full_simpsons[[1]],full_simpsons[[2]]))  # mBAL v. TA Group 1
-print(wilcox.test(full_simpsons[[3]],full_simpsons[[4]]))  # mBAL v. TA Group 2 
-print(wilcox.test(full_simpsons[[5]],full_simpsons[[6]]))  # mBAL v. TA Group 3
-print(wilcox.test(full_simpsons[[7]],full_simpsons[[8]]))  # mBAL v. TA Group 4
-print(wilcox.test(c(full_simpsons[[1]],full_simpsons[[3]],full_simpsons[[5]],full_simpsons[[7]]),
-                  c(full_simpsons[[2]],full_simpsons[[4]],full_simpsons[[6]],full_simpsons[[8]])))
-```
-
-There is a significant difference in phylum-level simpsons diversity comparing G1 to G4 in mBAL (p = )
-```{r}
-print(wilcox.test(full_simpsons[[1]],full_simpsons[[7]]))
-```
-
-The significance in phylum-level simpsons diversity between G1 and G4 in TA is not maintained (p = )
-```{r}
-print(wilcox.test(full_simpsons[[2]],full_simpsons[[8]]))
-```
-
-```{r,results="hide", fig.width=8, fig.heigt=4}
-if(generate_pdfs){
-  pdf('./output/phylum.simpsons.pdf',height=5, width=5)
-}
-names(full_simpsons) <- c("Group 1\nMBAL","Group 1\nTA", "Group 2\nMBAL","Group 2\nTA", "Group 3\nMBAL","Group 3\nTA", "Group 4\nMBAL","Group 4\nTA")
-boxplot(full_simpsons,cex.axis=.5,main="Simpsons Diversity by Sample Type and Patient Group",xlab="Patient Group", ylab="Simpsons Diversity Index",cex.main=.8)
-stripchart(full_simpsons,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=1,add=T)
-# dev.off()
-```
-
-```{r, echo=FALSE}
-print("mean/sd SDI mBAL Group 1:")
-print(mean(unlist(full_simpsons[[1]])))
-print(sd(unlist(full_simpsons[[1]])))
-print("mean/sd SDI TA Group 1:")
-print(mean(unlist(full_simpsons[[2]])))
-print(sd(unlist(full_simpsons[[2]])))
-print("mean/sd SDI mBAL Group 4:")
-print(mean(unlist(full_simpsons[[7]])))
-print(sd(unlist(full_simpsons[[7]])))
-print("mean/sd SDI TA Group 4:")
-print(mean(unlist(full_simpsons[[8]])))
-print(sd(unlist(full_simpsons[[8]])))
-```
-
-**PHYLUM-LEVEL RICHNESS** : We evaluate the phylum richness per sample type per patient, expecting no difference in richness between sample types from the same individual.
-```{r}
-# there is no significant difference in the phylum-level richness diversity comparing TA to mBAL in any group
-print(wilcox.test(full_richness[[1]],full_richness[[2]]))  # mBAL v. TA Group 1
-print(wilcox.test(full_richness[[3]],full_richness[[4]]))  # mBAL v. TA Group 1
-print(wilcox.test(full_richness[[5]],full_richness[[6]]))  # mBAL v. TA Group 1
-print(wilcox.test(full_richness[[7]],full_richness[[8]]))  # mBAL v. TA Group 1
-print(wilcox.test(c(full_richness[[1]],full_richness[[3]],full_richness[[5]],full_richness[[7]]),
-                  c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])))
-```
-
-There is NO significant difference in phylum-level richness diversity comparing G1 to G4 in mBAL 
-```{r}
-print(wilcox.test(full_richness[[1]],full_richness[[7]]))
-```
-
-There is NO significant difference in phylum-level richness diversity comparing G1 to G4 in TA
-```{r}
-print(wilcox.test(full_richness[[2]],full_richness[[8]]))
-```
-
-mBAL richness summary
-```{r}
-print(summary(c(full_richness[[1]],full_richness[[3]],full_richness[[5]],full_richness[[7]])))
-```
-
-TA richness summary
-```{r}
-print(summary(c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])))
-```
-
-```{r,results="hide", fig.width=8, fig.heigt=4}
-if(generate_pdfs){
-  pdf('./output/phylum.richness.pdf',height=5, width=5)
-}
-names(full_richness) <- c("Group 1\nMBAL","Group 1\nTA", "Group 2\nMBAL","Group 2\nTA", "Group 3\nMBAL","Group 3\nTA", "Group 4\nMBAL","Group 4\nTA")
-boxplot(full_richness,cex.axis=.5,main="Richness by Sample Type and Patient Group",xlab="Patient Group", ylab="Richness",cex.main=.8)
-stripchart(full_richness,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=1,add=T)
-# dev.off()
-```
-
-```{r, echo=FALSE}
-print("mean/sd richness mBAL Group 1:")
-print(mean(unlist(full_richness[[1]])))
-print(sd(unlist(full_richness[[1]])))
-print("mean/sd richness TA Group 1:")
-print(mean(unlist(full_richness[[2]])))
-print(sd(unlist(full_richness[[2]])))
-print("mean/sd richness mBAL Group 4:")
-print(mean(unlist(full_richness[[7]])))
-print(sd(unlist(full_richness[[7]])))
-print("mean/sd richness TA Group 4:")
-print(mean(unlist(full_richness[[8]])))
-print(sd(unlist(full_richness[[8]])))
-```
-
-**MICROBES THAT ARE STATISTICALLY DIFFERENT BETWEEN GROUP 1 AND GROUP 4**
-
-Using a Wilcox Rank Sum test with microbial proportions for each microbe in Group 1 patients as compared to Group 4 patients, we test whether the proportions are significantly different for each phylum. Caveat: This does include both TA and and mBAL samples from Group 1 in comparison with both TA and mBAL samples from Group 2, so if we assume that the two sample types were equivalent (regardless of previous analysis), then we are essentially duplicating the number of values for each microbe.
-
-Note: "Other" refers to the set of all microbes that were found at proportion < .01. These microbes were all grouped into the "other" category on a per-patient basis. Literature has previously indicated that Bacteroidetes and Actinobacteria are more abundant in the natural lung microbiota, while their is an overgrowth of Proteobacteria in the case of infection - thereby displacing Bacteroidetes, Acintobacteria, and other natural lung flora.
-
-```{r, fig.height=4, fig.width=12}
-# there are significant differences in phylum-level proportions in Bacteroidetes, Actinobacteria, and Proteobacteria.
-par(mfrow=c(1,5))
-for(i in rownames(PhyProp)){
-  pg1v4 <- wilcox.test(as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[metadata$effective_group == 1,][,c("mBAL_DNAseq_filename","TA_DNAseq_filename")]))]),
-as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[metadata$effective_group == 4,][,c("mBAL_DNAseq_filename","TA_DNAseq_filename")]))]))$p.value
-  if(!is.na(pg1v4) && pg1v4 < .05){
-    if(generate_pdfs){
-      pdf(paste('./output/',i,'.reads.TA.pdf',sep=''),height=5, width=5)
-    }
-    stripchart(list(as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[metadata$effective_group == 1,][,c("TA_DNAseq_filename")]))]),
-                    as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[metadata$effective_group == 2,][,c("TA_DNAseq_filename")]))]),
-                    as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[metadata$effective_group == 3,][,c("TA_DNAseq_filename")]))]),
-                    as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[metadata$effective_group == 4,][,c("TA_DNAseq_filename")]))])),
-               method='jitter',jitter=.1,vertical=T,col=alpha('navy',.6),pch=16,cex=2,
-               main=i,xlab="Patient Group", ylab="Proportion of Sample",group.names = c("Group 1 ", "Group 2", "Group 3", "Group 4"))
-    #dev.off()
-    
-    print(i)
-    # compare proteobacteria in G1 v G4
-    print(pg1v4)
-    # compare proteobacteria in G1 TA v G1 MBAL
-    print(wilcox.test(as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[metadata$effective_group == 1,][,c("TA_DNAseq_filename")]))]),
-    as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[metadata$effective_group == 1,][,c("mBAL_DNAseq_filename")]))]))$p.value)
-    # compare proteobacteria in G4 TA v G4 MBAL
-    print(wilcox.test(as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[metadata$effective_group == 4,][,c("TA_DNAseq_filename")]))]),
-    as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[metadata$effective_group == 4,][,c("mBAL_DNAseq_filename")]))]))$p.value)
-  }
-}
-
-```
-
-**MICROBES THAT ARE STATISTICALLY DIFFERENT BETWEEN TA AND MBAL**
-
-Using a Wilcox Rank Sum test with microbial proportions for each microbe in TA and mBAL samples, we test whether they are significantly different. This tests the pre-exisitng notion that TA samples are enriched for common oral flora.
-
-```{r, fig.height=4, fig.width=12}
-par(mfrow=c(1,5))
-# there are significant differences in phylum-level proportions in Bacteroidetes, Actinobacteria, and Proteobacteria.
-for(i in rownames(PhyProp)){
-  pg1v4 <- wilcox.test(as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[,c("TA_DNAseq_filename")]))]),
-                    as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]))$p.value
-  if(!is.na(pg1v4) && pg1v4 < .05){
-    
-    if(generate_pdfs){
-      pdf(paste('./output/',i,'.mBAL_TA.reads.pdf',sep=''),height=5, width=5)
-    }
-    stripchart(list(as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[,c("TA_DNAseq_filename")]))]),
-                    as.numeric(PhyProp[c(i),names(PhyProp) %in% as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])),
-               method='jitter',jitter=.1,vertical=T,col=alpha('navy',.6),pch=16,cex=2,
-               main=i,xlab="Patient Group", ylab="Proportion of Sample",group.names = c("TA ", "mBAL"))
-    # dev.off()
-    print(i)
-    # compare proteobacteria in G1 v G4
-    print(pg1v4)
-    # compare proteobacteria in G1 TA v G1 MBAL
-  }
-}
-
+bp <- c('aquamarine3','bisque3','blue','blue4','darkolivegreen3','darkred','darksalmon','darkslateblue',
+        'darkslategray','blueviolet','brown','brown2','darkgoldenrod','darkgoldenrod1','royalblue1',
+        'chocolate1','coral2','chartreuse4','chartreuse','cadetblue3','darkkhaki','darkmagenta','deepskyblue',
+        'darkorchid1','darkorange1','greenyellow','forestgreen','dodgerblue1','firebrick2','gold1',
+        'deeppink','deeppink3','mediumpurple','cornsilk3','cornsilk4','cyan','bisque4','gray39','black','hotpink4')
 ```
 
 
-### REPLICATE PHYLUM WITH GENUS DATA
+***
+
+
+### Obtain Community Composition metrics for genus-level microbial proportions
 
 Ultimately, we are interested in genus-level comparisons. Clinical diagnoses are made at the species- and strain-level, but our analysis of NGS data from airway samples has been limited to genus-level comparison due to technical challenges in calling species-level microbial hits (with strong confidence and accuracy). To avoid these issues, we collapse all hits to the genus-level. Thus, comparing the genus-level similarity between samples is important for understanding the impact it would have on ongoing projects.
 
 Iterate over all pairs of mBAL and TA samples from individuals to generate the community similarity metrics at the genus level.
 Initial output: a barchart of genera represented in each sample. The bar charts are separated by "group" - group 1 in the first two rows, group 2 in the second...etc.
 
+The main code to accomplish this is shown here:
 ```{r,fig.width=12,fig.height=6}
-all_microbe_data.microbes.norm <- t(t(all_microbe_data)/colSums(all_microbe_data))
-all_microbe_data.microbes.norm[all_microbe_data.microbes.norm<.01] <- 0
-new <- rbind(all_microbe_data.microbes.norm, c(1-colSums(all_microbe_data.microbes.norm)))
-rownames(new) <- c(rownames(all_microbe_data.microbes.norm),"Other")
-all_microbe_data <- new
+generate_pdfs = FALSE
+
+file_pair_order <- c()
 
 all_microbe_data <- all_microbe_data[order(rowSums(all_microbe_data),decreasing=F),]
 all_microbe_data <- all_microbe_data[,!is.na(colSums(all_microbe_data))]
 mbal_phyla <- all_microbe_data[,colnames(all_microbe_data) %in% MBAL]
-#barplot(as.matrix(mbal_phyla),col=rainbow(10),las=2)
 ta_phyla <- all_microbe_data[,colnames(all_microbe_data) %in% TA]
 
 if(generate_pdfs){
@@ -448,7 +224,7 @@ if(generate_pdfs){
 full_correlations <- vector("list",length=4)
 full_bc <- vector("list",length=4)
 full_jaccard <- vector("list", length=4)
-full_simpsons <- vector("list",length=8) #separate by TA and mBAL for each group
+full_Shannons <- vector("list",length=8) #separate by TA and mBAL for each group
 full_richness <- vector("list",length=8)
 for(j in c(1,2,3,4)){
   
@@ -460,7 +236,7 @@ for(j in c(1,2,3,4)){
   mbal_richness <- c()
   ta_richness <- c()
   jaccard <- c()
-  par(mfrow=c(2,8))
+  par(mfrow=c(2,9))
   
   for( i in rownames(metadata)){
   mbal_filename <- as.character(metadata[rownames(metadata) == i,]$mBAL_DNAseq_filename)
@@ -470,28 +246,29 @@ for(j in c(1,2,3,4)){
     
     if(metadata[rownames(metadata) == i,]$effective_group == j){
     
-      # print(mbal_filename)
-      # print(ta_filename)
-      
       # genus barplot
-      barplot(as.matrix(all_microbe_data[,c(mbal_filename,ta_filename)]),col=plasma(10),cex.axis = .6,main=i,names.arg = c("mBAL","TA"))
+      barplot(as.matrix(all_microbe_data[,c(mbal_filename,ta_filename)]),col=bp,cex.axis = .6,main=i,names.arg = c("mBAL","TA"))
+      file_pair_order <- c(file_pair_order, mbal_filename, ta_filename)
       
-      # pearson correlation - 1 per patient
-      correlations <- c(correlations,cor(all_microbe_data[,c(mbal_filename)],all_microbe_data[,c(ta_filename)]))
+      # pairwise pearson correlation - 1 value per patient
+      c <- cbind(all_microbe_data[,c(mbal_filename)],all_microbe_data[,c(ta_filename)])
+      c <- c[rowSums(c) > 0,]
+      colnames(c) <- c(mbal_filename,ta_filename)
+      correlations <- c(correlations,cor(c)[2])
       
-      # bray-curtis distance - 1 per patient
+      # bray-curtis distance - 1 value per patient
       bray_curtis_dist <- vegdist(t(as.matrix(all_microbe_data[,c(mbal_filename,ta_filename)])), method="bray", binary=FALSE, diag=FALSE, upper=TRUE, na.rm = FALSE)
       bc_dist <- c(bc_dist, bray_curtis_dist[1])
       
-      # SDI - 1 per sample ( 2 per patient )
-      ta_sdi <- c(ta_sdi,diversity(all_microbe_data[,c(ta_filename)],index="simpson") )
-      mbal_sdi <- c(mbal_sdi, diversity(all_microbe_data[,c(mbal_filename)],index="simpson"))
+      # SDI - 1 per sample ( 2 values per patient )
+      ta_sdi <- c(ta_sdi,diversity(all_microbe_data[,c(ta_filename)],index="shannon") ) #simpson d
+      mbal_sdi <- c(mbal_sdi, diversity(all_microbe_data[,c(mbal_filename)],index="shannon")) #simpson
       
-      # jaccard - 1 per patient
+      # jaccard - 1 value per patient
       jaccard_dist <- vegdist(t(as.matrix(all_microbe_data[,c(mbal_filename,ta_filename)])),method = "jaccard",binary = FALSE,diag = FALSE,upper = TRUE,na.rm = FALSE)
       jaccard <- c(jaccard, jaccard_dist[1])
       
-      # richness - 1 per sample ( 2 per patient )
+      # richness - 1 value per sample ( 2 values per patient )
       mbal_richness <- c(mbal_richness, length(all_microbe_data[,c(mbal_filename)][all_microbe_data[,c(mbal_filename)]>0]))
       ta_richness <- c(ta_richness, length(all_microbe_data[,c(ta_filename)][all_microbe_data[,c(ta_filename)]>0]))
       
@@ -503,48 +280,58 @@ full_correlations[[j]] <- correlations
 full_bc[[j]] <- bc_dist
 full_jaccard[[j]] <- jaccard
 
-full_simpsons[[j + (j-1)]] <- mbal_sdi
-full_simpsons[[j+1+(j-1)]] <- ta_sdi
+full_Shannons[[j + (j-1)]] <- mbal_sdi
+full_Shannons[[j+1+(j-1)]] <- ta_sdi
 
 full_richness[[j + (j-1)]] <- mbal_richness
 full_richness[[j+1+(j-1)]] <- ta_richness
 
 }
-
-# dev.off()
-
 ```
 
-Replicated the barplot including the legend.
-```{r,results="hide"}
+
+```{r, echo = FALSE}
+
 if(generate_pdfs){
-  pdf('./output/genus_analysis.legend.pdf')
-  barplot(as.matrix(all_microbe_data[,c(mbal_filename,ta_filename)]),col=plasma(10),cex.axis = .6,main=i,names.arg = c("mBAL","TA"),legend=TRUE)
+  dev.off()
 }
-# genus barplot
-# dev.off()
+
+if(generate_pdfs){
+  pdf('./output/genus_analysis.legend.pdf',height=20)
+  barplot(as.matrix(all_microbe_data[,c(mbal_filename,ta_filename)]),col=bp,cex.axis = .6,main=i,names.arg = c("mBAL","TA"),legend=TRUE)
+}
+
 ```
 
 
-**GENUS-LEVEL PEARSON CORRELATION** : We evaluate the pearson correlation between mBAL and TA samples from the same individual.
+```{r, fig.width=10, include=FALSE}
+library(RColorBrewer)
+pdf('./output/genus_analysis_v2.pdf',width=50, height=4)
+barplot(all_microbe_data[,file_pair_order],col=brewer.pal(n = 30, name = "Paired"), las=2, cex.names=.4)
+dev.off()
+pdf('./output/genus_analysis_v2L.pdf',width=80, height=20)
+barplot(all_microbe_data[,file_pair_order],col=brewer.pal(n = 30, name = "Paired"), las=2, cex.names=.4,legend=TRUE)
+dev.off()
+```
 
-```{r, results="hide"}
+***
+
+### Per-patient Pearson Correlation
+We evaluate the pearson correlation between mBAL and TA samples from the same individual.
+
+```{r, results="hide", include=FALSE}
 if(generate_pdfs){
   pdf('./output/genus.pearson.pdf',height=5, width=5)
 }
 names(full_correlations) <- c("Group 1","Group 2", "Group 3", "Group 4")
-stripchart(full_correlations,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,main="Pearson Correlation by Patient Group",xlab="Patient Group", ylab="Pearson Correlation")
+stripchart(full_correlations,method='jitter',jitter=.1,vertical=T,col='navyblue',pch=16,cex=2,main="Pearson Correlation by Patient Group",xlab="Patient Group", ylab="Pearson Correlation")
 # dev.off()
-```
 
-Overall correlation is variable
-```{r, echo=FALSE}
+#Overall correlation is variable
 print(paste("mean pearson correlation over all group: ",mean(unlist(full_correlations))))
 print(paste("sd pearson corr over all groups: ",sd(unlist(full_correlations))))
-```
 
-But correlation in group 1 is much higher than correlation in group 4
-```{r, echo=FALSE}
+#But correlation in group 1 is much higher than correlation in group 4
 print(paste("mean pearson correlation over group1: ",mean(full_correlations[[1]])))
 print(paste("sd pearson corr over group 1: ",sd(full_correlations[[1]])))
 print(paste("mean pearson correlation over group2: ",mean(full_correlations[[2]])))
@@ -555,35 +342,207 @@ print(paste("mean pearson correlation over group4: ",mean(full_correlations[[4]]
 print(paste("sd pearson corr over group 4: ",sd(full_correlations[[4]])))
 ```
 
-Difference in the genus-level pearson correlation between Group 1 and Group 4 individuals.
+Summary of Per-patient, Pearson Correlation between mBAL and TA:
+```{r}
+#print(summary(unlist(full_correlations)))
+kable(t(as.matrix(summary(unlist(full_correlations)))), "markdown") %>%
+  kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),full_width=F)#,position = "float_right")
+```
+
+We note that there is a difference in the genus-level pearson correlation between Group 1 and Group 4 individuals.
 ```{r}
 wilcox.test(full_correlations[[1]],full_correlations[[4]])
 ```
 
-Summary of Pearson Correlation
-```{r}
-print(summary(unlist(full_correlations)))
-```
+***
 
-**GENUS-LEVEL BRAY-CURTIST DISTANCE** : We evaluate the Bray-curtis community similarity metric between mBAL and TA samples from the same individual.
-```{r}
-if(generate_pdfs){
-  pdf('./output/genus.bc.pdf',height=5, width=5)
+### Pearson Correlation of all microbes, regardless of patient ID.
+
+We plot the microbial genus rpM from mini-BAL samples versus the microbial genus rpM from Tracheal Aspriate samples and evaluate the pearson correlation between microbe counts across all patients (black). Then, repeat the ananlysis restricting to only the microbes identified in PNA-pos (red) or PNA-neg (blue) patients.
+
+```{r, echo = FALSE}
+#filenames <- metadata[,c("mBAL_DNAseq_filename","TA_DNAseq_filename")]
+reds <- rgb(colorRamp(c("red", "red3", "red4"), space="rgb", interpolate="linear")(0:255/255), maxColorValue=255)  
+ #palette(brewer.pal(n = 20, name = "Reds"))
+blues <- rgb(colorRamp(c("blue", "blue2", "blue3"), space="rgb", interpolate="linear")(0:255/255), maxColorValue=255)  #palette(brewer.pal(n = 20, name = "Blues")) #"blue3", "blue2",  'blue', "white",  
+
+microbes_TA_g1 <- c()
+microbes_MBAL_g1 <- c()
+microbes_TA_g4 <- c()
+microbes_MBAL_g4 <- c()
+microbes_TA_g2 <- c()
+microbes_MBAL_g2 <- c()
+
+microbes_TA <- c()
+microbes_MBAL <- c()
+
+metadata[is.na(metadata)] <- 3
+
+for(i in seq(1:nrow(metadata))){
+  colval <- 'grey'
+  #print(metadata[i,c("effective_group")])
+  
+  #print(metadata[i,"mBAL_DNAseq_filename"])
+  #print(metadata[i,"TA_DNAseq_filename"])
+  #print(all_microbe_data[,metadata[i,c("mBAL_DNAseq_filename")]][all_microbe_data[,metadata[i,c("mBAL_DNAseq_filename")]]>0])
+  #print(all_microbe_data[,metadata[i,c("TA_DNAseq_filename")]][all_microbe_data[,metadata[i,c("TA_DNAseq_filename")]] > 0])
+  plot_data <- cbind(all_microbe_data[,as.character(metadata[i,c("mBAL_DNAseq_filename")])],all_microbe_data[,as.character(metadata[i,c("TA_DNAseq_filename")])])
+  #plot_data <- cbind(log10(all_microbe_data[,as.character(metadata[i,c("mBAL_DNAseq_filename")])]*100),log10(all_microbe_data[,as.character(metadata[i,c("TA_DNAseq_filename")])]*100))
+  colnames(plot_data) <- c("MBAL","TA")
+  plot_data <- plot_data[rowSums(plot_data) > 0,]
+  
+  if(metadata[i,c("effective_group")] == "1"){
+    #colval <- 'red'
+    colval <- reds[i*2]
+    #print(colval)
+    if(class(plot_data)=="numeric"){
+        microbes_TA_g1 <- c(microbes_TA_g1,plot_data[c("TA")])
+        microbes_MBAL_g1 <- c(microbes_MBAL_g1,plot_data[c("MBAL")])
+      }else{
+        microbes_TA_g1 <- c(microbes_TA_g1,plot_data[,c("TA")])
+        microbes_MBAL_g1 <- c(microbes_MBAL_g1,plot_data[,c("MBAL")])
+      }
+  }else if(metadata[i,c("effective_group")] == "4"){
+    #colval <- 'blue'
+    colval <- blues[i*2]
+    #print(colval)
+    if(class(plot_data)=="numeric"){
+        microbes_TA_g4 <- c(microbes_TA_g4,plot_data[c("TA")])
+        microbes_MBAL_g4 <- c(microbes_MBAL_g4,plot_data[c("MBAL")])
+      }else{
+        microbes_TA_g4 <- c(microbes_TA_g4,plot_data[,c("TA")])
+        microbes_MBAL_g4 <- c(microbes_MBAL_g4,plot_data[,c("MBAL")])
+      }
+  }else if(metadata[i,c("effective_group")] == "2"){
+    #colval <- 'blue'
+    colval <- blues[i*2]
+    #print(colval)
+    if(class(plot_data)=="numeric"){
+        microbes_TA_g2 <- c(microbes_TA_g2,plot_data[c("TA")])
+        microbes_MBAL_g2 <- c(microbes_MBAL_g2,plot_data[c("MBAL")])
+      }else{
+        microbes_TA_g2 <- c(microbes_TA_g2,plot_data[,c("TA")])
+        microbes_MBAL_g2 <- c(microbes_MBAL_g2,plot_data[,c("MBAL")])
+      }
+  }
+  if(class(plot_data)=="numeric"){
+    microbes_TA <- c(microbes_TA,plot_data[c("TA")])
+    microbes_MBAL <- c(microbes_MBAL,plot_data[c("MBAL")])
+  }else{
+    microbes_TA <- c(microbes_TA,plot_data[,c("TA")])
+    microbes_MBAL <- c(microbes_MBAL,plot_data[,c("MBAL")])
+  }
 }
-# there is a significant difference in the genus-level BC dist between infxn and no infxn
-names(full_bc) <- c("Group 1","Group 2", "Group 3", "Group 4")
-stripchart(full_bc,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,main="Bray Curtis Similarity by Patient Group",xlab="Patient Group", ylab="Bray Curtis Similarity")
-# dev.off()
+
 ```
 
-Overall Bray-Curtis is variable
-```{r, echo=FALSE}
+
+```{r, echo = FALSE, fig.height=3, fig.width=3 }
+
+if(generate_pdfs){
+pdf('./output/genus.pearson.pdf',height=5, width=5)
+}
+par(mfrow=c(1,3))
+
+#postscript(file = './output/genus.pearson3.ps',onefile=TRUE,height=5, width=5)
+gALL<- as.data.frame(cbind(microbes_TA,microbes_MBAL))
+scatter_plot2 <- ggplot(as.data.frame(gALL), aes(microbes_TA, microbes_MBAL))
+scatter_plot2 + geom_point(shape=3,colour="black") + labs(x = "mini-BAL", y = "Tracheal Aspirate", cex=.8)  + geom_smooth(method="lm",colour="black") + xlim(0,1) + ylim(0,1)+theme(axis.text=element_text(size=8),
+        axis.title=element_text(size=10)) + ggtitle("All Microbes")
+#dev.off()
+
+#postscript(file = './output/genus.pearson.ps',onefile=TRUE,height=5, width=5)
+g1 <- as.data.frame(cbind(microbes_TA_g1,microbes_MBAL_g1))
+scatter_plot1 <- ggplot(as.data.frame(g1), aes(microbes_TA_g1, microbes_MBAL_g1))
+scatter_plot1 + geom_point(shape=3,colour="red") +labs(x = "mini-BAL", y = "Tracheal Aspirate", cex=.8)  + geom_smooth(method="lm",colour="red") + xlim(0,1) + ylim(0,1)+theme(axis.text=element_text(size=8),
+        axis.title=element_text(size=10))+ ggtitle("Microbes from PNA-pos pts")
+#dev.off()
+
+#postscript(file = './output/genus.pearson2.ps',onefile=TRUE,height=5, width=5)
+g4<- as.data.frame(cbind(microbes_TA_g4,microbes_MBAL_g4))
+scatter_plot2 <- ggplot(as.data.frame(g4), aes(microbes_TA_g4, microbes_MBAL_g4))
+scatter_plot2 + geom_point(shape=3,colour="blue") + labs(x = "mini-BAL", y = "Tracheal Aspirate", cex=.8)  + geom_smooth(method="lm",colour="blue") + xlim(0,1) + ylim(0,1)+theme(axis.text=element_text(size=8),
+        axis.title=element_text(size=10))+ ggtitle("Microbes from PNA-neg pts")
+```
+
+Pearson correlation for all microbes was:
+```{r, echo = FALSE}
+cor.test(gALL$microbes_TA, gALL$microbes_MBAL, method = "pearson", conf.level = 0.95)
+```
+
+Pearson correlation for microbes found in PNA-pos patients was:
+```{r, echo = FALSE}
+cor.test(g1$microbes_TA_g1, g1$microbes_MBAL_g1, method = "pearson", conf.level = 0.95)
+```
+
+Pearson correlation for microbes found in PNA-neg patients was:
+```{r, echo = FALSE}
+cor.test(g4$microbes_TA_g4, g4$microbes_MBAL_g4, method = "pearson", conf.level = 0.95)
+
+if(generate_pdfs){
+  dev.off()
+}
+
+```
+
+
+```{r, include = FALSE}
+### EVALUATE WHETHER THE PEARSON CORR for G1 is statistically significantly larger than the corr for G4
+
+library(psych)
+r1 <- cor.test(g1$microbes_TA_g1, g1$microbes_MBAL_g1, method = "pearson", conf.level = 0.95)$estimate
+r2 <- cor.test(g4$microbes_TA_g4, g4$microbes_MBAL_g4, method = "pearson", conf.level = 0.95)$estimate
+
+# function to do fisher transformations 
+fisher.z<- function (r1,r2,n1,n2) ((0.5*log((1+r1)/(1-r1)))-(0.5*log((1+r2)/(1-r2))))/((1/(n1-3))+(1/(n2-3)))^0.5
+
+# or this (either version will suffice) 
+fisher.z<- function(r1,r2,n1,n2) (atanh(r1) - atanh(r2)) / ((1/(n1-3))+(1/(n2-3)))^0.5
+
+#input n and r from correlations manually (two tailed test)
+2*(1-pnorm(abs(fisher.z(r1,r2,n1= length(g1$microbes_TA_g1),n2= length(g4$microbes_TA_g4)))))
+
+diff.corr <- function( r1, n1, r2, n2 ){ 
+
+    Z1 <- 0.5 * log( (1+r1)/(1-r1) ) 
+    Z2 <- 0.5 * log( (1+r2)/(1-r2) ) 
+
+    diff   <- Z1 - Z2 
+    SEdiff <- sqrt( 1/(n1 - 3) + 1/(n2 - 3) ) 
+    diff.Z  <- diff/SEdiff 
+
+    p <- 2*pnorm( abs(diff.Z), lower=F) 
+    cat( "Two-tailed p-value", p , "\n" ) 
+  } 
+
+  diff.corr( r1, n1=length(g1$microbes_MBAL_g1), r2, n2=length(g4$microbes_MBAL_g4) ) 
+  ## Two-tailed p-value 0.4103526 
+
+  diff.corr( r1=0.1, n1=100, r2=-0.1, n2=80 ) 
+  ## Two-tailed p-value 0.1885966 
+
+```
+
+***
+
+### Genus-level Bray-Curtis Distance: 
+
+We evaluate the Bray-curtis community similarity metric between mBAL and TA samples from the same individual, and evaluate significance using the PERMANOVA test.
+
+```{r, include = FALSE}
+#if(generate_pdfs){
+#  pdf('./output/genus.bc.pdf',height=5, width=5)
+#}
+# there is a significant difference in the genus-level BC dist between infxn and no infxn
+#names(full_bc) <- c("Group 1","Group 2", "Group 3", "Group 4")
+#stripchart(full_bc,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,main="Bray Curtis Similarity by Patient Group",xlab="Patient Group", ylab="Bray Curtis Similarity")
+# dev.off()
+
+#Overall Bray-Curtis is variable
 print(paste("mean BC over all group: ",mean(unlist(full_bc))))
 print(paste("sd BC over all groups: ",sd(unlist(full_bc))))
-```
 
-But Bray-Curtis in group 1 is much higher than correlation in group 4
-```{r, echo=FALSE}
+#But Bray-Curtis in group 1 is much higher than correlation in group 4
 print(paste("mean BC over group1: ",mean(full_bc[[1]])))
 print(paste("sd BC over group1 : ",sd(full_bc[[1]])))
 print(paste("mean bray curtis over group2: ",mean(full_bc[[2]])))
@@ -592,37 +551,185 @@ print(paste("mean bray curtis over group3: ",mean(full_bc[[3]])))
 print(paste("sd pearson corr over group 3: ",sd(full_bc[[3]])))
 print(paste("mean bray curtis over group4: ",mean(full_bc[[4]])))
 print(paste("sd pearson corr over group 4: ",sd(full_bc[[4]])))
-```
 
-There is a significant difference in the genus-level bray-curtis dist between group 1 and group 4
-```{r}
+#There is a significant difference in the genus-level bray-curtis dist between group 1 and group 4
 wilcox.test(full_bc[[1]],full_bc[[4]])
-```
 
-Summary of bray curtis 
-```{r}
+#Summary of bray curtis 
 print(summary(unlist(full_bc)))
 ```
 
-**GENUS-LEVEL JACCARD SIMILARITY** : We evalaute the genus-level jaccad similarity between sample types from the same individual.
+
+
+**PERMANOVA Analysis**
+```{r, echo = FALSE, message = FALSE, results = FALSE, fig.height=4, fig.width=10}
+
+output <- c("./output/")
+
+par(mfrow=c(1,3))
+
+set.seed(5)
+
+BC <- as.matrix(vegan::vegdist(t(all_microbe_data),method="bray"))#as.matrix()
+example_NMDS <- vegan::metaMDS(BC,k=2,trymax=1000)
+# plot solution 
+x <- example_NMDS$points[,1]
+y <- example_NMDS$points[,2]
+names(x) %in% metadata$mBAL_DNAseq_filename
+
+#Here is an example of how to run a permanova test using the adonis function in vegan. In this example we are testing the hypothesis that the three stations we collected samples from have different centroids
+a <-(as.integer(names(x) %in% metadata$mBAL_DNAseq_filename)+1)
+names(a) <- names(x)
+a <- as.data.frame(a)
+colnames(a) <- c("group")
+a <- cbind(a,a)#,rownames(a),rownames(a))
+colnames(a) <- c("group","x")#,"category","BC")
+a$group <- as.factor(a$group)
+head(a)
+permanova_result_ALL <- vegan::adonis2(BC~group, a, permutations = 999)
+
+
+if(generate_pdfs){
+pdf(paste(output,"BrayCurtisPermanova.pdf"),height=6, width=6) 
+}
+plot(x, y, xlab="Coordinate 1", ylab="Coordinate 2", 
+  main="NMDS of ALL mBAL and TA Samples\nusing Bray-Curtis Dissimilarity",col=c(rgb(244,73,19,maxColorValue = 255),rgb(51,60,163,maxColorValue = 255))[as.integer(names(x) %in% metadata$mBAL_DNAseq_filename) + 1], pch=c(17,15)[as.integer(names(x) %in% c(as.character(metadata[metadata$effective_group==1,c("mBAL_DNAseq_filename")]),as.character(metadata[metadata$effective_group==1,c("TA_DNAseq_filename")]))
+) + 1],font.main = 1, cex.axis=.8,cex.main=.8)
+vegan::ordispider(example_NMDS, group=a$group, show="1", col=rgb(244,73,19,maxColorValue = 255), kind="se",conf=0.95)
+vegan::ordispider(example_NMDS, group=a$group, show="2", col=rgb(51,60,163,maxColorValue = 255), kind="se",conf=0.95)
+#text(-.2,.4,"p > .1",cex=.8)
+text(-.2,.23,"mini-BAL",cex=.6,col=rgb(51,60,163,maxColorValue = 255))
+text(.3,-.23,"Tracheal Aspriate",cex=.6, col=rgb(244,73,19,maxColorValue = 255))
+text(x, y, labels = sapply(strsplit(names(x),"[.]"),"[",2), cex=.5)
+if(generate_pdfs){
+dev.off()
+}
+
+
+
+# Bray-curtis for just the group 1 samples
+
+set.seed(5)
+g1_only <- metadata[metadata$effective_group==1,]
+
+BC <- as.matrix(vegan::vegdist(t(all_microbe_data[,colnames(all_microbe_data) %in% as.character(unlist(g1_only[,c("mBAL_DNAseq_filename","TA_DNAseq_filename")]))]),method="bray"))#as.matrix()
+example_NMDS <- vegan::metaMDS(BC,k=2,trymax=1000)
+# plot solution 
+x <- example_NMDS$points[,1]
+y <- example_NMDS$points[,2]
+names(x) %in% metadata$mBAL_DNAseq_filename
+#plot(x, y, xlab="Coordinate 1", ylab="Coordinate 2", 
+#  main="Metric	MDS", col=alpha(c("green2","grey29")[as.integer(names(x) %in% metadata$mBAL_DNAseq_filename) + 1],.5), pch=16)#,	type="n")
+#text(x, y, labels = sapply(strsplit(names(x),"[.]"),"[",2), cex=.5)
+
+#Here is an example of how to run a permanova test using the adonis function in vegan. In this example we are testing the hypothesis that the three stations we collected samples from have different centroids
+a <-(as.integer(names(x) %in% metadata$mBAL_DNAseq_filename)+1)
+names(a) <- names(x)
+a <- as.data.frame(a)
+colnames(a) <- c("group")
+a <- cbind(a,a)#,rownames(a),rownames(a))
+colnames(a) <- c("group","x")#,"category","BC")
+a$group <- as.factor(a$group)
+head(a)
+permanova_result_g1 <- vegan::adonis2(BC~group, a, permutations = 999)
+
+
+
+if(generate_pdfs){
+pdf(paste(output,"BrayCurtisPermanova_g1.pdf"),height=6, width=6) 
+}
+#plot(x, y, xlab="Coordinate 1", ylab="Coordinate 2", 
+#  main="NMDS of mini-BAL and Tracheal Aspirate Samples\nusing Bray-Curtis Dissimilarity", col=alpha(c("green2","grey29")[as.integer(names(x) %in% metadata$mBAL_DNAseq_filename) + 1],.5), pch=16,font.main = 1, #cex.axis=.8,cex.main=.8)
+plot(x, y, xlab="Coordinate 1", ylab="Coordinate 2", 
+  main="NMDS of PNA-pos mBAL and TA Samples\nusing Bray-Curtis Dissimilarity", col=c(rgb(244,73,19,maxColorValue = 255),rgb(51,60,163,maxColorValue = 255))[as.integer(names(x) %in% metadata$mBAL_DNAseq_filename) + 1], pch=17,font.main = 1, cex.axis=.8,cex.main=.8, cex=1.2)
+vegan::ordispider(example_NMDS, group=a$group, show="1", col=rgb(244,73,19,maxColorValue = 255), kind="se",conf=0.95)
+vegan::ordispider(example_NMDS, group=a$group, show="2", col=rgb(51,60,163,maxColorValue = 255), kind="se",conf=0.95)
+#text(-.2,.4,"p > .1",cex=.8)
+text(-.2,.23,"mini-BAL",cex=.6,col=rgb(51,60,163,maxColorValue = 255))
+text(.3,-.23,"Tracheal Aspriate",cex=.6, col=rgb(244,73,19,maxColorValue = 255))
+text(x, y, labels = sapply(strsplit(names(x),"[.]"),"[",2), cex=.5)
+
+if(generate_pdfs){
+dev.off()
+}
+
+
+
+# Bray-curtis for just the group 4 samples
+
+set.seed(5)
+g4_only <- metadata[metadata$effective_group==4,]
+
+BC <- as.matrix(vegan::vegdist(t(all_microbe_data[,colnames(all_microbe_data) %in% as.character(unlist(g4_only[,c("mBAL_DNAseq_filename","TA_DNAseq_filename")]))]),method="bray"))#as.matrix()
+example_NMDS <- vegan::metaMDS(BC,k=2,trymax=1000)
+# plot solution 
+x <- example_NMDS$points[,1]
+y <- example_NMDS$points[,2]
+names(x) %in% metadata$mBAL_DNAseq_filename
+
+#Here is an example of how to run a permanova test using the adonis function in vegan. In this example we are testing the hypothesis that the three stations we collected samples from have different centroids
+a <-(as.integer(names(x) %in% metadata$mBAL_DNAseq_filename)+1)
+names(a) <- names(x)
+a <- as.data.frame(a)
+colnames(a) <- c("group")
+a <- cbind(a,a)
+colnames(a) <- c("group","x")
+a$group <- as.factor(a$group)
+permanova_result_g4 <- vegan::adonis2(BC~group, a, permutations = 999)
+
+
+if(generate_pdfs){
+pdf(paste(output,"BrayCurtisPermanova_g4.pdf"),height=6, width=6) 
+}
+plot(x, y, xlab="Coordinate 1", ylab="Coordinate 2", 
+  main="NMDS of PNA-neg mBAL and TA Samples\nusing Bray-Curtis Dissimilarity",  col=c(rgb(244,73,19,maxColorValue = 255),rgb(51,60,163,maxColorValue = 255))[as.integer(names(x) %in% metadata$mBAL_DNAseq_filename) + 1], pch=15,font.main = 1, cex.axis=.8,cex.main=.8, cex=1.2)
+vegan::ordispider(example_NMDS, group=a$group, show="1", col=rgb(244,73,19,maxColorValue = 255), kind="se",conf=0.95)
+vegan::ordispider(example_NMDS, group=a$group, show="2", col=rgb(51,60,163,maxColorValue = 255), kind="se",conf=0.95)
+#text(-.2,.4,"p > .1",cex=.8)
+text(x, y, labels = sapply(strsplit(names(x),"[.]"),"[",2), cex=.5)
+text(-.2,.23,"mini-BAL",cex=.6,col=rgb(51,60,163,maxColorValue = 255))
+text(.3,-.23,"Tracheal Aspriate",cex=.6, col=rgb(244,73,19,maxColorValue = 255))
+if(generate_pdfs){
+dev.off()
+}
+
+```
+
+
+PERMANOVA result across all samples:
 ```{r}
+print(permanova_result_ALL)
+```
+
+PERMANOVA result across only the PNA-pos samples:
+```{r}
+print(permanova_result_g1)
+```
+
+PERMANOVA result across only the PNA-neg samples:
+```{r}
+print(permanova_result_g4)
+```
+
+
+
+
+```{r, include = FALSE}
+#**GENUS-LEVEL JACCARD SIMILARITY** : We evalaute the genus-level jaccad similarity between sample types from the same individual.
+
 if(generate_pdfs){
   pdf('./output/genus.jaccard.pdf',height=5, width=5)
 }
 # there is a significant difference in the genus-level jaccard dist between infxn and no infxn
 names(full_jaccard) <- c("Group 1","Group 2", "Group 3", "Group 4")
-stripchart(full_jaccard,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,main="Jaccard Similarity by Patient Group",xlab="Patient Group", ylab="Jaccard Similarity")
+stripchart(full_jaccard,method='jitter',jitter=.1,vertical=T,col='navyblue',pch=16,cex=2,main="Jaccard Similarity by Patient Group",xlab="Patient Group", ylab="Jaccard Similarity")
 # dev.off()
-```
 
-Overall jaccard is variable
-```{r, echo=FALSE}
+#Overall jaccard is variable
 print(paste("mean jaccard over all group: ",mean(unlist(full_jaccard))))
 print(paste("sd jaccard over all groups: ",sd(unlist(full_jaccard))))
-```
 
-But jaccard in group 1 is much higher than correlation in group 4
-```{r, echo=FALSE}
+#But jaccard in group 1 is much higher than correlation in group 4
 print(paste("mean jaccard over group1: ",mean(full_jaccard[[1]])))
 print(paste("sd jaccard over group1 : ",sd(full_jaccard[[1]])))
 print(paste("mean jaccard over group2: ",mean(full_jaccard[[2]])))
@@ -631,139 +738,161 @@ print(paste("mean jaccard over group3: ",mean(full_jaccard[[3]])))
 print(paste("sd jaccard over group 3: ",sd(full_jaccard[[3]])))
 print(paste("mean jaccard over group4: ",mean(full_jaccard[[4]])))
 print(paste("sd jaccard over group 4: ",sd(full_jaccard[[4]])))
-```
 
-Difference in jaccard similarity between Group 1 and Group 4 individuals:
-```{r}
+#Difference in jaccard similarity between Group 1 and Group 4 individuals:
 wilcox.test(full_jaccard[[1]],full_jaccard[[4]])
-```
 
-Summary of jaccard
-```{r}
+#Summary of jaccard
 print(summary(unlist(full_jaccard)))
 ```
 
-**GENUS-LEVEL SIMPSONS DIVERSITY** : Here we evaluate the simpsons diversity index (SDI, alpha diversity) for each sample type from each individual. We expect that SDI will be similar across sample type for the same patient.
+***
 
-Difference in the genus-level simpsons diversity comparing TA to mBAL in any group
-```{r}
-print(wilcox.test(full_simpsons[[1]],full_simpsons[[2]])) # dif btwn TA and mBAL SDI in group 1 
-print(wilcox.test(full_simpsons[[3]],full_simpsons[[4]])) # dif btwn TA and mBAL SDI in group 2
-print(wilcox.test(full_simpsons[[5]],full_simpsons[[6]])) # dif btwn TA and mBAL SDI in group 3
-print(wilcox.test(full_simpsons[[7]],full_simpsons[[8]])) # dif btwn TA and mBAL SDI in group 4
-print(wilcox.test(c(full_simpsons[[1]],full_simpsons[[3]],full_simpsons[[5]],full_simpsons[[7]]),
-                  c(full_simpsons[[2]],full_simpsons[[4]],full_simpsons[[6]],full_simpsons[[8]]))) # dif btwn TA and mBAL SDI across ALL Groups
+### Shannons diversity index
+
+Reduced alpha diversity of the human respiratory microbiome has been described as an ecological marker of infection, and thus we next asked whether Shannon's Diversity Index (SDI) differed by specimen type. 
+
+Here we evaluate the Shannons diversity index (SDI, alpha diversity) for each sample type from each individual. We expect that SDI will be similar across sample type for the same patient.
+
+```{r, include= FALSE}
+#Difference in the genus-level Shannons diversity comparing TA to mBAL in any group
+
+print(wilcox.test(full_Shannons[[1]],full_Shannons[[2]])) # dif btwn TA and mBAL SDI in group 1 
+print(wilcox.test(full_Shannons[[3]],full_Shannons[[4]])) # dif btwn TA and mBAL SDI in group 2
+print(wilcox.test(full_Shannons[[5]],full_Shannons[[6]])) # dif btwn TA and mBAL SDI in group 3
+print(wilcox.test(full_Shannons[[7]],full_Shannons[[8]])) # dif btwn TA and mBAL SDI in group 4
+print(wilcox.test(c(full_Shannons[[1]],full_Shannons[[3]],full_Shannons[[5]],full_Shannons[[7]]),
+                  c(full_Shannons[[2]],full_Shannons[[4]],full_Shannons[[6]],full_Shannons[[8]]))) # dif btwn TA and mBAL SDI across ALL Groups
 ```
 
-Difference in genus-level simpsons diversity comparing G1 to G4 in mBAL (p =)
+Difference in genus-level Shannons diversity comparing G1 to G4 in mBAL
 ```{r, echo=FALSE}
-print(wilcox.test(full_simpsons[[1]],full_simpsons[[7]]))
+print(wilcox.test(full_Shannons[[1]],full_Shannons[[7]]))
 ```
 
-Significance in genus-level simpsons diversity between G1 and G4 in TA is not maintained (p = .07)
+Significance in genus-level Shannons diversity between G1 and G4 in TA
 ```{r, echo=FALSE}
-print(wilcox.test(full_simpsons[[2]],full_simpsons[[8]]))
+print(wilcox.test(full_Shannons[[2]],full_Shannons[[8]]))
 ```
 
-Summary of Simpsons Diversity in mBAL
+Summary of Shannons Diversity in mBAL
 ```{r, echo = FALSE}
-print(summary(c(full_simpsons[[1]],full_simpsons[[3]],full_simpsons[[5]],full_simpsons[[7]])))
+kable(t(as.matrix(summary(c(full_Shannons[[1]],full_Shannons[[3]],full_Shannons[[5]],full_Shannons[[7]])))),"markdown") %>%
+  kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),full_width=F)
 ```
 
-Summary of Simpsons Diversity in TA
+Summary of Shannons Diversity in TA
 ```{r, echo = FALSE}
-print(summary(c(full_simpsons[[2]],full_simpsons[[4]],full_simpsons[[6]],full_simpsons[[8]])))
+kable(t(as.matrix(summary(c(full_Shannons[[2]],full_Shannons[[4]],full_Shannons[[6]],full_Shannons[[8]])))),"markdown") %>%
+  kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),full_width=F)
 ```
 
 ```{r, results="hide", fig.width=8, fig.height=4}
 if(generate_pdfs){
-  pdf('./output/genus.simpsons.pdf',height=5, width=5)
+  pdf('./output/genus.Shannons.pdf',height=5, width=5)
 }
-names(full_simpsons) <- c("Group 1\nMBAL","Group 1\nTA", "Group 2\nMBAL","Group 2\nTA", "Group 3\nMBAL","Group 3\nTA", "Group 4\nMBAL","Group 4\nTA")
-boxplot(full_simpsons,cex.axis=.5,main="Simpsons Diversity by Sample Type and Patient Group",xlab="Patient Group", ylab="Simpsons Diversity Index",cex.main=.8)
-stripchart(full_simpsons,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=1,add=T)
+names(full_Shannons) <- c("Group 1\nMBAL","Group 1\nTA", "Group 2\nMBAL","Group 2\nTA", "Group 3\nMBAL","Group 3\nTA", "Group 4\nMBAL","Group 4\nTA")
+boxplot(full_Shannons,cex.axis=.5,main="Shannons Diversity by Sample Type and Patient Group",xlab="Patient Group", ylab="Shannons Diversity Index",cex.main=.8)
+stripchart(full_Shannons,method='jitter',jitter=.1,vertical=T,col='navyblue',pch=16,cex=1,add=T)
+# dev.off()
+
+
+if(generate_pdfs){
+  pdf('./output/genus.shannon_g1g4.pdf',height=5, width=5)
+}
+f <- full_Shannons[c(1,7,2,8)]
+names(f) <- c("Group 1\nMBAL","Group 4\nMBAL","Group 1\nTA", "Group 4\nTA")
+boxplot(f,cex.axis=.5,main="Shannon Diversity by Sample Type and Patient Group",xlab="Patient Group", ylab="Shannon Diversity Index",cex.main=.8)
+stripchart(f,method='jitter',jitter=.1,vertical=T,col='navyblue',pch=17,cex=1,add=T)
 # dev.off()
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
 print("mean/sd SDI mBAL Group 1:")
-print(mean(unlist(full_simpsons[[1]])))
-print(sd(unlist(full_simpsons[[1]])))
+print(mean(unlist(full_Shannons[[1]])))
+print(sd(unlist(full_Shannons[[1]])))
 print("mean/sd SDI TA Group 1:")
-print(mean(unlist(full_simpsons[[2]])))
-print(sd(unlist(full_simpsons[[2]])))
+print(mean(unlist(full_Shannons[[2]])))
+print(sd(unlist(full_Shannons[[2]])))
 print("mean/sd SDI mBAL Group 4:")
-print(mean(unlist(full_simpsons[[7]])))
-print(sd(unlist(full_simpsons[[7]])))
+print(mean(unlist(full_Shannons[[7]])))
+print(sd(unlist(full_Shannons[[7]])))
 print("mean/sd SDI TA Group 4:")
-print(mean(unlist(full_simpsons[[8]])))
-print(sd(unlist(full_simpsons[[8]])))
+print(mean(unlist(full_Shannons[[8]])))
+print(sd(unlist(full_Shannons[[8]])))
 ```
 
-**GENUS-LEVEL RICHNESS** : We evaluate the phylum richness per sample type per patient, expecting no difference in richness between sample types from the same individual.
+***
 
-There is no significant difference in the genus-level richness comparing TA to mBAL in any single group
-```{r, echo = FALSE}
+### Genus-level richness 
+We evaluate the genus richness per sample type per patient, expecting no difference in richness between sample types from the same individual.
+
+```{r, echo = FALSE, include=FALSE}
+#There is no significant difference in the genus-level richness comparing TA to mBAL in any single group
 print(wilcox.test(full_richness[[1]],full_richness[[2]])) # Richness TA v. mBAL Group 1
 print(wilcox.test(full_richness[[3]],full_richness[[4]])) # Richness TA v. mBAL Group 2
 print(wilcox.test(full_richness[[5]],full_richness[[6]])) # Richness TA v. mBAL Group 3
 print(wilcox.test(full_richness[[7]],full_richness[[8]])) # Richness TA v. mBAL Group 4
-```
 
-But, there is significant difference in the richness when you combine across groups!!!
-```{r}
+#But, there is significant difference in the richness when you combine across groups!!!
 print(wilcox.test(c(full_richness[[1]],full_richness[[3]],full_richness[[5]],full_richness[[7]]),
                   c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])))
-stripchart(list(c(full_richness[[1]],full_richness[[3]],full_richness[[5]],full_richness[[7]]),
-                c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])),
-           method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,main="Pearson Correlation by Patient Group",
-           xlab="Patient Group", ylab="Pearson Correlation")
 ```
 
 It appears that this difference in richness is driven by an outlier...
 
+```{r,fig.height=4, fig.width=10}
+stripchart(list(c(full_richness[[1]],full_richness[[3]],full_richness[[5]],full_richness[[7]]),
+                c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])),
+           method='jitter',jitter=.1,vertical=F,col='navyblue',pch=16,cex=1.2,main="Richness by Patient Group",
+           ylab="Patient Group", xlab="Richness")
+```
+
 Recomputing after removing richness outlier in mBAL 
 
 The mean + 3SD of mBAL richness
-```{r}
+```{r,fig.height=4, fig.width=10}
 original_mbal_richness <- (unlist(list(c(full_richness[[1]],full_richness[[3]],full_richness[[5]],full_richness[7]))))
 outlier_threshold <- mean(original_mbal_richness) + sd(original_mbal_richness)*3
 new_values <- original_mbal_richness[original_mbal_richness < outlier_threshold]
 print(wilcox.test(new_values,c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])))
-stripchart(list(new_values,c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])),method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=2,main="Richness by Patient Group",xlab="Patient Group", ylab="Richness")
+stripchart(list(new_values,c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])),method='jitter',jitter=.1,vertical=F,col='navyblue',pch=16,cex=1.2,main="Richness by Patient Group",ylab="Patient Group", xlab="Richness")
 ```
 
-There is NO significant difference in genus-level richness diversity comparing G1 to G4 in mBAL 
+Overall mBAL richness summary
+```{r, echo = FALSE}
+kable(t(as.matrix(summary(new_values))),"markdown") %>%
+  kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),full_width=F)
+```
+
+Overall TA richness summary
+```{r, echo = FALSE}
+kable(t(as.matrix(summary(c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])))),"markdown") %>%
+  kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),full_width=F)
+```
+
+Comparing genus-level richness between PNA-pos and PNA-neg patients in mBAL 
 ```{r, echo = FALSE}
 print(wilcox.test(full_richness[[1]],full_richness[[7]]))
 ```
 
-There is NO significant difference in genus-level richness diversity comparing G1 to G4 in TA
+Comparing genus-level richness between PNA-pos and PNA-neg patients in TA
 ```{r, echo = FALSE}
 print(wilcox.test(full_richness[[2]],full_richness[[8]]))
 ```
 
-mBAL richness summary
-```{r, echo = FALSE}
-print(summary(new_values))
-```
 
-TA richness summary
-```{r, echo = FALSE}
-print(summary(c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])))
-```
-
-```{r, results = "hide"}
+```{r, results = "hide", include =FALSE}
 if(generate_pdfs){
   pdf('./output/genus.richness.pdf',height=5, width=5)
 }
 names(full_richness) <- c("Group 1\nMBAL","Group 1\nTA", "Group 2\nMBAL","Group 2\nTA", "Group 3\nMBAL","Group 3\nTA", "Group 4\nMBAL","Group 4\nTA")
 boxplot(full_richness,cex.axis=.5,main="Richness by Sample Type and Patient Group",xlab="Patient Group", ylab="Richness",cex.main=.8)
-stripchart(full_richness,method='jitter',jitter=.1,vertical=T,col=alpha('navyblue',.6),pch=16,cex=1,add=T)
+stripchart(full_richness,method='jitter',jitter=.1,vertical=T,col='navyblue',pch=16,cex=1,add=T)
 # dev.off()
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
 print("mean/sd richness mBAL Group 1:")
 print(mean(unlist(full_richness[[1]])))
 print(sd(unlist(full_richness[[1]])))
@@ -778,11 +907,11 @@ print(mean(unlist(full_richness[[8]])))
 print(sd(unlist(full_richness[[8]])))
 ```
 
+***
 
+### Evaluate the presence/absence of clinically-confirmed pathogens in Group 1 Patients 
 
-#### Evaluate the presence/absence of clinically-confirmed pathogens in Group 1 Patients 
-**MINIMALIST VERSION**
-```{r, fig.width=5, fig.height=8}
+```{r, fig.width=10, fig.height=6, results = FALSE, echo = FALSE}
 
 relative_numbers <- FALSE
 column_names <- c()
@@ -792,15 +921,16 @@ rank_list_mbal <- c()
 rank_list_ta <- c()
 cummulative_pathos <- c()
 
-plot(c(0,3),c(0,1),main="Proportion of Sample")
+plot(c(.5,2.5),c(0,1),main="Proportion of Sample",ylab="Proportion of Sample",xlab="TA (1) v. mBAL (2)")
 for( i in rownames(metadata)){
   mbal_filename <- as.character(metadata[rownames(metadata) == i,]$mBAL_DNAseq_filename)
   ta_filename <- as.character(metadata[rownames(metadata) == i,]$TA_DNAseq_filename)
   
+  
   if(!is.na(metadata[rownames(metadata) == i,]$effective_group)){
     if(metadata[rownames(metadata) == i,]$effective_group == 1){
-      # print(mbal_filename)
-      # print(ta_filename)
+      print(mbal_filename)
+      print(ta_filename)
       
       # sort mBAL samples and get names
       mbal <- sort(group1.MBAL.microbes.norm[,c(mbal_filename)],decreasing=TRUE)
@@ -818,13 +948,11 @@ for( i in rownames(metadata)){
         pathogens <- as.character(metadata[rownames(metadata) == i,]$microbe)
         patholist <- strsplit(pathogens,',')[[1]]
         print(patholist)
-        # print(head(mbal_names))
-        # print(head(ta_names))
         
         rank_mbal <- match(patholist,mbal_names) 
         rank_ta <- match(patholist,ta_names)
-        # print(paste("rank mBAL",rank_mbal))
-        # print(paste("rank TA",rank_ta))
+        print(paste("rank mBAL",rank_mbal))
+        print(paste("rank TA",rank_ta))
         
         rank_list_mbal <- c(rank_list_mbal,rank_mbal)
         rank_list_ta <- c(rank_list_ta, rank_ta)
@@ -837,30 +965,16 @@ for( i in rownames(metadata)){
         shared <- intersect(as.vector(mbal_names), as.vector(ta_names))
         mbal_specific <- setdiff(mbal_names, ta_names) #gives the number that are present only in mbal_set
         ta_specific <-  setdiff(ta_names, mbal_names)  #gives the number that are present only in ta_set
-      
-        #otherwise put those lines here:
-        #mbal_names <- mbal_names[mbal_names %in% patholist]
-        #ta_names <- ta_names[ta_names %in% patholist]
-        
-        
         
         #print(intersect(shared,patholist))
         overlap_both<-c(overlap_both, length(intersect(shared,patholist)))
         if(length(intersect(shared,patholist)) == length(patholist)){
           #print("ALL FOUND")
           for(p in patholist){
-            #print(ta[p])
-            #print(mbal[p])
             points(c(1,2),c(ta[p],mbal[p]),type="o")
             text(c(1,2),c(ta[p],mbal[p]),p,cex=.8)
           }
         }else{
-          #print("NOT ALL FOUND")
-          #print(patholist)
-          #print(mbal_names)
-          #print(ta_names)
-          #print(intersect(mbal_specific,patholist))
-          #print(intersect(ta_specific,patholist))
           for(p in patholist){
             if(p %in% ta_names){
               points(c(1),c(ta[p]),pch=4)
@@ -882,65 +996,122 @@ for( i in rownames(metadata)){
         rownames(relative_numbers) <- c("TA", "BOTH", "MBAL")
         column_names <- c(column_names, mbal_filename[1])
         colnames(relative_numbers) <- column_names    
-        
-      }
      
+      }
     }    
   }
-
 }
 ```
 
-Output plots 
-```{r, fig.height=4, fig.width=8}
 
+```{r, fig.height=4, fig.width=10, echo = FALSE}
+#Output plots 
+#generate_pdfs = TRUE
 if(generate_pdfs){
   pdf('./output/pathogens_identified.pdf',width=8, height=6)
 }
+
 par(mar=c(10,3,2,2))
 colnames(relative_numbers) <- IDs
-barplot(relative_numbers, col=c("gray80","navyblue","gray50"),main="Microbes Identified in DNA-seq by TA and/or mBAL",legend=TRUE,cex.main=.8,ylab="# of Pathogens Cultured",xlab="Patient ID",cex.axis=.6)
+barplot(relative_numbers, col=c("gray80","navyblue","gray50"),main="Microbes Identified in DNA-seq by TA and/or mBAL",legend=TRUE,cex.main=.8,ylab="# of Pathogens Cultured",xlab="Patient ID",cex.axis=.6, las=2)
 # dev.off()
 
-print(as.data.frame(cbind(cummulative_pathos,rank_list_mbal,rank_list_ta)))
+#par(mar=c(10,3,2,2))
+#barplot(t(t(relative_numbers)/colSums(relative_numbers)), col=c("gray80","navyblue","gray60"),las=2)
+
 write.csv(as.data.frame(cbind(cummulative_pathos,rank_list_mbal,rank_list_ta)),'./output/ranks_by_sample_type.tsv',quote=F)
-
-
-par(mar=c(10,3,2,2))
-barplot(t(t(relative_numbers)/colSums(relative_numbers)), col=c("gray80","navyblue","gray60"),las=2)
+kable(as.data.frame(cbind(cummulative_pathos,rank_list_mbal,rank_list_ta)), "markdown") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
+*** 
 
-A priori microbes
-```{r, fig.width=12, fig.height=4}
+
+
+
+### Analysis of a. priori selected oropharyngeal microbe contaiminants
+```{r, fig.width=12, fig.height=4, echo = FALSE}
+
 colorset1 <- c('#0F726F','#B01833')
 
 if(generate_pdfs){
   pdf('./output/Apriori_genera.pdf',width=18, height=5)
 }
+
 par(mfrow=c(1,6))
-stripchart(list(all_microbe_data[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=alpha(colorset1,.5),main="Prevotella ( 838 )")
-print(wilcox.test(all_microbe_data[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value)
+stripchart(list(all_microbe_data[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=colorset1,main="Prevotella ( 838 )", ylim=c(0,1))
+text(c(2),c(.8),round(wilcox.test(all_microbe_data[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value,3))
+#print(wilcox.test(all_microbe_data[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value)
 
-stripchart(list(all_microbe_data[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=alpha(colorset1,.5),main="Veillonella ( 29465 )")
-print(wilcox.test(all_microbe_data[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value)
+stripchart(list(all_microbe_data[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=colorset1,main="Veillonella ( 29465 )", ylim=c(0,1))
+text(c(2),c(.8),round(wilcox.test(all_microbe_data[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value,3))
+#print(wilcox.test(all_microbe_data[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value)
 
-stripchart(list(all_microbe_data[c("Streptococcus ( 1301 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Streptococcus ( 1301 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=alpha(colorset1,.5),main="Streptococcus ( 1301 )")
-print(wilcox.test(all_microbe_data[c("Streptococcus ( 1301 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Streptococcus ( 1301 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value)
+stripchart(list(all_microbe_data[c("Streptococcus ( 1301 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Streptococcus ( 1301 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=colorset1,main="Streptococcus ( 1301 )", ylim=c(0,1))
+text(c(2),c(.8),round(wilcox.test(all_microbe_data[c("Streptococcus ( 1301 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Streptococcus ( 1301 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value,3))
 
-stripchart(list(all_microbe_data[c("Fusobacterium ( 848 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Fusobacterium ( 848 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=alpha(colorset1,.5),main="Fusobacterium ( 848 )")
-print(wilcox.test(all_microbe_data[c("Fusobacterium ( 848 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Fusobacterium ( 848 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value)
+stripchart(list(all_microbe_data[c("Fusobacterium ( 848 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Fusobacterium ( 848 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=colorset1,main="Fusobacterium ( 848 )", ylim=c(0,1))
+text(c(2),c(.8),round(wilcox.test(all_microbe_data[c("Fusobacterium ( 848 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Fusobacterium ( 848 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value,3))
 
-stripchart(list(all_microbe_data[c("Rothia ( 32207 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Rothia ( 32207 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=alpha(colorset1,.5),main="Rothia ( 32207 )")
-print(wilcox.test(all_microbe_data[c("Rothia ( 32207 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Rothia ( 32207 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value)
+stripchart(list(all_microbe_data[c("Rothia ( 32207 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Rothia ( 32207 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=colorset1,main="Rothia ( 32207 )", ylim=c(0,1))
+text(c(2),c(.8),round(wilcox.test(all_microbe_data[c("Rothia ( 32207 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Rothia ( 32207 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value,3))
 
-stripchart(list(all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=alpha(colorset1,.5),main="Neisseria ( 482 )")
-print(wilcox.test(all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value)
+stripchart(list(all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=colorset1,main="Neisseria ( 482 )", ylim=c(0,1))
+text(c(2),c(.8),round(wilcox.test(all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value,3))
+```
 
-# dev.off()
-#wilcox.test(all_microbe_data[metadata$effective_group == 1,][c("Neisseria ( 482 )"),as.character(unlist(metadata[c("TA_DNAseq_filename")]))],all_microbe_data[metadata$effective_group == 1,][c("Neisseria ( 482 )"),as.character(unlist(metadata[c("mBAL_DNAseq_filename")]))])
+Summary of Microbial Abundances in Tracheal Aspriate Samples:
+```{r, echo=FALSE}
+kable(as.matrix(summary(t(all_microbe_data[c("Prevotella ( 838 )","Veillonella ( 29465 )","Streptococcus ( 1301 )","Fusobacterium ( 848 )","Rothia ( 32207 )","Neisseria ( 482 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))]))),"markdown") #%>% 
+#  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```
 
+Summary of Microbial Abundances in mini-BAL Samples:
+```{r, echo=FALSE}
+kable(as.matrix(summary(t(all_microbe_data[c("Prevotella ( 838 )","Veillonella ( 29465 )","Streptococcus ( 1301 )","Fusobacterium ( 848 )","Rothia ( 32207 )","Neisseria ( 482 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]))),"markdown")# %>% 
+#  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```
 
+***
+
+### Analysis of a. priori oropharyngeal microbial contaminants 
+**(without removing things with < 1% abundance)**
+
+```{r, fig.width=12, fig.height=4, echo = FALSE}
+all_microbe_data_orig <- as.matrix(all_microbe_data_orig)
+
+par(mfrow=c(1,6))
+stripchart(list(all_microbe_data_orig[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data_orig[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=colorset1,main="Prevotella ( 838 )", ylim=c(0,1))
+text(c(2),c(.8),round(wilcox.test(all_microbe_data_orig[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data_orig[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value,3))
+#print(wilcox.test(all_microbe_data_orig[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data_orig[c("Prevotella ( 838 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value)
+
+stripchart(list(all_microbe_data_orig[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data_orig[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=colorset1,main="Veillonella ( 29465 )", ylim=c(0,1))
+text(c(2),c(.8),round(wilcox.test(all_microbe_data_orig[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data_orig[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value,3))
+#print(wilcox.test(all_microbe_data_orig[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data_orig[c("Veillonella ( 29465 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value)
+
+stripchart(list(all_microbe_data_orig[c("Streptococcus ( 1301 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data_orig[c("Streptococcus ( 1301 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=colorset1,main="Streptococcus ( 1301 )", ylim=c(0,1))
+text(c(2),c(.8),round(wilcox.test(all_microbe_data_orig[c("Streptococcus ( 1301 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data_orig[c("Streptococcus ( 1301 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value,3))
+
+stripchart(list(all_microbe_data_orig[c("Fusobacterium ( 848 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data_orig[c("Fusobacterium ( 848 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=colorset1,main="Fusobacterium ( 848 )", ylim=c(0,1))
+text(c(2),c(.8),round(wilcox.test(all_microbe_data_orig[c("Fusobacterium ( 848 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data_orig[c("Fusobacterium ( 848 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value,3))
+
+stripchart(list(all_microbe_data_orig[c("Rothia ( 32207 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data_orig[c("Rothia ( 32207 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=colorset1,main="Rothia ( 32207 )", ylim=c(0,1))
+text(c(2),c(.8),round(wilcox.test(all_microbe_data_orig[c("Rothia ( 32207 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data_orig[c("Rothia ( 32207 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value,3))
+
+stripchart(list(all_microbe_data_orig[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data_orig[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]),vertical=TRUE,jitter=.1,method='jitter',pch=16,cex=2,col=colorset1,main="Neisseria ( 482 )", ylim=c(0,1))
+text(c(2),c(.8),round(wilcox.test(all_microbe_data_orig[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data_orig[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value,3))
+```
+
+Summary of Microbial Abundances in Tracheal Aspriate Samples:
+```{r, echo=FALSE}
+kable(as.matrix(summary(t(all_microbe_data_orig[c("Prevotella ( 838 )","Veillonella ( 29465 )","Streptococcus ( 1301 )","Fusobacterium ( 848 )","Rothia ( 32207 )","Neisseria ( 482 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))]))),"markdown") #%>% 
+#  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```
+
+Summary of Microbial Abundances in mini-BAL Samples:
+```{r, echo=FALSE}
+kable(as.matrix(summary(t(all_microbe_data_orig[c("Prevotella ( 838 )","Veillonella ( 29465 )","Streptococcus ( 1301 )","Fusobacterium ( 848 )","Rothia ( 32207 )","Neisseria ( 482 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]))),"markdown") # %>% 
+#  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
 
@@ -959,189 +1130,14 @@ print(wilcox.test(all_microbe_data[c("Neisseria ( 482 )"),as.character(unlist(me
 
 
 
-#### PREVIOUS CODE
-Get stats for all patients
-
-```{r, include =FALSE}
-
-# relative_numbers <- FALSE
-# column_names <- c()     # column names for the relative_proportions MBAL/BOTH/TA plot
-# ta_diversity <- c()     # simpsons diversity values
-# mbal_diversity <- c()   
-# pearson <- c()       # correlations btwn TA v. MBAL samples
-# spearman <- c()     
-# IDs <- c()      # save the common sample IDs between the two groups
-# bcdist <- c()     # Bray-Curtis distance between MBAL and TA
-# jaccard <- c()     # Jaccard similarity btwn MBAL and TA
-# mbal_richness <- c()   # richness
-# ta_richness <- c()
-# mbal_burden <- c()   # burden
-# ta_burden <- c()
-# 
-# for(i in rownames(metadata)) {
-#   mbal_filename <- as.character(metadata[rownames(metadata) == i, ]$mBAL_DNAseq_filename)
-#   ta_filename <- as.character(metadata[rownames(metadata) == i, ]$TA_DNAseq_filename)
-#   
-#   print(mbal_filename)
-#   print(ta_filename)
-#   
-#   # sort mBAL samples and get names
-#   mbal <- sort(MBAL.microbes.norm[, c(mbal_filename)], decreasing = TRUE)
-#   mbal_names <- names(mbal[mbal > 0.01])   # only consider microbes with abundance > 1%
-#   
-#   if (ta_filename %in% colnames(TA.microbes.norm)) {
-#     IDs <- c(IDs, rownames(metadata[rownames(metadata) == i, ]))
-#     
-#     # sort TA samples and get names
-#     ta <-
-#     sort(TA.microbes.norm[, c(ta_filename)], decreasing = TRUE)
-#     ta_names <- names(ta[ta > 0.01])    # only consider microbes with abundance > 1%
-#     
-#     # create dataframes of top 10 from each TA/mBAL
-#     m <- as.data.frame(mbal[mbal > .01])
-#     colnames(m) <- c("mbal")
-#     t <- as.data.frame(ta[ta > .01])
-#     colnames(t) <- c("ta")
-#     merged <- merge(m, t, by = 0, all = TRUE)
-#     merged[is.na(merged)] <- 0
-#     print(merged)
-#     
-#     print(merged$mbal)
-#     print(merged$ta)
-#     
-#     # make sure that there are at least some non-zero reads - otherwise the distance metrics will fail. 
-#     # if a sample has all zeros, give it NA values for distance metrics
-#     if (sum(merged$mbal) > 0 && sum(merged$ta) > 0) {
-#       # save metrics - correlation and simpson's diversity
-#       pearson <-  c(pearson, cor(merged$mbal, merged$ta, method = "pearson"))
-#       spearman <- c(spearman, cor(merged$mbal, merged$ta, method = "spearman"))
-#       
-#       c <- cbind(MBAL.microbes.norm[, c(mbal_filename)], TA.microbes.norm[, c(ta_filename)])
-#       c <- c[rowMax(c) > .01, ]  # remove the rows with less than 1% of reads
-#       colnames(c) <- c(mbal_filename, ta_filename)
-#       bray_curtis_dist <- vegdist(t(c),method = "bray",binary = FALSE,diag = FALSE,upper = TRUE,na.rm = FALSE)
-#       bcdist <- c(bcdist, bray_curtis_dist)
-#     } else{
-#       pearson <- c(pearson, NA)
-#       spearman <- c(spearman, NA)
-#       bcdist <- c(bcdist, NA)
-#     }
-#     if (sum(merged$mbal) > 0) {
-#       mbal_diversity <- c(mbal_diversity, diversity(mbal, index = "simpson"))
-#     } else{
-#       mbal_diversity <- c(mbal_diversity, 0)
-#     }
-#     if (sum(merged$mbal) > 0) {
-#       ta_diversity <- c(ta_diversity, diversity(ta, index = "simpson"))
-#     } else{
-#       ta_diversity <- c(ta_diversity, 0)
-#     }
-#     
-#     jaccard_dist <- vegdist(t(c),method = "jaccard",binary = FALSE,diag = FALSE,upper = TRUE,na.rm = FALSE)
-#     jaccard <- c(jaccard, jaccard_dist)
-#     mbal_richness <- c(mbal_richness, length(mbal[mbal > 0]))
-#     ta_richness <- c(ta_richness, length(ta[ta > 0]))
-#     mbal_burden <- c(mbal_burden, sum(MBAL.microbes[, c(mbal_filename)]))
-#     ta_burden <- c(ta_burden, sum(TA.microbes[, c(ta_filename)]))
-#     
-#     shared <- intersect(as.vector(mbal_names), as.vector(ta_names))
-#     mbal_specific <- setdiff(mbal_names, ta_names) #gives the number that are present only in mbal_set
-#     ta_specific <- setdiff(ta_names, mbal_names)  #gives the number that are present only in ta_set
-#     
-#     if (length(relative_numbers) < 3) {
-#       relative_numbers <- c(length(ta_specific), length(shared),length(mbal_specific))
-#     } else{
-#     relative_numbers <- cbind(relative_numbers, c(length(ta_specific),length(shared), length(mbal_specific)
-#     ))
-#   }
-#   cbind(relative_numbers, c(ta_specific, shared, mbal_specific))
-#   
-#   relative_numbers <- as.matrix(relative_numbers)
-#   rownames(relative_numbers) <- c("TA", "BOTH", "MBAL")
-#   column_names <- c(column_names, mbal_filename[1])
-#   colnames(relative_numbers) <- column_names
-#   
-#   }
-#   
-# }
-# diversity_matrix <- cbind(mbal_diversity,ta_diversity)
-# rownames(diversity_matrix) <- IDs
-# names(pearson) <- IDs
-# names(spearman) <- IDs
-# names(bcdist) <- IDs
-# names(jaccard) <- IDs
-# names(ta_richness) <- IDs
-# names(mbal_richness) <- IDs
-# names(mbal_burden) <- IDs
-# names(ta_burden) <- IDs
-# 
-# wilcox.test(mbal_burden,ta_burden)
-# wilcox.test(mbal_richness,ta_richness)
-# 
-# 
-# print(pearson)
-# print(spearman)
-# print(bcdist)
-# print(ta_richness)
-# print(mbal_richness)
-# print(cor(diversity_matrix))
-# 
-# 
-# stripchart(list(pearson[names(pearson) %in% rownames(metadata[metadata$effective_group==1,])],
-#            pearson[names(pearson) %in% rownames(metadata[metadata$effective_group==2,])],
-#            pearson[names(pearson) %in% rownames(metadata[metadata$effective_group==3,])],
-#            pearson[names(pearson) %in% rownames(metadata[metadata$effective_group==4,])]),method='jitter',jitter=.1, vertical = TRUE)
-# 
-# stripchart(list(spearman[names(spearman) %in% rownames(metadata[metadata$effective_group==1,])],
-#            spearman[names(spearman) %in% rownames(metadata[metadata$effective_group==2,])],
-#            spearman[names(spearman) %in% rownames(metadata[metadata$effective_group==3,])],
-#            spearman[names(spearman) %in% rownames(metadata[metadata$effective_group==4,])]),method='jitter',jitter=.1, vertical = TRUE)
-# 
-# 
-# stripchart(list(mbal_richness[names(mbal_richness) %in% rownames(metadata[metadata$effective_group==1,])],mbal_richness[names(mbal_richness) %in% rownames(metadata[metadata$effective_group==2,])],mbal_richness[names(mbal_richness) %in% rownames(metadata[metadata$effective_group==3,])],mbal_richness[names(mbal_richness) %in% rownames(metadata[metadata$effective_group==4,])] ),method='jitter',jitter=.15,vertical=TRUE,cex=1.2,pch=1)
-# 
-# stripchart(list(bcdist[names(bcdist) %in% rownames(metadata[metadata$effective_group==1,])],bcdist[names(bcdist) %in% rownames(metadata[metadata$effective_group==2,])],bcdist[names(bcdist) %in% rownames(metadata[metadata$effective_group==3,])],bcdist[names(bcdist) %in% rownames(metadata[metadata$effective_group==4,])] ),method='jitter',jitter=.15,vertical=TRUE,cex=1.2,pch=1)
-# 
-# stripchart(list(
-# mbal_richness[names(mbal_richness) %in% rownames(metadata[metadata$effective_group==1,])],
-# ta_richness[names(ta_richness) %in% rownames(metadata[metadata$effective_group==1,])],
-# mbal_richness[names(mbal_richness) %in% rownames(metadata[metadata$effective_group==2,])],
-# ta_richness[names(ta_richness) %in% rownames(metadata[metadata$effective_group==2,])],
-# mbal_richness[names(mbal_richness) %in% rownames(metadata[metadata$effective_group==3,])],
-# ta_richness[names(ta_richness) %in% rownames(metadata[metadata$effective_group==3,])],
-# mbal_richness[names(mbal_richness) %in% rownames(metadata[metadata$effective_group==4,])],
-# ta_richness[names(ta_richness) %in% rownames(metadata[metadata$effective_group==4,])] )
-# ,method='jitter',jitter=.15,vertical=TRUE,cex=1.2,pch=1,main="mbal and ta richness across all 4 patient groupings")
-# 
-# 
-# par(mar=c(10,3,2,2))
-# barplot(relative_numbers, col=c("gray80","navyblue","gray60"),las=2,main="Microbes Identified in DNA-seq by TA and/or mBAL")
-# 
-# par(mar=c(10,3,2,2))
-# barplot(t(t(relative_numbers)/colSums(relative_numbers)), col=c("gray80","navyblue","gray60"),las=2)
-```
-
-```{r, fig.height=3, fig.width=10, include = FALSE}
-
-# g1 <- relative_numbers[,colnames(relative_numbers) %in% metadata[metadata$effective_group==1,]$mBAL_DNAseq_filename]
-# g2 <- relative_numbers[,colnames(relative_numbers) %in% metadata[metadata$effective_group==2,]$mBAL_DNAseq_filename]
-# g3 <- relative_numbers[,colnames(relative_numbers) %in% metadata[metadata$effective_group==3,]$mBAL_DNAseq_filename]
-# g4 <- relative_numbers[,colnames(relative_numbers) %in% metadata[metadata$effective_group==4,]$mBAL_DNAseq_filename]
-# 
-# par(mfrow=c(1,4))
-# barplot(t(t(g1)/colSums(g1)), col=c("gray80","navyblue","gray60"),las=2)
-# barplot(t(t(g2)/colSums(g2)), col=c("gray80","navyblue","gray60"),las=2)
-# barplot(t(t(g3)/colSums(g3)), col=c("gray80","navyblue","gray60"),las=2)
-# barplot(t(t(g4)/colSums(g4)), col=c("gray80","navyblue","gray60"),las=2)
-# 
-# print(wilcox.test(t(t(g1)/colSums(g1))[c("BOTH"),],t(t(g3)/colSums(g3))[c("BOTH"),])$p.value)
-# print(wilcox.test(t(t(g1)/colSums(g1))[c("BOTH"),],t(t(g4)/colSums(g4))[c("BOTH"),])$p.value)
-# 
 
 
 
 
-```
+
+
+
+
 
 
 
