@@ -16,6 +16,7 @@ library(knitr)
 library(viridis)
 library(ggplot2)
 library(kableExtra)
+options(knitr.table.format = "html") 
 
 generate_pdfs = FALSE
 ```
@@ -62,15 +63,19 @@ metadata <- read.csv('./data/020718/tavmbal_metadata_noviruses.tsv', sep='\t', r
 ```
 
 
-The raw microbe data appeared as follows (showing the first 20 rows): 
+The raw microbe data appeared as follows (showing only the first 5 rows): 
 ```{r, echo = FALSE}
-kable(head(all_microbe_data, n=20), "markdown" ) #%>% 
+kable(head(all_microbe_data, n=5), "markdown" ) #%>% 
   #kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
   #scroll_box(width = "900px", height = "200px")
 ```
  
 
 And the metadata was:
+
+Note, that effective_group = 1 refers to samples indicated as PNA-pos (unequivocal pneumonia-positive) in the manuscript and effective_group = 4 refers to samples indicated as PNA-neg (unequivocal pneumonia-negative, with clear alternative cause for respiratory failure). "effective_group"'s 2 and 3 are lumped together to form the PNA-unk (pneumonia-unknown) group. 
+
+For more information on the adjudication process, refer to "Cohort Summary" below.
 ```{r, echo = FALSE}
 kable(metadata, "markdown") #%>% 
   #kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
@@ -87,13 +92,15 @@ Two-physician adjudication was used to identify subjects with culture-confirmed 
  
 Adjudication is noted in the analysis under the following categories:
 
-Group 1 = "PNA-pos", Definite bacterial pneumonia
+Group 1 = **"PNA-pos"**, Definite bacterial pneumonia
 
-Group 2 = Probable Lower Respiratory Tract Infection, but negative clinical microbiology
+**"PNA-unk"**, pneumonia unknown (all patients not in PNA-pos or PNA-neg, grouped together for the purpose of comparing sample types)
 
-Group 3 = Unknown
+Group 2 = Probable Lower Respiratory Tract Infection, but negative clinical microbiology; AND definite viral pneumonia cases (ie pt 205, 228, 295) where infection with RNA virus could not be detected by DNA-seq. 
 
-Group 4 = "PNA-neg", Definitely no LRTI, with clear alternative explanation for acute respiratory failure
+Group 3 = Unknown LRTI status.
+
+Group 4 = **"PNA-neg"**, Definitely no LRTI, with clear alternative explanation for acute respiratory failure
 
 
 The distribution of patients is as follows:
@@ -147,6 +154,7 @@ kable(t(as.matrix(summary(burden[names(burden) %in% as.character(unlist(metadata
   kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),full_width=F)
 ```
 
+Wilcox rank sum p-value for comparing microbial burden in TA v. mBAL
 ```{r, echo=FALSE}
 # TOTAL BURDEN (all TA v all mBAL)
 wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effective_group %in% c(1,2,3,4),]["TA_DNAseq_filename"]))],
@@ -157,7 +165,7 @@ wilcox.test(burden[names(burden) %in% as.character(unlist(metadata[metadata$effe
 
 ### Analysis of microbial community proportions
 
-#### Create data splits, normalize microbe counts by Total Sum Scaling, and remove low-level microbes < 1% of total reads.
+#### Create data splits, normalize microbe counts by Total Sum Scaling, and group all low-level microbes < 1% of total reads into "Other".
 Separate MBAL and TA into dataframes, normalize the microbial data into proportions, and separate out group 1.
 
 ```{r}
@@ -177,7 +185,9 @@ group1.TA.microbes <- all_microbe_data[,colnames(all_microbe_data) %in% group1.T
 group1.TA.microbes.norm <- t(t(group1.TA.microbes)/colSums(group1.TA.microbes))
 
 all_microbe_data.microbes.norm <- t(t(all_microbe_data)/colSums(all_microbe_data)) # normalize (TSS)
-write.csv(all_microbe_data.microbes.norm, "./output/TableS2.tsv", sep="\t", quote=FALSE) # save file for publication
+
+write.csv(all_microbe_data.microbes.norm, "./output/TableS3.tsv", sep="\t", quote=FALSE) # save normalized data for manuscript prior to filtering microbes with < 1% per sample
+
 all_microbe_data_orig <- all_microbe_data.microbes.norm  # re-assign variable so we have a copy with non-normalized values
 all_microbe_data.microbes.norm[all_microbe_data.microbes.norm<.01] <- 0  # remove microbes present at < 1% abundance
 new <- rbind(all_microbe_data.microbes.norm, c(1-colSums(all_microbe_data.microbes.norm)))  # add "Other" category
@@ -186,15 +196,14 @@ all_microbe_data <- new
 
 ```
 
-Set colors to be used in genus-abundance barplots
-```{r}
-bp <- c('aquamarine3','bisque3','blue','blue4','darkolivegreen3','darkred','darksalmon','darkslateblue',
-        'darkslategray','blueviolet','brown','brown2','darkgoldenrod','darkgoldenrod1','royalblue1',
-        'chocolate1','coral2','chartreuse4','chartreuse','cadetblue3','darkkhaki','darkmagenta','deepskyblue',
-        'darkorchid1','darkorange1','greenyellow','forestgreen','dodgerblue1','firebrick2','gold1',
-        'deeppink','deeppink3','mediumpurple','cornsilk3','cornsilk4','cyan','bisque4','gray39','black','hotpink4')
-```
+The normalized data (without removing microbes present at abundance < 1%) is reported in TableS3 of the manuscript, but here we show the per-sample proportions of the top 10 most abundant genera across the cohort after grouping all microbes present at abundance < 1% into the "Other" category:
 
+Note: this is still different from the "Other" values reported in FigureS1, which includes rpm values for all microbes not in the top 39 most abundant microbes.
+```{r}
+kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE),n=20)),], "markdown" ) #%>% 
+  #kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  #scroll_box(width = "900px", height = "200px")
+```
 
 ***
 
@@ -217,9 +226,9 @@ all_microbe_data <- all_microbe_data[,!is.na(colSums(all_microbe_data))]
 mbal_phyla <- all_microbe_data[,colnames(all_microbe_data) %in% MBAL]
 ta_phyla <- all_microbe_data[,colnames(all_microbe_data) %in% TA]
 
-if(generate_pdfs){
-  pdf('./output/genus_analysis.pdf',width=16,height=6)
-}
+#if(generate_pdfs){
+#  pdf('./output/genus_analysis.pdf',width=16,height=6)
+#}
 
 full_correlations <- vector("list",length=4)
 full_bc <- vector("list",length=4)
@@ -247,7 +256,7 @@ for(j in c(1,2,3,4)){
     if(metadata[rownames(metadata) == i,]$effective_group == j){
     
       # genus barplot
-      barplot(as.matrix(all_microbe_data[,c(mbal_filename,ta_filename)]),col=bp,cex.axis = .6,main=i,names.arg = c("mBAL","TA"))
+      #barplot(as.matrix(all_microbe_data[,c(mbal_filename,ta_filename)]),col=bp,cex.axis = .6,main=i,names.arg = c("mBAL","TA"))
       file_pair_order <- c(file_pair_order, mbal_filename, ta_filename)
       
       # pairwise pearson correlation - 1 value per patient
@@ -292,15 +301,87 @@ full_richness[[j+1+(j-1)]] <- ta_richness
 
 ```{r, echo = FALSE}
 
+# if(generate_pdfs){
+#   dev.off()
+# }
+# 
+# if(generate_pdfs){
+#   pdf('./output/genus_analysis.legend.pdf',height=20)
+#   barplot(as.matrix(all_microbe_data[,c(mbal_filename,ta_filename)]),col=bp,cex.axis = .6,main=i,names.arg = c("mBAL","TA"),legend=TRUE)
+# }
+
+```
+
+### Genus-level sample composition barcharts
+
+Set colors to be used in genus-abundance barplots
+```{r}
+bp <- c('aquamarine3','bisque3','blue','blue4','darkolivegreen3','darkred','darksalmon','darkslateblue',
+        'darkslategray','blueviolet','brown','brown2','darkgoldenrod','darkgoldenrod1','royalblue1',
+        'chocolate1','coral2','chartreuse4','chartreuse','cadetblue3','darkkhaki','darkmagenta','deepskyblue',
+        'darkorchid1','darkorange1','greenyellow','forestgreen','dodgerblue1','firebrick2','gold1',
+        'deeppink','deeppink3','mediumpurple','cornsilk3','cornsilk4','cyan','bisque4','gray39','black','hotpink4')
+```
+
+Create a genus-level barplot for each sample. Since we have limited the color palette to only 40 colors, we want anything that isn't in the length of the list of colors (top 39 most abundant microbes in the cohort) to be included in the "Other" category. The "Other" category also includes rpm values for any microbes that are present at < 1% of that particular sample (even if they are of a genera that is in the top 39 most abundant)
+```{r,fig.width=12,fig.height=6}
+generate_pdfs = FALSE #TRUE
+
+file_pair_order <- c()
+bp <- bp[shuffle(bp)]
+
+all_microbe_data <- all_microbe_data[order(rowSums(all_microbe_data),decreasing=F),]
+all_microbe_data <- all_microbe_data[,!is.na(colSums(all_microbe_data))]
+mbal_phyla <- all_microbe_data[,colnames(all_microbe_data) %in% MBAL]
+ta_phyla <- all_microbe_data[,colnames(all_microbe_data) %in% TA]
+
+if(generate_pdfs){
+  pdf('./output/genus_analysis.pdf',width=16,height=6)
+}
+
+for(j in c(1,2,3,4)){
+  
+  par(mfrow=c(2,9))
+  
+  for( i in rownames(metadata)){
+  mbal_filename <- as.character(metadata[rownames(metadata) == i,]$mBAL_DNAseq_filename)
+  ta_filename <- as.character(metadata[rownames(metadata) == i,]$TA_DNAseq_filename)
+  
+  if(!is.na(metadata[rownames(metadata) == i,]$effective_group)){
+    
+    if(metadata[rownames(metadata) == i,]$effective_group == j){
+    
+      # genus barplot
+      
+      # get the TA and MBAL sample into a subset of the original matrix
+      barplot_sub <- as.matrix(all_microbe_data[,c(mbal_filename,ta_filename)])  
+      
+      # add all microbes not in the top 39 most abundant to the "Other" variable
+      barplot_sub[c("Other"),] <- barplot_sub[c("Other"),] + colSums(barplot_sub[!(rownames(barplot_sub) %in% names(head(sort(rowSums(all_microbe_data), decreasing=TRUE),length(bp)))),])
+      
+      # subset to the top 40 (39 microbes + 1 Other)
+      barplot_sub <- barplot_sub[rownames(barplot_sub) %in% names(head(sort(rowSums(all_microbe_data), decreasing=TRUE),length(bp))),]
+      
+      # plot it
+      barplot(barplot_sub,col=bp,cex.axis = .6,main=i,names.arg = c("mBAL","TA"))
+
+      file_pair_order <- c(file_pair_order, mbal_filename, ta_filename)
+      
+    }  
+  }
+}
+}
+```
+
+```{r}
 if(generate_pdfs){
   dev.off()
 }
 
 if(generate_pdfs){
   pdf('./output/genus_analysis.legend.pdf',height=20)
-  barplot(as.matrix(all_microbe_data[,c(mbal_filename,ta_filename)]),col=bp,cex.axis = .6,main=i,names.arg = c("mBAL","TA"),legend=TRUE)
+  barplot(as.matrix(all_microbe_data[rownames(all_microbe_data) %in% names(head(sort(rowSums(all_microbe_data), decreasing=TRUE),length(bp))),c(mbal_filename,ta_filename)]),col=bp,cex.axis = .6,main=i,names.arg = c("mBAL","TA"),legend=TRUE)
 }
-
 ```
 
 
@@ -314,45 +395,6 @@ barplot(all_microbe_data[,file_pair_order],col=brewer.pal(n = 30, name = "Paired
 dev.off()
 ```
 
-***
-
-### Per-patient Pearson Correlation
-We evaluate the pearson correlation between mBAL and TA samples from the same individual.
-
-```{r, results="hide", include=FALSE}
-if(generate_pdfs){
-  pdf('./output/genus.pearson.pdf',height=5, width=5)
-}
-names(full_correlations) <- c("Group 1","Group 2", "Group 3", "Group 4")
-stripchart(full_correlations,method='jitter',jitter=.1,vertical=T,col='navyblue',pch=16,cex=2,main="Pearson Correlation by Patient Group",xlab="Patient Group", ylab="Pearson Correlation")
-# dev.off()
-
-#Overall correlation is variable
-print(paste("mean pearson correlation over all group: ",mean(unlist(full_correlations))))
-print(paste("sd pearson corr over all groups: ",sd(unlist(full_correlations))))
-
-#But correlation in group 1 is much higher than correlation in group 4
-print(paste("mean pearson correlation over group1: ",mean(full_correlations[[1]])))
-print(paste("sd pearson corr over group 1: ",sd(full_correlations[[1]])))
-print(paste("mean pearson correlation over group2: ",mean(full_correlations[[2]])))
-print(paste("sd pearson corr over group 2: ",sd(full_correlations[[2]])))
-print(paste("mean pearson correlation over group3: ",mean(full_correlations[[3]])))
-print(paste("sd pearson corr over group 3: ",sd(full_correlations[[3]])))
-print(paste("mean pearson correlation over group4: ",mean(full_correlations[[4]])))
-print(paste("sd pearson corr over group 4: ",sd(full_correlations[[4]])))
-```
-
-Summary of Per-patient, Pearson Correlation between mBAL and TA:
-```{r}
-#print(summary(unlist(full_correlations)))
-kable(t(as.matrix(summary(unlist(full_correlations)))), "markdown") %>%
-  kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),full_width=F)#,position = "float_right")
-```
-
-We note that there is a difference in the genus-level pearson correlation between Group 1 and Group 4 individuals.
-```{r}
-wilcox.test(full_correlations[[1]],full_correlations[[4]])
-```
 
 ***
 
@@ -525,9 +567,56 @@ diff.corr <- function( r1, n1, r2, n2 ){
 
 ***
 
+### Per-patient Pearson Correlation
+We evaluate the pearson correlation between mBAL and TA samples from the same individual. Here we obtain a single correlation value per patient. Then, we evaluate the difference in pearson correlation values for patients in PNA-pos versus PNA-neg patients.
+
+Note: this analysis was ultimately not included in the manuscript, however is consistent with the conclusions of the above analysis of "microbe pearson correlation, regardless of patient ID" - indicating that correlation is stronger between TA and mBAL sampels in PNA-pos patients, likely drivent by high abundance of few microbes in the context of an infection.
+
+```{r, results="hide", include=FALSE}
+if(generate_pdfs){
+  pdf('./output/genus.pearson.pdf',height=5, width=5)
+}
+names(full_correlations) <- c("Group 1","Group 2", "Group 3", "Group 4")
+stripchart(full_correlations,method='jitter',jitter=.1,vertical=T,col='navyblue',pch=16,cex=2,main="Pearson Correlation by Patient Group",xlab="Patient Group", ylab="Pearson Correlation")
+# dev.off()
+
+#Overall correlation is variable
+print(paste("mean pearson correlation over all group: ",mean(unlist(full_correlations))))
+print(paste("sd pearson corr over all groups: ",sd(unlist(full_correlations))))
+
+#But correlation in group 1 is much higher than correlation in group 4
+print(paste("mean pearson correlation over group1: ",mean(full_correlations[[1]])))
+print(paste("sd pearson corr over group 1: ",sd(full_correlations[[1]])))
+print(paste("mean pearson correlation over group2: ",mean(full_correlations[[2]])))
+print(paste("sd pearson corr over group 2: ",sd(full_correlations[[2]])))
+print(paste("mean pearson correlation over group3: ",mean(full_correlations[[3]])))
+print(paste("sd pearson corr over group 3: ",sd(full_correlations[[3]])))
+print(paste("mean pearson correlation over group4: ",mean(full_correlations[[4]])))
+print(paste("sd pearson corr over group 4: ",sd(full_correlations[[4]])))
+```
+
+Summary of Per-patient, Pearson Correlation between mBAL and TA:
+```{r}
+#print(summary(unlist(full_correlations)))
+kable(t(as.matrix(summary(unlist(full_correlations)))), "markdown") %>%
+  kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),full_width=F)#,position = "float_right")
+```
+
+We note that there is a difference in the genus-level pearson correlation between Group 1 and Group 4 individuals.
+```{r}
+wilcox.test(full_correlations[[1]],full_correlations[[4]])
+```
+
+
+***
+
 ### Genus-level Bray-Curtis Distance: 
 
 We evaluate the Bray-curtis community similarity metric between mBAL and TA samples from the same individual, and evaluate significance using the PERMANOVA test.
+
+For reference, PERMANOVA (Permutational multivariate analysis of variance), as definted by Wikipedia is: a non-parametric multivariate statistical test. PERMANOVA is used to compare groups of objects and test the null hypothesis that the centroids and dispersion of the groups as defined by measure space are equivalent for all groups. A rejection of the null hypothesis means that either the centroid and/or the spread of the objects is different between the groups. Hence the test is based on the prior calculation of the distance between any two objects included to the experiment.
+
+In studies ecology studies, the Bray-Curtis community similarity metric is a beta diversity metirc used to quantify the dissimilarity between two different sites based on counts of organisms at each site. In this case, we evaluate TA and mBAL as two distinct sites and use Bray-Curtis distance as the input to the PERMANOVA analysis.
 
 ```{r, include = FALSE}
 #if(generate_pdfs){
@@ -712,6 +801,7 @@ print(permanova_result_g4)
 ```
 
 
+While no split (all data, PNA-pos only, or PNA-neg only) achieves statistical significantly differences in beta diversity, we note that the PNA-negative samples trend towards more distinct beta diversity in mBAL v. TA samples. Meanwhile, PNA-positive samples show a much more similar beta diversity.
 
 
 ```{r, include = FALSE}
@@ -803,7 +893,7 @@ if(generate_pdfs){
 f <- full_Shannons[c(1,7,2,8)]
 names(f) <- c("Group 1\nMBAL","Group 4\nMBAL","Group 1\nTA", "Group 4\nTA")
 boxplot(f,cex.axis=.5,main="Shannon Diversity by Sample Type and Patient Group",xlab="Patient Group", ylab="Shannon Diversity Index",cex.main=.8)
-stripchart(f,method='jitter',jitter=.1,vertical=T,col='navyblue',pch=17,cex=1,add=T)
+stripchart(f,method='jitter',jitter=.1,vertical=T,col=c('red','navyblue','red','navyblue'),pch=17,cex=1,add=T)
 # dev.off()
 ```
 
@@ -920,6 +1010,7 @@ overlap_both <- c()
 rank_list_mbal <- c()
 rank_list_ta <- c()
 cummulative_pathos <- c()
+sample_ids <- c()
 
 plot(c(.5,2.5),c(0,1),main="Proportion of Sample",ylab="Proportion of Sample",xlab="TA (1) v. mBAL (2)")
 for( i in rownames(metadata)){
@@ -957,6 +1048,7 @@ for( i in rownames(metadata)){
         rank_list_mbal <- c(rank_list_mbal,rank_mbal)
         rank_list_ta <- c(rank_list_ta, rank_ta)
         cummulative_pathos <- c(cummulative_pathos, patholist)
+        sample_ids <- c(sample_ids, rep(strsplit(mbal_filename,"[.]")[[1]][2],length(patholist)))
         
         #move these lines here if you want to only include the pathogens in the barplot
         mbal_names <- mbal_names[mbal_names %in% patholist]
@@ -1016,20 +1108,19 @@ colnames(relative_numbers) <- IDs
 barplot(relative_numbers, col=c("gray80","navyblue","gray50"),main="Microbes Identified in DNA-seq by TA and/or mBAL",legend=TRUE,cex.main=.8,ylab="# of Pathogens Cultured",xlab="Patient ID",cex.axis=.6, las=2)
 # dev.off()
 
-#par(mar=c(10,3,2,2))
-#barplot(t(t(relative_numbers)/colSums(relative_numbers)), col=c("gray80","navyblue","gray60"),las=2)
-
-write.csv(as.data.frame(cbind(cummulative_pathos,rank_list_mbal,rank_list_ta)),'./output/ranks_by_sample_type.tsv',quote=F)
-kable(as.data.frame(cbind(cummulative_pathos,rank_list_mbal,rank_list_ta)), "markdown") %>% 
+write.csv(as.data.frame(cbind(sample_ids,cummulative_pathos,rank_list_mbal,rank_list_ta)),'./output/ranks_by_sample_type.tsv',quote=F)
+kable(as.data.frame(cbind(sample_ids,cummulative_pathos,rank_list_mbal,rank_list_ta)), "markdown") %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
 *** 
 
-
-
-
 ### Analysis of a. priori selected oropharyngeal microbe contaiminants
+
+Oropharyngeal contaminant microbes were selected a. priori from this paper: 
+Dickson, R. P. et al. Bacterial Topography of the Healthy Human Lower Respiratory Tract. mBio 8, (2017).
+In which they describe bacterial taxa identified by 16S amplicon sequencing in the airway from 1. Oral rinse, 2. Protected specimen brush, 3. Bronchoalveolar lavage.
+
 ```{r, fig.width=12, fig.height=4, echo = FALSE}
 
 colorset1 <- c('#0F726F','#B01833')
@@ -1074,10 +1165,12 @@ kable(as.matrix(summary(t(all_microbe_data[c("Prevotella ( 838 )","Veillonella (
 
 ***
 
-### Analysis of a. priori oropharyngeal microbial contaminants 
-**(without removing things with < 1% abundance)**
+```{r, fig.width=12, fig.height=4, echo = FALSE, include=FALSE}
+# ### Analysis of a. priori oropharyngeal microbial contaminants 
+# **(without removing things with < 1% abundance)**
+# 
+# Note: this analysis was not included in the manuscript for the sake of consistency with the other analyses.
 
-```{r, fig.width=12, fig.height=4, echo = FALSE}
 all_microbe_data_orig <- as.matrix(all_microbe_data_orig)
 
 par(mfrow=c(1,6))
@@ -1102,14 +1195,14 @@ stripchart(list(all_microbe_data_orig[c("Neisseria ( 482 )"),as.character(unlist
 text(c(2),c(.8),round(wilcox.test(all_microbe_data_orig[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))],all_microbe_data_orig[c("Neisseria ( 482 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))])$p.value,3))
 ```
 
-Summary of Microbial Abundances in Tracheal Aspriate Samples:
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
+# Summary of Microbial Abundances in Tracheal Aspriate Samples:
 kable(as.matrix(summary(t(all_microbe_data_orig[c("Prevotella ( 838 )","Veillonella ( 29465 )","Streptococcus ( 1301 )","Fusobacterium ( 848 )","Rothia ( 32207 )","Neisseria ( 482 )"),as.character(unlist(metadata[,c("TA_DNAseq_filename")]))]))),"markdown") #%>% 
 #  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-Summary of Microbial Abundances in mini-BAL Samples:
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
+# Summary of Microbial Abundances in mini-BAL Samples:
 kable(as.matrix(summary(t(all_microbe_data_orig[c("Prevotella ( 838 )","Veillonella ( 29465 )","Streptococcus ( 1301 )","Fusobacterium ( 848 )","Rothia ( 32207 )","Neisseria ( 482 )"),as.character(unlist(metadata[,c("mBAL_DNAseq_filename")]))]))),"markdown") # %>% 
 #  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
