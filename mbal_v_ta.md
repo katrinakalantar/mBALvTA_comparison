@@ -1,7 +1,7 @@
 MBAL vs. TA comparison
 ================
 Katrina Kalantar
-2018-03-12
+2018-03-13
 
 **Relevant Definitions:**
 
@@ -3914,7 +3914,360 @@ For reference, PERMANOVA (Permutational multivariate analysis of variance), as d
 
 In studies ecology studies, the Bray-Curtis community similarity metric is a beta diversity metirc used to quantify the dissimilarity between two different sites based on counts of organisms at each site. In this case, we evaluate TA and mBAL as two distinct sites and use Bray-Curtis distance as the input to the PERMANOVA analysis.
 
-**PERMANOVA Analysis** ![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-28-1.png)
+**PERMANOVA Analysis**
+
+``` r
+output <- c("./output/")
+
+par(mfrow=c(1,3))
+
+set.seed(5)
+
+BC <- as.matrix(vegan::vegdist(t(all_microbe_data),method="bray"))#as.matrix()
+example_NMDS <- vegan::metaMDS(BC,k=2,trymax=1000)
+# plot solution 
+x <- example_NMDS$points[,1]
+y <- example_NMDS$points[,2]
+names(x) %in% metadata$mBAL_DNAseq_filename
+
+#Here is an example of how to run a permanova test using the adonis function in vegan. 
+
+# generate a matrix with the group ID (mBAL versus TA)
+a <-(as.integer(names(x) %in% metadata$mBAL_DNAseq_filename)+1)
+names(a) <- names(x)
+a <- as.data.frame(a)
+colnames(a) <- c("group")
+a <- cbind(a,a)
+colnames(a) <- c("group","x")
+a$group <- as.factor(a$group)
+kable(head(a, n=5), "markdown" ) 
+permanova_result_ALL <- vegan::adonis2(BC~group, a, permutations = 999) # this is the main PERMANOVA function
+
+# Plot the NMDS projection
+if(generate_pdfs){
+pdf(paste(output,"BrayCurtisPermanova.pdf"),height=6, width=6) 
+}
+plot(x, y, xlab="Coordinate 1", ylab="Coordinate 2", 
+  main="NMDS of ALL mBAL and TA Samples\nusing Bray-Curtis Dissimilarity",col=c(rgb(244,73,19,maxColorValue = 255),rgb(51,60,163,maxColorValue = 255))[as.integer(names(x) %in% metadata$mBAL_DNAseq_filename) + 1], pch=c(17,15)[as.integer(names(x) %in% c(as.character(metadata[metadata$effective_group==1,c("mBAL_DNAseq_filename")]),as.character(metadata[metadata$effective_group==1,c("TA_DNAseq_filename")]))
+) + 1],font.main = 1, cex.axis=.8,cex.main=.8)
+vegan::ordispider(example_NMDS, group=a$group, show="1", col=rgb(244,73,19,maxColorValue = 255), kind="se",conf=0.95)
+vegan::ordispider(example_NMDS, group=a$group, show="2", col=rgb(51,60,163,maxColorValue = 255), kind="se",conf=0.95)
+#text(-.2,.4,"p > .1",cex=.8)
+text(-.2,.23,"mini-BAL",cex=.6,col=rgb(51,60,163,maxColorValue = 255))
+text(.3,-.23,"Tracheal Aspriate",cex=.6, col=rgb(244,73,19,maxColorValue = 255))
+text(x, y, labels = sapply(strsplit(names(x),"[.]"),"[",2), cex=.5)
+if(generate_pdfs){
+dev.off()
+}
+
+
+
+# Bray-curtis for just the group 1 samples
+
+set.seed(5)
+g1_only <- metadata[metadata$effective_group==1,]
+
+BC <- as.matrix(vegan::vegdist(t(all_microbe_data[,colnames(all_microbe_data) %in% as.character(unlist(g1_only[,c("mBAL_DNAseq_filename","TA_DNAseq_filename")]))]),method="bray"))#as.matrix()
+example_NMDS <- vegan::metaMDS(BC,k=2,trymax=1000)
+# plot solution 
+x <- example_NMDS$points[,1]
+y <- example_NMDS$points[,2]
+names(x) %in% metadata$mBAL_DNAseq_filename
+
+#Here is an example of how to run a permanova test using the adonis function in vegan. 
+a <-(as.integer(names(x) %in% metadata$mBAL_DNAseq_filename)+1)
+names(a) <- names(x)
+a <- as.data.frame(a)
+colnames(a) <- c("group")
+a <- cbind(a,a)
+colnames(a) <- c("group","x")
+a$group <- as.factor(a$group)
+kable(head(a, n=5), "markdown" ) 
+permanova_result_g1 <- vegan::adonis2(BC~group, a, permutations = 999) # this is the main PERMANOVA function
+
+
+# plot of NMDS projection
+if(generate_pdfs){
+pdf(paste(output,"BrayCurtisPermanova_g1.pdf"),height=6, width=6) 
+}
+#plot(x, y, xlab="Coordinate 1", ylab="Coordinate 2", 
+#  main="NMDS of mini-BAL and Tracheal Aspirate Samples\nusing Bray-Curtis Dissimilarity", col=alpha(c("green2","grey29")[as.integer(names(x) %in% metadata$mBAL_DNAseq_filename) + 1],.5), pch=16,font.main = 1, #cex.axis=.8,cex.main=.8)
+plot(x, y, xlab="Coordinate 1", ylab="Coordinate 2", 
+  main="NMDS of PNA-pos mBAL and TA Samples\nusing Bray-Curtis Dissimilarity", col=c(rgb(244,73,19,maxColorValue = 255),rgb(51,60,163,maxColorValue = 255))[as.integer(names(x) %in% metadata$mBAL_DNAseq_filename) + 1], pch=17,font.main = 1, cex.axis=.8,cex.main=.8, cex=1.2)
+vegan::ordispider(example_NMDS, group=a$group, show="1", col=rgb(244,73,19,maxColorValue = 255), kind="se",conf=0.95)
+vegan::ordispider(example_NMDS, group=a$group, show="2", col=rgb(51,60,163,maxColorValue = 255), kind="se",conf=0.95)
+#text(-.2,.4,"p > .1",cex=.8)
+text(-.2,.23,"mini-BAL",cex=.6,col=rgb(51,60,163,maxColorValue = 255))
+text(.3,-.23,"Tracheal Aspriate",cex=.6, col=rgb(244,73,19,maxColorValue = 255))
+text(x, y, labels = sapply(strsplit(names(x),"[.]"),"[",2), cex=.5)
+
+if(generate_pdfs){
+dev.off()
+}
+
+
+
+# Bray-curtis for just the group 4 samples
+
+set.seed(5)
+g4_only <- metadata[metadata$effective_group==4,]
+
+BC <- as.matrix(vegan::vegdist(t(all_microbe_data[,colnames(all_microbe_data) %in% as.character(unlist(g4_only[,c("mBAL_DNAseq_filename","TA_DNAseq_filename")]))]),method="bray"))#as.matrix()
+example_NMDS <- vegan::metaMDS(BC,k=2,trymax=1000)
+# plot solution 
+x <- example_NMDS$points[,1]
+y <- example_NMDS$points[,2]
+names(x) %in% metadata$mBAL_DNAseq_filename
+
+#Here is an example of how to run a permanova test using the adonis function in vegan. 
+a <-(as.integer(names(x) %in% metadata$mBAL_DNAseq_filename)+1)
+names(a) <- names(x)
+a <- as.data.frame(a)
+colnames(a) <- c("group")
+a <- cbind(a,a)
+colnames(a) <- c("group","x")
+a$group <- as.factor(a$group)
+permanova_result_g4 <- vegan::adonis2(BC~group, a, permutations = 999) # this is the main PERMANOVA functionality
+
+# Plot the NMDS projection
+if(generate_pdfs){
+pdf(paste(output,"BrayCurtisPermanova_g4.pdf"),height=6, width=6) 
+}
+plot(x, y, xlab="Coordinate 1", ylab="Coordinate 2", 
+  main="NMDS of PNA-neg mBAL and TA Samples\nusing Bray-Curtis Dissimilarity",  col=c(rgb(244,73,19,maxColorValue = 255),rgb(51,60,163,maxColorValue = 255))[as.integer(names(x) %in% metadata$mBAL_DNAseq_filename) + 1], pch=15,font.main = 1, cex.axis=.8,cex.main=.8, cex=1.2)
+vegan::ordispider(example_NMDS, group=a$group, show="1", col=rgb(244,73,19,maxColorValue = 255), kind="se",conf=0.95)
+vegan::ordispider(example_NMDS, group=a$group, show="2", col=rgb(51,60,163,maxColorValue = 255), kind="se",conf=0.95)
+#text(-.2,.4,"p > .1",cex=.8)
+text(x, y, labels = sapply(strsplit(names(x),"[.]"),"[",2), cex=.5)
+text(-.2,.23,"mini-BAL",cex=.6,col=rgb(51,60,163,maxColorValue = 255))
+text(.3,-.23,"Tracheal Aspriate",cex=.6, col=rgb(244,73,19,maxColorValue = 255))
+```
+
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-28-1.png)
+
+``` r
+if(generate_pdfs){
+dev.off()
+}
+```
+
+For reference, the matrix a used in the core PERMANOVA function looks like this:
+
+``` r
+kable(head(a, n=5), "markdown" ) 
+```
+
+|                      | group |    x|
+|:---------------------|:------|----:|
+| mBAL.208.DNA.B3      | 2     |    2|
+| mBAL.208.DNA.TA1.B10 | 1     |    1|
+| mBAL.211.DNA.B1      | 2     |    2|
+| mBAL.211.DNA.TA1.B10 | 1     |    1|
+| mBAL.215.DNA.B1      | 2     |    2|
+
+...and the BC matix appears like this, with the samples in rows/columns and the pairwise Bray-Curtis distance between the samples listed as entries in the matrix:
+
+``` r
+kable(head(BC, n=5), "markdown" ) 
+```
+
+<table>
+<colgroup>
+<col width="4%" />
+<col width="3%" />
+<col width="4%" />
+<col width="3%" />
+<col width="4%" />
+<col width="3%" />
+<col width="4%" />
+<col width="3%" />
+<col width="4%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="4%" />
+<col width="3%" />
+<col width="5%" />
+<col width="3%" />
+<col width="5%" />
+<col width="3%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="3%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">mBAL.208.DNA.B3</th>
+<th align="right">mBAL.208.DNA.TA1.B10</th>
+<th align="right">mBAL.211.DNA.B1</th>
+<th align="right">mBAL.211.DNA.TA1.B10</th>
+<th align="right">mBAL.215.DNA.B1</th>
+<th align="right">mBAL.215.DNA.TA1.B10</th>
+<th align="right">mBAL.218.DNA.B4</th>
+<th align="right">mBAL.218.DNA.TA1.B10</th>
+<th align="right">mBAL.220.DNA.B1</th>
+<th align="right">mBAL.220.DNA.TA1.B8</th>
+<th align="right">mBAL.221.DNA.B1</th>
+<th align="right">mBAL.221.DNA.TA1.B8</th>
+<th align="right">mBAL.227.DNA.B2</th>
+<th align="right">mBAL.227.DNA.TA1.B10</th>
+<th align="right">mBAL.256.DNA.B1</th>
+<th align="right">mBAL.256.DNA.TA2.QIA.6517.B7</th>
+<th align="right">mBAL.261.DNA.B3</th>
+<th align="right">mBAL.261.DNA.TA2.QIA.6517.B7</th>
+<th align="right">mBAL.273.DNA.B3</th>
+<th align="right">mBAL.273.DNA.TA1.ZYM.6717.B7</th>
+<th align="right">mBAL.319.DNA.MB1.ZYM.6117.B7</th>
+<th align="right">mBAL.319.DNA.TA1.ZYM.6717.B7</th>
+<th align="right">mBAL.331.DNA.B6</th>
+<th align="right">mBAL.331.DNA.TA1.QIA.6117.B7</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">mBAL.208.DNA.B3</td>
+<td align="right">0.0000000</td>
+<td align="right">0.9408275</td>
+<td align="right">0.9549548</td>
+<td align="right">0.9189186</td>
+<td align="right">0.8842009</td>
+<td align="right">0.8985068</td>
+<td align="right">1</td>
+<td align="right">0.8572565</td>
+<td align="right">0.7859468</td>
+<td align="right">0.9087591</td>
+<td align="right">0.9013380</td>
+<td align="right">0.8865397</td>
+<td align="right">0.7031154</td>
+<td align="right">0.8814698</td>
+<td align="right">0.5184726</td>
+<td align="right">0.9459457</td>
+<td align="right">0.3167084</td>
+<td align="right">0.9456691</td>
+<td align="right">0.8055060</td>
+<td align="right">0.8677299</td>
+<td align="right">0.7777778</td>
+<td align="right">0.9684783</td>
+<td align="right">0.7648721</td>
+<td align="right">0.9279276</td>
+</tr>
+<tr class="even">
+<td align="left">mBAL.208.DNA.TA1.B10</td>
+<td align="right">0.9408275</td>
+<td align="right">0.0000000</td>
+<td align="right">0.9593615</td>
+<td align="right">0.9593615</td>
+<td align="right">0.6110942</td>
+<td align="right">0.6200148</td>
+<td align="right">1</td>
+<td align="right">0.8252159</td>
+<td align="right">0.9896219</td>
+<td align="right">0.9624878</td>
+<td align="right">0.9593615</td>
+<td align="right">0.9408275</td>
+<td align="right">0.9610577</td>
+<td align="right">0.9408275</td>
+<td align="right">0.9605600</td>
+<td align="right">1.0000000</td>
+<td align="right">0.9511641</td>
+<td align="right">0.9636872</td>
+<td align="right">0.9408275</td>
+<td align="right">0.9408275</td>
+<td align="right">0.9814659</td>
+<td align="right">0.9814659</td>
+<td align="right">0.9408275</td>
+<td align="right">0.9593615</td>
+</tr>
+<tr class="odd">
+<td align="left">mBAL.211.DNA.B1</td>
+<td align="right">0.9549548</td>
+<td align="right">0.9593615</td>
+<td align="right">0.0000000</td>
+<td align="right">0.8119403</td>
+<td align="right">0.9427764</td>
+<td align="right">0.9428459</td>
+<td align="right">1</td>
+<td align="right">0.9451220</td>
+<td align="right">0.9688658</td>
+<td align="right">0.9496350</td>
+<td align="right">0.4114626</td>
+<td align="right">0.4833021</td>
+<td align="right">0.9897959</td>
+<td align="right">0.4258065</td>
+<td align="right">0.9790941</td>
+<td align="right">1.0000000</td>
+<td align="right">0.9696982</td>
+<td align="right">0.9134078</td>
+<td align="right">0.3864177</td>
+<td align="right">0.3855457</td>
+<td align="right">1.0000000</td>
+<td align="right">1.0000000</td>
+<td align="right">0.7051720</td>
+<td align="right">0.6434048</td>
+</tr>
+<tr class="even">
+<td align="left">mBAL.211.DNA.TA1.B10</td>
+<td align="right">0.9189186</td>
+<td align="right">0.9593615</td>
+<td align="right">0.8119403</td>
+<td align="right">0.0000000</td>
+<td align="right">0.5793764</td>
+<td align="right">0.4799332</td>
+<td align="right">1</td>
+<td align="right">0.4917706</td>
+<td align="right">0.8124537</td>
+<td align="right">0.5451138</td>
+<td align="right">0.7229435</td>
+<td align="right">0.5618453</td>
+<td align="right">0.9897959</td>
+<td align="right">0.7583476</td>
+<td align="right">0.9581882</td>
+<td align="right">1.0000000</td>
+<td align="right">0.9515177</td>
+<td align="right">0.8069596</td>
+<td align="right">0.7083749</td>
+<td align="right">0.7985149</td>
+<td align="right">1.0000000</td>
+<td align="right">1.0000000</td>
+<td align="right">0.6218577</td>
+<td align="right">0.6339298</td>
+</tr>
+<tr class="odd">
+<td align="left">mBAL.215.DNA.B1</td>
+<td align="right">0.8842009</td>
+<td align="right">0.6110942</td>
+<td align="right">0.9427764</td>
+<td align="right">0.5793764</td>
+<td align="right">0.0000000</td>
+<td align="right">0.1562469</td>
+<td align="right">1</td>
+<td align="right">0.4104900</td>
+<td align="right">0.8124537</td>
+<td align="right">0.5946313</td>
+<td align="right">0.8502590</td>
+<td align="right">0.6341176</td>
+<td align="right">0.9200744</td>
+<td align="right">0.8544392</td>
+<td align="right">0.8993312</td>
+<td align="right">1.0000000</td>
+<td align="right">0.8951621</td>
+<td align="right">0.8786122</td>
+<td align="right">0.8400758</td>
+<td align="right">0.8786340</td>
+<td align="right">0.9404827</td>
+<td align="right">0.9804348</td>
+<td align="right">0.6967516</td>
+<td align="right">0.7647660</td>
+</tr>
+</tbody>
+</table>
+
+Together, these pieces are used by the adonis() function to evaluate differences in the Bray-curtis matrix between the groups listed in the "a" matrix.
 
 PERMANOVA result across all samples:
 
@@ -4015,7 +4368,7 @@ boxplot(full_Shannons,cex.axis=.5,main="Shannons Diversity by Sample Type and Pa
 stripchart(full_Shannons,method='jitter',jitter=.1,vertical=T,col='navyblue',pch=16,cex=1,add=T)
 ```
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-38-1.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-40-1.png)
 
 ``` r
 # dev.off()
@@ -4030,7 +4383,7 @@ boxplot(f,cex.axis=.5,main="Shannon Diversity by Sample Type and Patient Group",
 stripchart(f,method='jitter',jitter=.1,vertical=T,col=c('red','navyblue','red','navyblue'),pch=17,cex=1,add=T)
 ```
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-38-2.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-40-2.png)
 
 ``` r
 # dev.off()
@@ -4051,7 +4404,7 @@ stripchart(list(c(full_richness[[1]],full_richness[[3]],full_richness[[5]],full_
            ylab="Patient Group", xlab="Richness")
 ```
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-41-1.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-43-1.png)
 
 Recomputing after removing richness outlier in mBAL
 
@@ -4075,7 +4428,7 @@ print(wilcox.test(new_values,c(full_richness[[2]],full_richness[[4]],full_richne
 stripchart(list(new_values,c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])),method='jitter',jitter=.1,vertical=F,col='navyblue',pch=16,cex=1.2,main="Richness by Patient Group",ylab="Patient Group", xlab="Richness")
 ```
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-42-1.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-44-1.png)
 
 Overall mBAL richness summary
 
@@ -4111,9 +4464,9 @@ Comparing genus-level richness between PNA-pos and PNA-neg patients in TA
 
 ### Evaluate the presence/absence of clinically-confirmed pathogens in Group 1 Patients
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-49-1.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-51-1.png)
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-50-1.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-52-1.png)
 
 | sample\_ids | cummulative\_pathos        | rank\_list\_mbal | rank\_list\_ta |
 |:------------|:---------------------------|:-----------------|:---------------|
@@ -4147,7 +4500,7 @@ Comparing genus-level richness between PNA-pos and PNA-neg patients in TA
 
 Oropharyngeal contaminant microbes were selected a. priori from this paper: Dickson, R. P. et al. Bacterial Topography of the Healthy Human Lower Respiratory Tract. mBio 8, (2017). In which they describe bacterial taxa identified by 16S amplicon sequencing in the airway from 1. Oral rinse, 2. Protected specimen brush, 3. Bronchoalveolar lavage.
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-51-1.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-53-1.png)
 
 Summary of Microbial Abundances in Tracheal Aspriate Samples:
 

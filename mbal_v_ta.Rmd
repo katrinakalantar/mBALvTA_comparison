@@ -651,7 +651,7 @@ print(summary(unlist(full_bc)))
 
 
 **PERMANOVA Analysis**
-```{r, echo = FALSE, message = FALSE, results = FALSE, fig.height=4, fig.width=10}
+```{r, echo = TRUE, message = FALSE, results = FALSE, fig.height=4, fig.width=10}
 
 output <- c("./output/")
 
@@ -666,18 +666,20 @@ x <- example_NMDS$points[,1]
 y <- example_NMDS$points[,2]
 names(x) %in% metadata$mBAL_DNAseq_filename
 
-#Here is an example of how to run a permanova test using the adonis function in vegan. In this example we are testing the hypothesis that the three stations we collected samples from have different centroids
+#Here is an example of how to run a permanova test using the adonis function in vegan. 
+
+# generate a matrix with the group ID (mBAL versus TA)
 a <-(as.integer(names(x) %in% metadata$mBAL_DNAseq_filename)+1)
 names(a) <- names(x)
 a <- as.data.frame(a)
 colnames(a) <- c("group")
-a <- cbind(a,a)#,rownames(a),rownames(a))
-colnames(a) <- c("group","x")#,"category","BC")
+a <- cbind(a,a)
+colnames(a) <- c("group","x")
 a$group <- as.factor(a$group)
-head(a)
-permanova_result_ALL <- vegan::adonis2(BC~group, a, permutations = 999)
+kable(head(a, n=5), "markdown" ) 
+permanova_result_ALL <- vegan::adonis2(BC~group, a, permutations = 999) # this is the main PERMANOVA function
 
-
+# Plot the NMDS projection
 if(generate_pdfs){
 pdf(paste(output,"BrayCurtisPermanova.pdf"),height=6, width=6) 
 }
@@ -707,23 +709,20 @@ example_NMDS <- vegan::metaMDS(BC,k=2,trymax=1000)
 x <- example_NMDS$points[,1]
 y <- example_NMDS$points[,2]
 names(x) %in% metadata$mBAL_DNAseq_filename
-#plot(x, y, xlab="Coordinate 1", ylab="Coordinate 2", 
-#  main="Metric	MDS", col=alpha(c("green2","grey29")[as.integer(names(x) %in% metadata$mBAL_DNAseq_filename) + 1],.5), pch=16)#,	type="n")
-#text(x, y, labels = sapply(strsplit(names(x),"[.]"),"[",2), cex=.5)
 
-#Here is an example of how to run a permanova test using the adonis function in vegan. In this example we are testing the hypothesis that the three stations we collected samples from have different centroids
+#Here is an example of how to run a permanova test using the adonis function in vegan. 
 a <-(as.integer(names(x) %in% metadata$mBAL_DNAseq_filename)+1)
 names(a) <- names(x)
 a <- as.data.frame(a)
 colnames(a) <- c("group")
-a <- cbind(a,a)#,rownames(a),rownames(a))
-colnames(a) <- c("group","x")#,"category","BC")
+a <- cbind(a,a)
+colnames(a) <- c("group","x")
 a$group <- as.factor(a$group)
-head(a)
-permanova_result_g1 <- vegan::adonis2(BC~group, a, permutations = 999)
+kable(head(a, n=5), "markdown" ) 
+permanova_result_g1 <- vegan::adonis2(BC~group, a, permutations = 999) # this is the main PERMANOVA function
 
 
-
+# plot of NMDS projection
 if(generate_pdfs){
 pdf(paste(output,"BrayCurtisPermanova_g1.pdf"),height=6, width=6) 
 }
@@ -756,7 +755,7 @@ x <- example_NMDS$points[,1]
 y <- example_NMDS$points[,2]
 names(x) %in% metadata$mBAL_DNAseq_filename
 
-#Here is an example of how to run a permanova test using the adonis function in vegan. In this example we are testing the hypothesis that the three stations we collected samples from have different centroids
+#Here is an example of how to run a permanova test using the adonis function in vegan. 
 a <-(as.integer(names(x) %in% metadata$mBAL_DNAseq_filename)+1)
 names(a) <- names(x)
 a <- as.data.frame(a)
@@ -764,9 +763,9 @@ colnames(a) <- c("group")
 a <- cbind(a,a)
 colnames(a) <- c("group","x")
 a$group <- as.factor(a$group)
-permanova_result_g4 <- vegan::adonis2(BC~group, a, permutations = 999)
+permanova_result_g4 <- vegan::adonis2(BC~group, a, permutations = 999) # this is the main PERMANOVA functionality
 
-
+# Plot the NMDS projection
 if(generate_pdfs){
 pdf(paste(output,"BrayCurtisPermanova_g4.pdf"),height=6, width=6) 
 }
@@ -784,6 +783,17 @@ dev.off()
 
 ```
 
+For reference, the matrix a used in the core PERMANOVA function looks like this:
+```{r}
+kable(head(a, n=5), "markdown" ) 
+```
+
+...and the BC matix appears like this, with the samples in rows/columns and the pairwise Bray-Curtis distance between the samples listed as entries in the matrix:
+```{r}
+kable(head(BC, n=5), "markdown" ) 
+```
+
+Together, these pieces are used by the adonis() function to evaluate differences in the Bray-curtis matrix between the groups listed in the "a" matrix.
 
 PERMANOVA result across all samples:
 ```{r}
