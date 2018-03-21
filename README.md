@@ -9,15 +9,21 @@ This repository contains the code and analysis files for comparison of mBAL and 
 ### mbal_v_ta.Rmd
 Primary markdown file containing the functions for analysis.
 
-### /data
+
+### mbal_v_ta.md
+Output from mbal_v_ta.Rmd with all analyses configured to show results in the github interface.
+
+
+### /data/032118/
 **all_mBALvTA.txt** : contains the filenames used in the analysis
 
-**merged_genusrpmphylum.csv** : contains the phylum-level collapsed microbe counts
-
-**phylum_proportions.csv** : contains the normalized phylum proportions for all DNA-seq samples in the analysis
+**background_model.txt** : dummy file containing the background model used when pulling the report files from the pipeline
 
 **tavmbal_metadata_noviruses.tsv** : contains the metadata for the files - all viral infections have been removed from the analysis at this point
 
+
 **/BM_4** : contains the raw microbial counts data per patient - output from DeRisi lab pipeline
 
+**merged_genusrpm.csv** : contains the genus-level collapsed microbe counts; a single matrix containing all microbe counts for all patients in the study.
 
+**mBAL-XXX.report.csv** : there is a single report.csv file produced per sample run through the DeRisi Lab pipeline. These include the RPM values that were grouped to produce the merged file.
