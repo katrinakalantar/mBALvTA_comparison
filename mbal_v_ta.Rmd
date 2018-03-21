@@ -56,10 +56,10 @@ Then, the NT genus rpM counts were merged across all samples. Metadata describin
 ```{r}
 #IMPORT DATA
 #.csv of all microbes by TA/mBAL sample ID #012618/
-all_microbe_data <- read.csv('./data/020718/BM_4/merged_genusrpm.tsv', sep='\t', header=TRUE, row.names=1)
+all_microbe_data <- read.csv('./data/032118/BM_4/merged_genusrpm.tsv', sep='\t', header=TRUE, row.names=1)
 
 #read in metadata #012618/
-metadata <- read.csv('./data/020718/tavmbal_metadata_noviruses.tsv', sep='\t', row.names=1)
+metadata <- read.csv('./data/032118/tavmbal_metadata_noviruses.tsv', sep='\t', row.names=1)
 ```
 
 
@@ -217,7 +217,7 @@ Initial output: a barchart of genera represented in each sample. The bar charts 
 
 The main code to accomplish this is shown here:
 ```{r,fig.width=12,fig.height=6}
-generate_pdfs = FALSE
+#generate_pdfs = TRUE
 
 file_pair_order <- c()
 
@@ -325,7 +325,7 @@ bp <- c('aquamarine3','bisque3','blue','blue4','darkolivegreen3','darkred','dark
 
 Create a genus-level barplot for each sample. Since we have limited the color palette to only 40 colors, we want anything that isn't in the length of the list of colors (top 39 most abundant microbes in the cohort) to be included in the "Other" category. The "Other" category also includes rpm values for any microbes that are present at < 1% of that particular sample (even if they are of a genera that is in the top 39 most abundant)
 ```{r,fig.width=12,fig.height=6}
-generate_pdfs = FALSE #TRUE
+#generate_pdfs = TRUE
 
 file_pair_order <- c()
 bp <- bp[shuffle(bp)]
@@ -505,6 +505,8 @@ g4<- as.data.frame(cbind(microbes_TA_g4,microbes_MBAL_g4))
 scatter_plot2 <- ggplot(as.data.frame(g4), aes(microbes_TA_g4, microbes_MBAL_g4))
 scatter_plot2 + geom_point(shape=3,colour="blue") + labs(x = "mini-BAL", y = "Tracheal Aspirate", cex=.8)  + geom_smooth(method="lm",colour="blue") + xlim(0,1) + ylim(0,1)+theme(axis.text=element_text(size=8),
         axis.title=element_text(size=10))+ ggtitle("Microbes from PNA-neg pts")
+
+dev.off()
 ```
 
 Pearson correlation for all microbes was:

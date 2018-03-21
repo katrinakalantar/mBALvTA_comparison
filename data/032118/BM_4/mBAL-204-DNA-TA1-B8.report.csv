@@ -1,0 +1,12 @@
+Category,Species,Genus,Score1,Score2,Score3,NT Species Z,NT Genus Z,NT Species rM,NT Genus rM,NR Species Z,NR Genus Z,NR Species rM,NR Genus rM
+Mammalia,Homo sapiens ( 9606 ),Homo ( 9605 ),0,0,1,0.52,0.52,0.70,0.70,2.02,2.02,0.18,0.18
+Mammalia,Pongo abelii ( 9601 ),Pongo ( 9599 ),0,0,0,1.28,1.26,0.35,0.35,0.00,0.00,0.00,0.00
+Mammalia,Gorilla gorilla ( 9593 ),Gorilla ( 9592 ),0,0,0,0.44,0.44,0.44,0.44,0.00,0.00,0.00,0.00
+Mammalia,Cercocebus atys ( 9531 ),Cercocebus ( 9529 ),0,0,0,0.70,0.70,0.09,0.09,0.00,0.00,0.00,0.00
+Mammalia,Chlorocebus sabaeus ( 60711 ),Chlorocebus ( 392815 ),0,0,0,0.37,0.34,0.26,0.26,0.00,0.00,0.00,0.00
+Artificial Sequences,Expression vector pYM70 ( 754152 ),No genus ( -1 ),0,8,0,100.00,0.00,0.09,0.00,0.00,0.00,0.00,0.00
+Mammalia,Pan paniscus ( 9597 ),Pan ( 9596 ),0,0,0,-0.02,-0.02,0.09,0.09,0.00,0.00,0.00,0.00
+Fungi,Candida glabrata ( 5478 ),Nakaseomyces ( 374468 ),0,0,0,-0.06,-0.07,0.09,0.09,0.00,0.00,0.00,0.00
+Bacteria,Renibacterium salmoninarum ( 1646 ),Renibacterium ( 1645 ),0,0,0,-0.27,-0.27,0.09,0.09,0.00,0.00,0.00,0.00
+Bacteria,Stenotrophomonas maltophilia ( 40324 ),Stenotrophomonas ( 40323 ),0,0,0,-0.31,-0.32,0.26,0.26,-0.37,-0.37,0.09,0.09
+Fungi,Candida albicans ( 5476 ),Candida ( 1535326 ),0,2,0,1.64,-0.14,0.44,0.44,3.42,-0.04,0.44,0.44

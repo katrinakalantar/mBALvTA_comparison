@@ -1,7 +1,7 @@
 MBAL vs. TA comparison
 ================
 Katrina Kalantar
-2018-03-13
+2018-03-21
 
 **Relevant Definitions:**
 
@@ -30,10 +30,10 @@ Then, the NT genus rpM counts were merged across all samples. Metadata describin
 ``` r
 #IMPORT DATA
 #.csv of all microbes by TA/mBAL sample ID #012618/
-all_microbe_data <- read.csv('./data/020718/BM_4/merged_genusrpm.tsv', sep='\t', header=TRUE, row.names=1)
+all_microbe_data <- read.csv('./data/032118/BM_4/merged_genusrpm.tsv', sep='\t', header=TRUE, row.names=1)
 
 #read in metadata #012618/
-metadata <- read.csv('./data/020718/tavmbal_metadata_noviruses.tsv', sep='\t', row.names=1)
+metadata <- read.csv('./data/032118/tavmbal_metadata_noviruses.tsv', sep='\t', row.names=1)
 ```
 
 The raw microbe data appeared as follows (showing only the first 5 rows):
@@ -778,7 +778,7 @@ The raw microbe data appeared as follows (showing only the first 5 rows):
 <td align="right">0</td>
 <td align="right">2.23</td>
 <td align="right">0</td>
-<td align="right">0.03</td>
+<td align="right">0.05</td>
 <td align="right">0.00</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -1230,19 +1230,19 @@ burden <- colSums(all_microbe_data)
 
 Summary of burden in TA:
 
-|  Min.|  1st Qu.|  Median|      Mean|   3rd Qu.|     Max.|
-|-----:|--------:|-------:|---------:|---------:|--------:|
-|   0.1|    6.685|  43.295|  305.3173|  327.9275|  3568.04|
+|  Min.|  1st Qu.|  Median|     Mean|   3rd Qu.|     Max.|
+|-----:|--------:|-------:|--------:|---------:|--------:|
+|   0.1|    6.685|  43.295|  307.834|  327.9275|  3568.04|
 
 Summary of burden in mBAL:
 
 |  Min.|  1st Qu.|  Median|      Mean|   3rd Qu.|      Max.|
 |-----:|--------:|-------:|---------:|---------:|---------:|
-|   0.4|   5.6575|   26.89|  1737.491|  167.6275|  76324.15|
+|   0.4|   5.6575|   26.89|  1743.159|  167.6275|  76324.15|
 
 Wilcox rank sum p-value for comparing microbial burden in TA v. mBAL
 
-    ## [1] 0.6655015
+    ## [1] 0.6607838
 
 ------------------------------------------------------------------------
 
@@ -1583,7 +1583,7 @@ kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE
 <td align="right">0.1640796</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
-<td align="right">0.5852895</td>
+<td align="right">0.5955983</td>
 <td align="right">0.8213784</td>
 <td align="right">0.5626486</td>
 <td align="right">0.8138420</td>
@@ -1602,7 +1602,7 @@ kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0115138</td>
-<td align="right">0.0122389</td>
+<td align="right">0.0121006</td>
 <td align="right">0.1855170</td>
 <td align="right">0.3181406</td>
 <td align="right">0.0000000</td>
@@ -1706,7 +1706,7 @@ kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE
 <td align="right">0.0000000</td>
 <td align="right">0.1592595</td>
 <td align="right">0.0232558</td>
-<td align="right">0.3134859</td>
+<td align="right">0.3124789</td>
 <td align="right">0.3027653</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
@@ -1813,10 +1813,10 @@ kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE
 <td align="right">0.0000000</td>
 <td align="right">0.0207448</td>
 <td align="right">0.2558140</td>
-<td align="right">0.0208202</td>
+<td align="right">0.0208069</td>
 <td align="right">0.0207942</td>
 <td align="right">0.0140245</td>
-<td align="right">0.0119832</td>
+<td align="right">0.0127728</td>
 <td align="right">0.0472225</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
@@ -1904,7 +1904,7 @@ kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE
 <td align="right">0.0636327</td>
 <td align="right">0.0057695</td>
 <td align="right">0.0071300</td>
-<td align="right">0.0375587</td>
+<td align="right">0.0330124</td>
 <td align="right">0.0488194</td>
 <td align="right">0.1134126</td>
 <td align="right">0.0511887</td>
@@ -1920,10 +1920,10 @@ kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE
 <td align="right">0.0614293</td>
 <td align="right">0.3147495</td>
 <td align="right">0.0000000</td>
-<td align="right">0.0405295</td>
+<td align="right">0.0405582</td>
 <td align="right">0.0551139</td>
 <td align="right">0.0324871</td>
-<td align="right">0.0259879</td>
+<td align="right">0.0263125</td>
 <td align="right">0.2714241</td>
 <td align="right">0.0453515</td>
 <td align="right">0.1753349</td>
@@ -2011,7 +2011,7 @@ kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE
 <td align="right">0.0904510</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
-<td align="right">0.0281690</td>
+<td align="right">0.0247593</td>
 <td align="right">0.0115188</td>
 <td align="right">0.1035654</td>
 <td align="right">0.0460123</td>
@@ -2118,7 +2118,7 @@ kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE
 <td align="right">0.0860626</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
-<td align="right">0.0359937</td>
+<td align="right">0.0316369</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
@@ -2134,7 +2134,7 @@ kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE
 <td align="right">0.1157611</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0232558</td>
-<td align="right">0.0243188</td>
+<td align="right">0.0242684</td>
 <td align="right">0.0561016</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
@@ -2241,10 +2241,10 @@ kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
-<td align="right">0.3165865</td>
+<td align="right">0.3172099</td>
 <td align="right">0.3066195</td>
 <td align="right">0.8869925</td>
-<td align="right">0.8765025</td>
+<td align="right">0.8747715</td>
 <td align="right">0.0141246</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
@@ -2351,7 +2351,7 @@ kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0549821</td>
-<td align="right">0.0562138</td>
+<td align="right">0.0569106</td>
 <td align="right">0.0458522</td>
 <td align="right">0.1814059</td>
 <td align="right">0.0000000</td>
@@ -2458,7 +2458,7 @@ kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
-<td align="right">0.0170736</td>
+<td align="right">0.0171320</td>
 <td align="right">0.0141246</td>
 <td align="right">0.2968254</td>
 <td align="right">0.0000000</td>
@@ -2546,7 +2546,7 @@ kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
-<td align="right">0.1924883</td>
+<td align="right">0.1774415</td>
 <td align="right">0.0544990</td>
 <td align="right">0.0169779</td>
 <td align="right">0.0128451</td>
@@ -2867,7 +2867,7 @@ kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE
 <td align="right">0.0576189</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
-<td align="right">0.0735524</td>
+<td align="right">0.0962861</td>
 <td align="right">0.0199426</td>
 <td align="right">0.0509338</td>
 <td align="right">0.0402607</td>
@@ -3509,7 +3509,7 @@ kable(all_microbe_data[names(head(sort(rowSums(all_microbe_data),decreasing=TRUE
 <td align="right">0.0386835</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
-<td align="right">0.0281690</td>
+<td align="right">0.0247593</td>
 <td align="right">0.0301213</td>
 <td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
@@ -3664,7 +3664,7 @@ Iterate over all pairs of mBAL and TA samples from individuals to generate the c
 The main code to accomplish this is shown here:
 
 ``` r
-generate_pdfs = FALSE
+#generate_pdfs = TRUE
 
 file_pair_order <- c()
 
@@ -3760,7 +3760,7 @@ bp <- c('aquamarine3','bisque3','blue','blue4','darkolivegreen3','darkred','dark
 Create a genus-level barplot for each sample. Since we have limited the color palette to only 40 colors, we want anything that isn't in the length of the list of colors (top 39 most abundant microbes in the cohort) to be included in the "Other" category. The "Other" category also includes rpm values for any microbes that are present at &lt; 1% of that particular sample (even if they are of a genera that is in the top 39 most abundant)
 
 ``` r
-generate_pdfs = FALSE #TRUE
+#generate_pdfs = TRUE
 
 file_pair_order <- c()
 bp <- bp[shuffle(bp)]
@@ -3829,19 +3829,22 @@ We plot the microbial genus rpM from mini-BAL samples versus the microbial genus
 
 ![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-19-1.png)![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-19-2.png)![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-19-3.png)
 
+    ## null device 
+    ##           1
+
 Pearson correlation for all microbes was:
 
     ## 
     ##  Pearson's product-moment correlation
     ## 
     ## data:  gALL$microbes_TA and gALL$microbes_MBAL
-    ## t = 26.779, df = 656, p-value < 2.2e-16
+    ## t = 26.793, df = 656, p-value < 2.2e-16
     ## alternative hypothesis: true correlation is not equal to 0
     ## 95 percent confidence interval:
-    ##  0.6840197 0.7572744
+    ##  0.6842233 0.7574376
     ## sample estimates:
-    ##       cor 
-    ## 0.7226702
+    ##      cor 
+    ## 0.722853
 
 Pearson correlation for microbes found in PNA-pos patients was:
 
@@ -3849,13 +3852,13 @@ Pearson correlation for microbes found in PNA-pos patients was:
     ##  Pearson's product-moment correlation
     ## 
     ## data:  g1$microbes_TA_g1 and g1$microbes_MBAL_g1
-    ## t = 22.199, df = 89, p-value < 2.2e-16
+    ## t = 22.197, df = 89, p-value < 2.2e-16
     ## alternative hypothesis: true correlation is not equal to 0
     ## 95 percent confidence interval:
-    ##  0.8814721 0.9468263
+    ##  0.8814522 0.9468171
     ## sample estimates:
     ##       cor 
-    ## 0.9203428
+    ## 0.9203292
 
 Pearson correlation for microbes found in PNA-neg patients was:
 
@@ -3889,7 +3892,7 @@ kable(t(as.matrix(summary(unlist(full_correlations)))), "markdown") %>%
 
 |       Min.|    1st Qu.|     Median|       Mean|   3rd Qu.|  Max.|
 |----------:|----------:|----------:|----------:|---------:|-----:|
-|  -0.544415|  0.3718411|  0.8372393|  0.6243173|  0.992337|     1|
+|  -0.544415|  0.3718411|  0.8372393|  0.6243773|  0.992337|     1|
 
 We note that there is a difference in the genus-level pearson correlation between Group 1 and Group 4 individuals.
 
@@ -4282,8 +4285,8 @@ print(permanova_result_ALL)
     ## 
     ## vegan::adonis2(formula = BC ~ group, data = a, permutations = 999)
     ##           Df SumOfSqs      F Pr(>F)
-    ## group      1    0.441 1.1266  0.313
-    ## Residual 102   39.969
+    ## group      1    0.441 1.1242  0.314
+    ## Residual 102   39.974
 
 PERMANOVA result across only the PNA-pos samples:
 
@@ -4299,7 +4302,7 @@ print(permanova_result_g1)
     ## vegan::adonis2(formula = BC ~ group, data = a, permutations = 999)
     ##          Df SumOfSqs      F Pr(>F)
     ## group     1   0.0157 0.0366      1
-    ## Residual 28  11.9893
+    ## Residual 28  11.9888
 
 PERMANOVA result across only the PNA-neg samples:
 
@@ -4351,13 +4354,13 @@ Summary of Shannons Diversity in mBAL
 
 |       Min.|   1st Qu.|    Median|      Mean|   3rd Qu.|      Max.|
 |----------:|---------:|---------:|---------:|---------:|---------:|
-|  0.1038994|  0.735984|  1.448818|  1.418934|  2.048576|  3.511092|
+|  0.1038994|  0.735984|  1.448818|  1.418398|  2.048576|  3.511092|
 
 Summary of Shannons Diversity in TA
 
 |  Min.|    1st Qu.|    Median|      Mean|   3rd Qu.|      Max.|
 |-----:|----------:|---------:|---------:|---------:|---------:|
-|     0|  0.7080832|  1.051651|  1.111475|  1.549218|  2.227865|
+|     0|  0.7080832|  1.051651|  1.111592|  1.549218|  2.227865|
 
 ``` r
 if(generate_pdfs){
@@ -4636,16 +4639,16 @@ Summary of Microbial Abundances in mini-BAL Samples:
 </tr>
 <tr class="even">
 <td align="left"></td>
-<td align="left">Mean :0.02423</td>
-<td align="left">Mean :0.02729</td>
-<td align="left">Mean :0.1836</td>
-<td align="left">Mean :0.007329</td>
+<td align="left">Mean :0.02415</td>
+<td align="left">Mean :0.02773</td>
+<td align="left">Mean :0.1838</td>
+<td align="left">Mean :0.007264</td>
 <td align="left">Mean :0.012868</td>
 <td align="left">Mean :0.03253</td>
 </tr>
 <tr class="odd">
 <td align="left"></td>
-<td align="left">3rd Qu.:0.02527</td>
+<td align="left">3rd Qu.:0.02524</td>
 <td align="left">3rd Qu.:0.01748</td>
 <td align="left">3rd Qu.:0.3355</td>
 <td align="left">3rd Qu.:0.000000</td>

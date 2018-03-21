@@ -1,0 +1,57 @@
+Category,Species,Genus,Score1,Score2,Score3,NT Species Z,NT Genus Z,NT Species rM,NT Genus rM,NR Species Z,NR Genus Z,NR Species rM,NR Genus rM
+Bacteria,Lactobacillus gasseri ( 1596 ),Lactobacillus ( 1578 ),33056,9674,2037,20.28,3.06,278.40,292.13,31.76,3.91,126.83,135.91
+Caudovirales (dsDNA phages),Staphylococcus phage 13 ( 186153 ),77likevirus ( 1623274 ),2138,38,21,99.00,12.71,0.19,0.19,99.00,99.00,0.19,0.19
+Caudovirales (dsDNA phages),Staphylococcus phage phiMR25 ( 487152 ),Phietalikevirus ( 1623298 ),1851,58,61,100.00,31.92,0.58,1.93,0.00,0.00,0.00,0.00
+Caudovirales (dsDNA phages),Staphylococcus phage phinm2 ( 387908 ),Phietalikevirus ( 1623298 ),1832,57,61,99.00,31.92,0.58,1.93,0.00,0.00,0.00,0.00
+Caudovirales (dsDNA phages),Staphylococcus phage phinm1 ( 387907 ),Phietalikevirus ( 1623298 ),1221,38,61,99.00,31.92,0.39,1.93,0.00,0.00,0.00,0.00
+Caudovirales (dsDNA phages),Staphylococcus phage 80alpha ( 53369 ),Phietalikevirus ( 1623298 ),1221,38,61,99.00,31.92,0.39,1.93,0.00,0.00,0.00,0.00
+Bacteria,Lactobacillus johnsonii ( 33959 ),Lactobacillus ( 1578 ),501,128,2037,0.12,3.06,1.35,292.13,26.51,3.91,4.83,135.91
+Bacteria,Lactobacillus paracasei ( 1597 ),Lactobacillus ( 1578 ),21,6,2037,5.96,3.06,1.16,292.13,0.00,3.91,0.00,135.91
+Bacteria,Lactobacillus helveticus ( 1587 ),Lactobacillus ( 1578 ),11,3,2037,0.67,3.06,4.06,292.13,0.95,3.91,0.77,135.91
+Bacteria,Lactobacillus delbrueckii ( 1584 ),Lactobacillus ( 1578 ),4,1,2037,1.94,3.06,0.77,292.13,-0.12,3.91,0.77,135.91
+Bacteria,Lactobacillus pentosus ( 1589 ),Lactobacillus ( 1578 ),3,1,2037,3.22,3.06,0.39,292.13,0.00,3.91,0.00,135.91
+Bacteria,Lactobacillus salivarius ( 1624 ),Lactobacillus ( 1578 ),2,0,2037,0.26,3.06,3.09,292.13,0.00,3.91,0.00,135.91
+Bacteria,Lactobacillus casei ( 1582 ),Lactobacillus ( 1578 ),1,0,2037,0.77,3.06,0.58,292.13,0.00,3.91,0.00,135.91
+Bacteria,Lactobacillus kefiranofaciens ( 267818 ),Lactobacillus ( 1578 ),1,0,2037,0.42,3.06,0.97,292.13,0.00,3.91,0.00,135.91
+Eukaryotes,Trichinella spiralis ( 6334 ),Trichinella ( 6333 ),0,0,0,2.02,2.02,0.19,0.19,0.00,0.00,0.00,0.00
+Bacteria,Parascardovia denticolens ( 78258 ),Parascardovia ( 196082 ),0,0,0,1.98,1.98,0.19,0.19,0.00,0.00,0.00,0.00
+Bacteria,Lactobacillus brevis ( 1580 ),Lactobacillus ( 1578 ),0,0,2037,0.23,3.06,0.58,292.13,0.00,3.91,0.00,135.91
+Mammalia,Chlorocebus sabaeus ( 60711 ),Chlorocebus ( 392815 ),0,0,0,0.70,0.65,0.39,0.39,0.00,0.00,0.00,0.00
+Bacteria,Lactobacillus buchneri ( 1581 ),Lactobacillus ( 1578 ),0,0,2037,0.18,3.06,0.19,292.13,0.00,3.91,0.00,135.91
+Mammalia,Homo sapiens ( 9606 ),Homo ( 9605 ),0,0,0,0.10,0.10,0.39,0.39,0.00,0.00,0.00,0.00
+Bacteria,Lactobacillus reuteri ( 1598 ),Lactobacillus ( 1578 ),0,0,2037,0.00,3.06,0.39,292.13,0.00,3.91,0.00,135.91
+Mammalia,Gorilla gorilla ( 9593 ),Gorilla ( 9592 ),0,0,0,0.11,0.11,0.19,0.19,0.00,0.00,0.00,0.00
+Caudovirales (dsDNA phages),Staphylococcus phage JS01 ( 1273712 ),No genus ( -1 ),0,19,0,99.00,0.00,0.19,0.00,0.00,0.00,0.00,0.00
+Caudovirales (dsDNA phages),Staphylococcus phage phiNM3 ( 387909 ),No genus ( -1 ),0,25,0,26.53,0.00,0.97,0.00,0.00,0.00,0.00,0.00
+Caudovirales (dsDNA phages),Staphylococcus phage phi5967PVL ( 874267 ),No genus ( -1 ),0,19,0,99.00,0.00,0.19,0.00,0.00,0.00,0.00,0.00
+Caudovirales (dsDNA phages),Staphylococcus phage TEM126 ( 947066 ),No genus ( -1 ),0,19,0,99.00,0.00,0.19,0.00,0.00,0.00,0.00,0.00
+Unclassified Phage,Staphylococcus phage tp310-1 ( 445515 ),No genus ( -1 ),0,19,0,99.00,0.00,0.19,0.00,0.00,0.00,0.00,0.00
+Caudovirales (dsDNA phages),Staphylococcus phage DW2 ( 1464127 ),No genus ( -1 ),0,19,0,99.00,0.00,0.19,0.00,0.00,0.00,0.00,0.00
+Bacteria,uncultured Staphylococcus sp. ( 189668 ),Staphylococcus ( 1279 ),0,0,-12,-0.25,-0.04,0.19,84.10,0.00,-0.11,0.00,30.35
+Bacteria,Streptococcus equi ( 1336 ),Streptococcus ( 1301 ),0,0,-2,-0.07,-0.18,0.19,5.61,0.00,-0.23,0.00,1.35
+Bacteria,Gemmatimonas aurantiaca ( 173480 ),Gemmatimonas ( 173479 ),0,0,0,-0.12,-0.15,0.19,0.19,0.00,0.00,0.00,0.00
+Bacteria,Streptococcus mutans ( 1309 ),Streptococcus ( 1301 ),0,0,-2,-0.13,-0.18,0.19,5.61,0.00,-0.23,0.00,1.35
+Bacteria,Prevotella dentalis ( 52227 ),Prevotella ( 838 ),0,0,0,-0.13,-0.22,0.19,0.39,0.00,-0.15,0.00,0.77
+Mammalia,Macaca mulatta ( 9544 ),Macaca ( 9539 ),0,0,0,-0.22,-0.14,0.19,0.39,0.00,0.00,0.00,0.00
+Bacteria,Streptococcus pneumoniae ( 1313 ),Streptococcus ( 1301 ),0,0,-2,-0.18,-0.18,0.19,5.61,0.00,-0.23,0.00,1.35
+Bacteria,Parvimonas micra ( 33033 ),Parvimonas ( 543311 ),0,0,0,-0.16,-0.16,0.19,0.19,-0.08,-0.10,0.19,0.19
+Bacteria,Corynebacterium kroppenstedtii ( 161879 ),Corynebacterium ( 1716 ),0,0,0,-0.15,-0.24,0.19,0.19,0.00,-0.16,0.00,0.19
+Bacteria,Streptococcus anginosus ( 1328 ),Streptococcus ( 1301 ),0,0,-2,-0.20,-0.18,0.19,5.61,0.00,-0.23,0.00,1.35
+Bacteria,uncultured Enterococcus sp. ( 167972 ),Enterococcus ( 1350 ),0,0,0,-0.20,-0.23,0.19,0.19,0.00,0.00,0.00,0.00
+Bacteria,Leuconostoc mesenteroides ( 1245 ),Leuconostoc ( 1243 ),0,0,0,-0.10,-0.17,0.58,0.58,0.00,-0.15,0.00,0.19
+Bacteria,Prevotella melaninogenica ( 28132 ),Prevotella ( 838 ),0,0,0,-0.24,-0.22,0.19,0.39,0.00,-0.15,0.00,0.77
+Bacteria,Tannerella forsythia ( 28112 ),Tannerella ( 195950 ),0,0,0,-0.14,-0.14,0.39,0.39,-0.12,-0.13,0.19,0.19
+Bacteria,Pseudomonas pseudoalcaligenes ( 330 ),Pseudomonas ( 286 ),0,0,0,-0.18,-0.30,0.19,0.19,0.00,0.00,0.00,0.00
+Bacteria,Propionibacterium avidum ( 33010 ),Propionibacterium ( 1743 ),0,0,0,-0.23,-0.27,0.19,0.39,0.00,-0.30,0.00,0.19
+Bacteria,Sphingobium sp. SYK-6 ( 627192 ),Sphingobium ( 165695 ),0,0,0,-0.36,-0.37,0.19,0.19,0.00,0.00,0.00,0.00
+Bacteria,Delftia sp. Cs1-4 ( 742013 ),Delftia ( 80865 ),0,0,0,-0.20,-0.11,1.16,1.93,0.00,-0.37,0.00,0.58
+Propionbacterium acnes,Propionibacterium acnes ( 1747 ),Propionibacterium ( 1743 ),0,0,0,-0.27,-0.27,0.19,0.39,-0.30,-0.30,0.19,0.19
+Bacteria,Erythrobacter litoralis ( 39960 ),Erythrobacter ( 1041 ),0,0,0,-0.41,-0.41,0.19,0.19,0.00,0.00,0.00,0.00
+Bacteria,Staphylococcus simulans ( 1286 ),Staphylococcus ( 1279 ),0,0,-12,0.15,-0.04,0.19,84.10,1.75,-0.11,0.19,30.35
+Bacteria,Lactobacillus plantarum ( 1590 ),Lactobacillus ( 1578 ),0,0,2037,-0.14,3.06,0.19,292.13,0.00,3.91,0.00,135.91
+Bacteria,Delftia acidovorans ( 80866 ),Delftia ( 80865 ),0,0,0,-0.11,-0.11,0.77,1.93,-0.36,-0.37,0.58,0.58
+Bacteria,Streptococcus intermedius ( 1338 ),Streptococcus ( 1301 ),0,0,-2,0.24,-0.18,2.32,5.61,-0.25,-0.23,0.19,1.35
+Bacteria,Streptococcus agalactiae ( 1311 ),Streptococcus ( 1301 ),0,0,-2,0.29,-0.18,2.51,5.61,-0.05,-0.23,0.97,1.35
+Mammalia,Macaca fascicularis ( 9541 ),Macaca ( 9539 ),0,1,0,6.06,-0.14,0.19,0.39,0.00,0.00,0.00,0.00
+Bacteria,Bifidobacterium dentium ( 1689 ),Bifidobacterium ( 1678 ),-1,3,0,1.25,-0.19,0.58,0.58,6.31,-0.37,0.39,0.39
+Bacteria,Staphylococcus aureus ( 1280 ),Staphylococcus ( 1279 ),-10,225,-12,2.54,-0.04,83.71,84.10,0.43,-0.11,29.97,30.35
