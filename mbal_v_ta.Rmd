@@ -60,6 +60,84 @@ all_microbe_data <- read.csv('./data/032118/BM_4/merged_genusrpm.tsv', sep='\t',
 
 #read in metadata #012618/
 metadata <- read.csv('./data/032118/tavmbal_metadata_noviruses.tsv', sep='\t', row.names=1)
+
+```
+
+#### Cohort Characteristics
+```{r}
+# After review suggesting that we include percentages in the breakdown of cohort characteristics
+
+metadata_full <- read.csv("./data/032118/full_metadata.tsv", row.names=1, sep='\t')#metadata-mbal-vs-ta-6.10.2018.csv",row.names=1)
+
+metadata_pos = metadata_full[metadata_full$mBALvTApaper == "PNA-pos",]
+metadata_unk = metadata_full[metadata_full$mBALvTApaper == "PNA-unk",]
+metadata_neg = metadata_full[metadata_full$mBALvTApaper == "PNA-neg",]
+
+round(mean(metadata_full$age))
+round(mean(metadata_pos$age))
+round(mean(metadata_neg$age))
+round(mean(metadata_unk$age))
+
+
+print(c(table(metadata_full$Gender)[c("Female")],round(table(metadata_full$Gender)[c("Female")]/52,2)))
+print(c(table(metadata_pos$Gender)[c("Female")],round(table(metadata_pos$Gender)[c("Female")]/dim(metadata_pos)[1],2)))
+print(c(table(metadata_neg$Gender)[c("Female")],round(table(metadata_neg$Gender)[c("Female")]/dim(metadata_neg)[1],2)))
+print(c(table(metadata_unk$Gender)[c("Female")],round(table(metadata_unk$Gender)[c("Female")]/dim(metadata_unk)[1],2)))
+
+#round(table(metadata_full$Gender)[c("Female")]/52,2)
+#round(table(metadata_pos$Gender)[c("Female")]/dim(metadata_pos)[1],2)
+#round(table(metadata_neg$Gender)[c("Female")]/dim(metadata_neg)[1],2)
+#round(table(metadata_unk$Gender)[c("Female")]/dim(metadata_unk)[1],2)
+
+table(metadata_full$Race)
+round(table(metadata_full$Race)/52,2)
+table(metadata_pos$Race)
+round(table(metadata_pos$Race)/dim(metadata_pos)[1],2)
+table(metadata_neg$Race)
+round(table(metadata_neg$Race)/dim(metadata_neg)[1],2)
+table(metadata_unk$Race)
+round(table(metadata_unk$Race)/dim(metadata_unk)[1],2)
+
+# THIS SEEMS WRONG
+table(metadata_pos$pneumoType)
+
+
+table(metadata_full$anyImmunesup)[c("Yes")]
+round(table(metadata_full$anyImmunesup)[c("Yes")]/52,2)
+table(metadata_pos$anyImmunesup)[c("Yes")]
+round(table(metadata_pos$anyImmunesup)[c("Yes")]/dim(metadata_pos)[1],2)
+table(metadata_neg$anyImmunesup)[c("Yes")]
+round(table(metadata_neg$anyImmunesup)[c("Yes")]/dim(metadata_neg)[1],2)
+table(metadata_unk$anyImmunesup)[c("Yes")]
+round(table(metadata_unk$anyImmunesup)[c("Yes")]/dim(metadata_unk)[1],2)
+
+table(metadata_full$abxPrior)[c("Yes")]
+round(table(metadata_full$abxPrior)[c("Yes")]/52,2)
+table(metadata_pos$abxPrior)[c("Yes")]
+round(table(metadata_pos$abxPrior)[c("Yes")]/dim(metadata_pos)[1],2)
+table(metadata_neg$abxPrior)[c("Yes")]
+round(table(metadata_neg$abxPrior)[c("Yes")]/dim(metadata_neg)[1],2)
+table(metadata_unk$abxPrior)[c("Yes")]
+round(table(metadata_unk$abxPrior)[c("Yes")]/dim(metadata_unk)[1],2)
+
+
+table(metadata_full$bloodstreamInfection)[c("Yes")]
+round(table(metadata_full$bloodstreamInfection)[c("Yes")]/52,2)
+table(metadata_pos$bloodstreamInfection)[c("Yes")]
+round(table(metadata_pos$bloodstreamInfection)[c("Yes")]/dim(metadata_pos)[1],2)
+table(metadata_neg$bloodstreamInfection)[c("Yes")]
+round(table(metadata_neg$bloodstreamInfection)[c("Yes")]/dim(metadata_neg)[1],2)
+table(metadata_unk$bloodstreamInfection)[c("Yes")]
+round(table(metadata_unk$bloodstreamInfection)[c("Yes")]/dim(metadata_unk)[1],2)
+
+
+print(c(table(metadata_full$X30.day.mortality)[c("Yes")],round(table(metadata_full$X30.day.mortality)[c("Yes")]/52,2)))
+print(c(table(metadata_pos$X30.day.mortality)[c("Yes")], round(table(metadata_pos$X30.day.mortality)[c("Yes")]/dim(metadata_pos)[1],2)))
+table(metadata_neg$X30.day.mortality)[c("Yes")]
+round(table(metadata_neg$X30.day.mortality)[c("Yes")]/dim(metadata_neg)[1],2)
+table(metadata_unk$X30.day.mortality)[c("Yes")]
+round(table(metadata_unk$X30.day.mortality)[c("Yes")]/dim(metadata_unk)[1],2)
+
 ```
 
 
@@ -230,6 +308,7 @@ ta_phyla <- all_microbe_data[,colnames(all_microbe_data) %in% TA]
 #  pdf('./output/genus_analysis.pdf',width=16,height=6)
 #}
 
+full_spearman <- vector("list",length=4)
 full_correlations <- vector("list",length=4)
 full_bc <- vector("list",length=4)
 full_jaccard <- vector("list", length=4)
@@ -238,6 +317,7 @@ full_richness <- vector("list",length=8)
 for(j in c(1,2,3,4)){
   
   correlations <- c()
+  spearman <- c()
   bc_dist <- c()
   ta_sdi <- c()
   mbal_sdi <- c()
@@ -265,6 +345,12 @@ for(j in c(1,2,3,4)){
       colnames(c) <- c(mbal_filename,ta_filename)
       correlations <- c(correlations,cor(c)[2])
       
+      # pairwise spearman correlation - 1 value per patient
+      c <- cbind(all_microbe_data[,c(mbal_filename)],all_microbe_data[,c(ta_filename)])
+      c <- c[rowSums(c) > 0,]
+      colnames(c) <- c(mbal_filename,ta_filename)
+      spearman <- c(spearman,cor(c, method = "spearman")[2])
+      
       # bray-curtis distance - 1 value per patient
       bray_curtis_dist <- vegdist(t(as.matrix(all_microbe_data[,c(mbal_filename,ta_filename)])), method="bray", binary=FALSE, diag=FALSE, upper=TRUE, na.rm = FALSE)
       bc_dist <- c(bc_dist, bray_curtis_dist[1])
@@ -286,6 +372,7 @@ for(j in c(1,2,3,4)){
   }
 }
 full_correlations[[j]] <- correlations
+full_spearman[[j]] <- spearman
 full_bc[[j]] <- bc_dist
 full_jaccard[[j]] <- jaccard
 
@@ -1228,11 +1315,43 @@ kable(as.matrix(summary(t(all_microbe_data_orig[c("Prevotella ( 838 )","Veillone
 
 
 
+#### Further investigation of the PNA-unk group based on thresholds identified for the Shannon diversity and Pearson correlations
+
+```{r, fig.height = 3, fig.width = 3}
+
+names(full_correlations) <- c("Group 1","Group 2", "Group 3", "Group 4")
+plot(c(full_correlations$`Group 2`, full_correlations$`Group 3`), c(full_Shannons[[3]], full_Shannons[[5]]), col = bp, cex=1, pch=16, 
+     ylab = "Shannon Diversity", xlab = "Pearson Correlation") # MBAL
+abline(h = 1.7, add = TRUE)
+abline(v = .6, add = TRUE)
+text(c(full_correlations$`Group 2`, full_correlations$`Group 3`) + .04, c(full_Shannons[[3]], full_Shannons[[5]]) + .04, c(rownames(metadata[metadata$effective_group==2,]), rownames(metadata[metadata$effective_group==3,])), col = bp, cex=.8, pch=16)
+points(c(full_correlations$`Group 2`, full_correlations$`Group 3`), c(full_Shannons[[4]], full_Shannons[[6]]), col = bp, cex=1, pch = 15, add=TRUE)
+
+# Same plot, but with spearman correlation - basically the same conclusion
+#names(full_spearman) <- c("Group 1","Group 2", "Group 3", "Group 4")
+#plot(c(full_spearman$`Group 2`, full_spearman$`Group 3`), c(full_Shannons[[3]], full_Shannons[[5]]), col = bp, cex=1, pch=16, 
+#     ylab = "Shannon Diversity", xlab = "Spearman Correlation") # MBAL
+#text(c(full_spearman$`Group 2`, full_spearman$`Group 3`) + .04, c(full_Shannons[[3]], full_Shannons[[5]]) + .04, c(rownames(metadata[metadata$effective_group==2,]), #rownames(metadata[metadata$effective_group==3,])), col = bp, cex=.8, pch=16)
+#points(c(full_spearman$`Group 2`, full_spearman$`Group 3`), c(full_Shannons[[4]], full_Shannons[[6]]), col = bp, cex=1, pch = 15, add=TRUE)
 
 
+all_microbe_data[,c("mBAL.217.DNA.B1","mBAL.217.DNA.TA1.B8")][names(sort(rowSums(all_microbe_data[,c("mBAL.217.DNA.B1","mBAL.217.DNA.TA1.B8")]), decreasing = TRUE))[1:5],]
+all_microbe_data[,c("mBAL.254.DNA.B3","mBAL.254.DNA.TA1.QIA.6517.B7")][names(sort(rowSums(all_microbe_data[,c("mBAL.254.DNA.B3","mBAL.254.DNA.TA1.QIA.6517.B7")]), decreasing = TRUE))[1:5],]
+all_microbe_data[,c("mBAL.274.DNA.B3","mBAL.274.DNA.TA1.ZYM.6717.B7")][names(sort(rowSums(all_microbe_data[,c("mBAL.274.DNA.B3","mBAL.274.DNA.TA1.ZYM.6717.B7")]), decreasing = TRUE))[1:5],]
 
+all_microbe_data[,c("mBAL.236.DNA.B3","mBAL.236.DNA.TA1.QIA.6517.B7")][names(sort(rowSums(all_microbe_data[,c("mBAL.236.DNA.B3","mBAL.236.DNA.TA1.QIA.6517.B7")]), decreasing = TRUE))[1:5],]
+all_microbe_data[,c("mBAL.255.DNA.B1","mBAL.255.DNA.TA1.QIA.6517.B7")][names(sort(rowSums(all_microbe_data[,c("mBAL.255.DNA.B1","mBAL.255.DNA.TA1.QIA.6517.B7")]), decreasing = TRUE))[1:5],]
+all_microbe_data[,c("mBAL.237.DNA.B3","mBAL.237.DNA.TA1.B8")][names(sort(rowSums(all_microbe_data[,c("mBAL.237.DNA.B3","mBAL.237.DNA.TA1.B8")]), decreasing = TRUE))[1:5],]
 
+all_microbe_data[,c("mBAL.272.DNA.B3","mBAL.272.DNA.TA2.QIA.6517.B7")][names(sort(rowSums(all_microbe_data[,c("mBAL.272.DNA.B3","mBAL.272.DNA.TA2.QIA.6517.B7")]), decreasing = TRUE))[1:5],]
+all_microbe_data[,c("mBAL.229.DNA.B1","mBAL.229.DNA.TA1.B8")][names(sort(rowSums(all_microbe_data[,c("mBAL.229.DNA.B1","mBAL.229.DNA.TA1.B8")]), decreasing = TRUE))[1:5],]
+all_microbe_data[,c("mBAL.238.DNA.B3","mBAL.238.DNA.TA1.B10")][names(sort(rowSums(all_microbe_data[,c("mBAL.238.DNA.B3","mBAL.238.DNA.TA1.B10")]), decreasing = TRUE))[1:5],]
+all_microbe_data[,c("mBAL.245.DNA.B3","mBAL.245.DNA.TA1.B8")][names(sort(rowSums(all_microbe_data[,c("mBAL.245.DNA.B3","mBAL.245.DNA.TA1.B8")]), decreasing = TRUE))[1:5],]
 
+all_microbe_data[,c("mBAL.214.DNA.B3","mBAL.214.DNA.TA1.ZYM.6717.B7")][names(sort(rowSums(all_microbe_data[,c("mBAL.214.DNA.B3","mBAL.214.DNA.TA1.ZYM.6717.B7")]), decreasing = TRUE))[1:5],]
+all_microbe_data[,c("mBAL.216.DNA.B1","mBAL.216.DNA.TA1.B10")][names(sort(rowSums(all_microbe_data[,c("mBAL.216.DNA.B1","mBAL.216.DNA.TA1.B10")]), decreasing = TRUE))[1:5],]
+
+```
 
 
 
