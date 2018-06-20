@@ -98,9 +98,6 @@ round(table(metadata_neg$Race)/dim(metadata_neg)[1],2)
 table(metadata_unk$Race)
 round(table(metadata_unk$Race)/dim(metadata_unk)[1],2)
 
-# THIS SEEMS WRONG
-table(metadata_pos$pneumoType)
-
 
 table(metadata_full$anyImmunesup)[c("Yes")]
 round(table(metadata_full$anyImmunesup)[c("Yes")]/52,2)
@@ -137,6 +134,19 @@ table(metadata_neg$X30.day.mortality)[c("Yes")]
 round(table(metadata_neg$X30.day.mortality)[c("Yes")]/dim(metadata_neg)[1],2)
 table(metadata_unk$X30.day.mortality)[c("Yes")]
 round(table(metadata_unk$X30.day.mortality)[c("Yes")]/dim(metadata_unk)[1],2)
+
+
+# cohort statistics on pneumonia type
+table(metadata_full$pneumoType)
+table(metadata_full$pneumoType)/dim(metadata_full)[1]
+
+pneumoType_pos <- table(metadata_pos$pneumoType)/dim(metadata_pos)[1]
+cap_pos <- pneumoType_pos[2] + pneumoType_pos[4]
+hap_pos <- pneumoType_pos[3]
+vap_pos <- pneumoType_pos[5]
+
+table(metadata_unk$pneumoType)
+table(metadata_unk$pneumoType)/dim(metadata_unk)[1]
 
 ```
 
@@ -1333,6 +1343,8 @@ points(c(full_correlations$`Group 2`, full_correlations$`Group 3`), c(full_Shann
 #     ylab = "Shannon Diversity", xlab = "Spearman Correlation") # MBAL
 #text(c(full_spearman$`Group 2`, full_spearman$`Group 3`) + .04, c(full_Shannons[[3]], full_Shannons[[5]]) + .04, c(rownames(metadata[metadata$effective_group==2,]), #rownames(metadata[metadata$effective_group==3,])), col = bp, cex=.8, pch=16)
 #points(c(full_spearman$`Group 2`, full_spearman$`Group 3`), c(full_Shannons[[4]], full_Shannons[[6]]), col = bp, cex=1, pch = 15, add=TRUE)
+
+#subset <- as.matrix(cbind(c(rownames(metadata[metadata$effective_group==2,]), rownames(metadata[metadata$effective_group==3,])),as.numeric(c(full_correlations$`Group 2`, full_correlations$`Group 3`)), as.numeric(c(full_Shannons[[3]], full_Shannons[[5]]))))
 
 
 all_microbe_data[,c("mBAL.217.DNA.B1","mBAL.217.DNA.TA1.B8")][names(sort(rowSums(all_microbe_data[,c("mBAL.217.DNA.B1","mBAL.217.DNA.TA1.B8")]), decreasing = TRUE))[1:5],]
