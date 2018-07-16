@@ -1,7 +1,7 @@
 MBAL vs. TA comparison
 ================
 Katrina Kalantar
-2018-03-21
+2018-07-15
 
 **Relevant Definitions:**
 
@@ -15,7 +15,7 @@ Katrina Kalantar
 
 **PNA-neg:** Pneumonia negative
 
-**ABSTRACT:** Pneumonia causes more deaths each year in the United States than any other type of infectious disease. The ability to accurately detect etiologic pathogens and distinguish them from background commensal microbiota is essential for guiding optimal antimicrobial treatments. In patients requiring mechanical ventilation, less invasive tracheal aspirate sampling (TA) has historically been considered inferior to mini-bronchial alveolar lavage/telescoping catheter (mBAL) specimen collection due to the potential for oropharyngeal microbiota contamination. This idea has been challenged, however, by studies demonstrating a lack of clinically significant differences between sample types, and a greater acceptance of TA sampling is now reflected in recent updates to clinical practice guidelines.4 Despite the broad potential implications of this shift in diagnostic sampling approach, relatively little information exists regarding microbial composition differences between mBAL and TA specimens, and the potential implications of such differences for clinical diagnostic testing.
+**ABSTRACT:** Accurate and informative microbiologic testing is essential for guiding diagnosis and management of pneumonia in critically ill patients. Sampling of tracheal aspirate (TA) is less invasive compared to mini-bronchoalveolar lavage (mBAL) and is now recommended as a frontline diagnostic approach in mechanically ventilated patients, despite the historical belief that TA was suboptimal due to contamination from oral microbes. Advancements in metagenomic next generation sequencing (mNGS) now permit assessment of airway microbiota without a need for culture, and as such provide an opportunity to examine differences between mBAL and TA at a resolution previously unachievable. Here, we engaged shotgun mNGS to quantitatively assess the airway microbiome in matched mBAL and TA specimens from a prospective cohort of critically ill adults. We observed moderate differences between sample types across all patients (Pearson correlation of 0.72, 95% CI: 0.68 – 0.76), however we found significant compositional similarity in patients with bacterial pneumonia, whose microbial communities were characterized by a dominant pathogen (Pearson correlation of 0.92, 95% CI: 0.88 – 0.95). In addition, we found that both mBAL and TA were similar in terms of microbial burden, abundance of oropharyngeal taxa, and microbial diversity. Our findings suggest that TA sampling provides a similar assessment of airway microbiota as more invasive testing by mBAL, and that this similarity is most significant in the setting of bacterial pneumonia.
 
 ------------------------------------------------------------------------
 
@@ -35,6 +35,401 @@ all_microbe_data <- read.csv('./data/032118/BM_4/merged_genusrpm.tsv', sep='\t',
 #read in metadata #012618/
 metadata <- read.csv('./data/032118/tavmbal_metadata_noviruses.tsv', sep='\t', row.names=1)
 ```
+
+#### Cohort Characteristics
+
+``` r
+# After review suggesting that we include percentages in the breakdown of cohort characteristics
+
+metadata_full <- read.csv("./data/032118/full_metadata.tsv", row.names=1, sep='\t')#metadata-mbal-vs-ta-6.10.2018.csv",row.names=1)
+
+metadata_pos = metadata_full[metadata_full$mBALvTApaper == "PNA-pos",]
+metadata_unk = metadata_full[metadata_full$mBALvTApaper == "PNA-unk",]
+metadata_neg = metadata_full[metadata_full$mBALvTApaper == "PNA-neg",]
+
+round(mean(metadata_full$age))
+```
+
+    ## [1] 63
+
+``` r
+round(mean(metadata_pos$age))
+```
+
+    ## [1] 60
+
+``` r
+round(mean(metadata_neg$age))
+```
+
+    ## [1] 64
+
+``` r
+round(mean(metadata_unk$age))
+```
+
+    ## [1] 64
+
+``` r
+print(c(table(metadata_full$Gender)[c("Female")],round(table(metadata_full$Gender)[c("Female")]/52,2)))
+```
+
+    ## Female Female 
+    ##  17.00   0.33
+
+``` r
+print(c(table(metadata_pos$Gender)[c("Female")],round(table(metadata_pos$Gender)[c("Female")]/dim(metadata_pos)[1],2)))
+```
+
+    ## Female Female 
+    ##    3.0    0.2
+
+``` r
+print(c(table(metadata_neg$Gender)[c("Female")],round(table(metadata_neg$Gender)[c("Female")]/dim(metadata_neg)[1],2)))
+```
+
+    ## Female Female 
+    ##   7.00   0.58
+
+``` r
+print(c(table(metadata_unk$Gender)[c("Female")],round(table(metadata_unk$Gender)[c("Female")]/dim(metadata_unk)[1],2)))
+```
+
+    ## Female Female 
+    ##   7.00   0.28
+
+``` r
+#round(table(metadata_full$Gender)[c("Female")]/52,2)
+#round(table(metadata_pos$Gender)[c("Female")]/dim(metadata_pos)[1],2)
+#round(table(metadata_neg$Gender)[c("Female")]/dim(metadata_neg)[1],2)
+#round(table(metadata_unk$Gender)[c("Female")]/dim(metadata_unk)[1],2)
+
+table(metadata_full$Race)
+```
+
+    ## 
+    ## African American            Asian        Caucasian         Hispanic 
+    ##                3               14               27                4 
+    ##            Other Pacific Islander 
+    ##                3                1
+
+``` r
+round(table(metadata_full$Race)/52,2)
+```
+
+    ## 
+    ## African American            Asian        Caucasian         Hispanic 
+    ##             0.06             0.27             0.52             0.08 
+    ##            Other Pacific Islander 
+    ##             0.06             0.02
+
+``` r
+table(metadata_pos$Race)
+```
+
+    ## 
+    ## African American            Asian        Caucasian         Hispanic 
+    ##                1                4                8                2 
+    ##            Other Pacific Islander 
+    ##                0                0
+
+``` r
+round(table(metadata_pos$Race)/dim(metadata_pos)[1],2)
+```
+
+    ## 
+    ## African American            Asian        Caucasian         Hispanic 
+    ##             0.07             0.27             0.53             0.13 
+    ##            Other Pacific Islander 
+    ##             0.00             0.00
+
+``` r
+table(metadata_neg$Race)
+```
+
+    ## 
+    ## African American            Asian        Caucasian         Hispanic 
+    ##                0                2                8                0 
+    ##            Other Pacific Islander 
+    ##                2                0
+
+``` r
+round(table(metadata_neg$Race)/dim(metadata_neg)[1],2)
+```
+
+    ## 
+    ## African American            Asian        Caucasian         Hispanic 
+    ##             0.00             0.17             0.67             0.00 
+    ##            Other Pacific Islander 
+    ##             0.17             0.00
+
+``` r
+table(metadata_unk$Race)
+```
+
+    ## 
+    ## African American            Asian        Caucasian         Hispanic 
+    ##                2                8               11                2 
+    ##            Other Pacific Islander 
+    ##                1                1
+
+``` r
+round(table(metadata_unk$Race)/dim(metadata_unk)[1],2)
+```
+
+    ## 
+    ## African American            Asian        Caucasian         Hispanic 
+    ##             0.08             0.32             0.44             0.08 
+    ##            Other Pacific Islander 
+    ##             0.04             0.04
+
+``` r
+table(metadata_full$anyImmunesup)[c("Yes")]
+```
+
+    ## Yes 
+    ##  18
+
+``` r
+round(table(metadata_full$anyImmunesup)[c("Yes")]/52,2)
+```
+
+    ##  Yes 
+    ## 0.35
+
+``` r
+table(metadata_pos$anyImmunesup)[c("Yes")]
+```
+
+    ## Yes 
+    ##   6
+
+``` r
+round(table(metadata_pos$anyImmunesup)[c("Yes")]/dim(metadata_pos)[1],2)
+```
+
+    ## Yes 
+    ## 0.4
+
+``` r
+table(metadata_neg$anyImmunesup)[c("Yes")]
+```
+
+    ## Yes 
+    ##   4
+
+``` r
+round(table(metadata_neg$anyImmunesup)[c("Yes")]/dim(metadata_neg)[1],2)
+```
+
+    ##  Yes 
+    ## 0.33
+
+``` r
+table(metadata_unk$anyImmunesup)[c("Yes")]
+```
+
+    ## Yes 
+    ##   8
+
+``` r
+round(table(metadata_unk$anyImmunesup)[c("Yes")]/dim(metadata_unk)[1],2)
+```
+
+    ##  Yes 
+    ## 0.32
+
+``` r
+table(metadata_full$abxPrior)[c("Yes")]
+```
+
+    ## Yes 
+    ##  43
+
+``` r
+round(table(metadata_full$abxPrior)[c("Yes")]/52,2)
+```
+
+    ##  Yes 
+    ## 0.83
+
+``` r
+table(metadata_pos$abxPrior)[c("Yes")]
+```
+
+    ## Yes 
+    ##  11
+
+``` r
+round(table(metadata_pos$abxPrior)[c("Yes")]/dim(metadata_pos)[1],2)
+```
+
+    ##  Yes 
+    ## 0.73
+
+``` r
+table(metadata_neg$abxPrior)[c("Yes")]
+```
+
+    ## Yes 
+    ##  12
+
+``` r
+round(table(metadata_neg$abxPrior)[c("Yes")]/dim(metadata_neg)[1],2)
+```
+
+    ## Yes 
+    ##   1
+
+``` r
+table(metadata_unk$abxPrior)[c("Yes")]
+```
+
+    ## Yes 
+    ##  20
+
+``` r
+round(table(metadata_unk$abxPrior)[c("Yes")]/dim(metadata_unk)[1],2)
+```
+
+    ## Yes 
+    ## 0.8
+
+``` r
+table(metadata_full$bloodstreamInfection)[c("Yes")]
+```
+
+    ## Yes 
+    ##  12
+
+``` r
+round(table(metadata_full$bloodstreamInfection)[c("Yes")]/52,2)
+```
+
+    ##  Yes 
+    ## 0.23
+
+``` r
+table(metadata_pos$bloodstreamInfection)[c("Yes")]
+```
+
+    ## Yes 
+    ##   4
+
+``` r
+round(table(metadata_pos$bloodstreamInfection)[c("Yes")]/dim(metadata_pos)[1],2)
+```
+
+    ##  Yes 
+    ## 0.27
+
+``` r
+table(metadata_neg$bloodstreamInfection)[c("Yes")]
+```
+
+    ## Yes 
+    ##   2
+
+``` r
+round(table(metadata_neg$bloodstreamInfection)[c("Yes")]/dim(metadata_neg)[1],2)
+```
+
+    ##  Yes 
+    ## 0.17
+
+``` r
+table(metadata_unk$bloodstreamInfection)[c("Yes")]
+```
+
+    ## Yes 
+    ##   6
+
+``` r
+round(table(metadata_unk$bloodstreamInfection)[c("Yes")]/dim(metadata_unk)[1],2)
+```
+
+    ##  Yes 
+    ## 0.24
+
+``` r
+print(c(table(metadata_full$X30.day.mortality)[c("Yes")],round(table(metadata_full$X30.day.mortality)[c("Yes")]/52,2)))
+```
+
+    ##   Yes   Yes 
+    ## 14.00  0.27
+
+``` r
+print(c(table(metadata_pos$X30.day.mortality)[c("Yes")], round(table(metadata_pos$X30.day.mortality)[c("Yes")]/dim(metadata_pos)[1],2)))
+```
+
+    ##  Yes  Yes 
+    ## 4.00 0.27
+
+``` r
+table(metadata_neg$X30.day.mortality)[c("Yes")]
+```
+
+    ## Yes 
+    ##   2
+
+``` r
+round(table(metadata_neg$X30.day.mortality)[c("Yes")]/dim(metadata_neg)[1],2)
+```
+
+    ##  Yes 
+    ## 0.17
+
+``` r
+table(metadata_unk$X30.day.mortality)[c("Yes")]
+```
+
+    ## Yes 
+    ##   8
+
+``` r
+round(table(metadata_unk$X30.day.mortality)[c("Yes")]/dim(metadata_unk)[1],2)
+```
+
+    ##  Yes 
+    ## 0.32
+
+``` r
+# cohort statistics on pneumonia type
+table(metadata_full$pneumoType)
+```
+
+    ## 
+    ##       CAP  HAP HCAP  VAP 
+    ##   20    4    8   18    2
+
+``` r
+table(metadata_full$pneumoType)/dim(metadata_full)[1]
+```
+
+    ## 
+    ##                   CAP        HAP       HCAP        VAP 
+    ## 0.38461538 0.07692308 0.15384615 0.34615385 0.03846154
+
+``` r
+pneumoType_pos <- table(metadata_pos$pneumoType)/dim(metadata_pos)[1]
+cap_pos <- pneumoType_pos[2] + pneumoType_pos[4]
+hap_pos <- pneumoType_pos[3]
+vap_pos <- pneumoType_pos[5]
+
+table(metadata_unk$pneumoType)
+```
+
+    ## 
+    ##       CAP  HAP HCAP  VAP 
+    ##    8    3    3   11    0
+
+``` r
+table(metadata_unk$pneumoType)/dim(metadata_unk)[1]
+```
+
+    ## 
+    ##       CAP  HAP HCAP  VAP 
+    ## 0.32 0.12 0.12 0.44 0.00
 
 The raw microbe data appeared as follows (showing only the first 5 rows):
 
@@ -1207,7 +1602,7 @@ Group 4 = **"PNA-neg"**, Definitely no LRTI, with clear alternative explanation 
 
 The distribution of patients is as follows:
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-4-1.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-5-1.png)
 
 | Var1 |  Freq|
 |:-----|-----:|
@@ -3677,6 +4072,7 @@ ta_phyla <- all_microbe_data[,colnames(all_microbe_data) %in% TA]
 #  pdf('./output/genus_analysis.pdf',width=16,height=6)
 #}
 
+full_spearman <- vector("list",length=4)
 full_correlations <- vector("list",length=4)
 full_bc <- vector("list",length=4)
 full_jaccard <- vector("list", length=4)
@@ -3685,6 +4081,7 @@ full_richness <- vector("list",length=8)
 for(j in c(1,2,3,4)){
   
   correlations <- c()
+  spearman <- c()
   bc_dist <- c()
   ta_sdi <- c()
   mbal_sdi <- c()
@@ -3712,6 +4109,12 @@ for(j in c(1,2,3,4)){
       colnames(c) <- c(mbal_filename,ta_filename)
       correlations <- c(correlations,cor(c)[2])
       
+      # pairwise spearman correlation - 1 value per patient
+      c <- cbind(all_microbe_data[,c(mbal_filename)],all_microbe_data[,c(ta_filename)])
+      c <- c[rowSums(c) > 0,]
+      colnames(c) <- c(mbal_filename,ta_filename)
+      spearman <- c(spearman,cor(c, method = "spearman")[2])
+      
       # bray-curtis distance - 1 value per patient
       bray_curtis_dist <- vegdist(t(as.matrix(all_microbe_data[,c(mbal_filename,ta_filename)])), method="bray", binary=FALSE, diag=FALSE, upper=TRUE, na.rm = FALSE)
       bc_dist <- c(bc_dist, bray_curtis_dist[1])
@@ -3733,6 +4136,7 @@ for(j in c(1,2,3,4)){
   }
 }
 full_correlations[[j]] <- correlations
+full_spearman[[j]] <- spearman
 full_bc[[j]] <- bc_dist
 full_jaccard[[j]] <- jaccard
 
@@ -3808,7 +4212,7 @@ for(j in c(1,2,3,4)){
 }
 ```
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-15-1.png)![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-15-2.png)![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-15-3.png)![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-15-4.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-16-1.png)![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-16-2.png)![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-16-3.png)![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-16-4.png)
 
 ``` r
 if(generate_pdfs){
@@ -3827,7 +4231,7 @@ if(generate_pdfs){
 
 We plot the microbial genus rpM from mini-BAL samples versus the microbial genus rpM from Tracheal Aspriate samples and evaluate the pearson correlation between microbe counts across all patients (black). Then, repeat the ananlysis restricting to only the microbes identified in PNA-pos (red) or PNA-neg (blue) patients.
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-19-1.png)![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-19-2.png)![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-19-3.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-20-1.png)![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-20-2.png)![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-20-3.png)
 
     ## null device 
     ##           1
@@ -4046,7 +4450,7 @@ text(-.2,.23,"mini-BAL",cex=.6,col=rgb(51,60,163,maxColorValue = 255))
 text(.3,-.23,"Tracheal Aspriate",cex=.6, col=rgb(244,73,19,maxColorValue = 255))
 ```
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-28-1.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-29-1.png)
 
 ``` r
 if(generate_pdfs){
@@ -4284,9 +4688,10 @@ print(permanova_result_ALL)
     ## Number of permutations: 999
     ## 
     ## vegan::adonis2(formula = BC ~ group, data = a, permutations = 999)
-    ##           Df SumOfSqs      F Pr(>F)
-    ## group      1    0.441 1.1242  0.314
-    ## Residual 102   39.974
+    ##           Df SumOfSqs     R2      F Pr(>F)
+    ## group      1    0.441 0.0109 1.1242  0.314
+    ## Residual 102   39.974 0.9891              
+    ## Total    103   40.414 1.0000
 
 PERMANOVA result across only the PNA-pos samples:
 
@@ -4300,9 +4705,10 @@ print(permanova_result_g1)
     ## Number of permutations: 999
     ## 
     ## vegan::adonis2(formula = BC ~ group, data = a, permutations = 999)
-    ##          Df SumOfSqs      F Pr(>F)
-    ## group     1   0.0157 0.0366      1
-    ## Residual 28  11.9888
+    ##          Df SumOfSqs      R2      F Pr(>F)
+    ## group     1   0.0157 0.00131 0.0366      1
+    ## Residual 28  11.9888 0.99869              
+    ## Total    29  12.0044 1.00000
 
 PERMANOVA result across only the PNA-neg samples:
 
@@ -4316,9 +4722,10 @@ print(permanova_result_g4)
     ## Number of permutations: 999
     ## 
     ## vegan::adonis2(formula = BC ~ group, data = a, permutations = 999)
-    ##          Df SumOfSqs      F Pr(>F)  
-    ## group     1   0.5761 1.6435  0.078 .
-    ## Residual 22   7.7117                
+    ##          Df SumOfSqs      R2      F Pr(>F)  
+    ## group     1   0.5761 0.06951 1.6435  0.078 .
+    ## Residual 22   7.7117 0.93049                
+    ## Total    23   8.2878 1.00000                
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -4371,7 +4778,7 @@ boxplot(full_Shannons,cex.axis=.5,main="Shannons Diversity by Sample Type and Pa
 stripchart(full_Shannons,method='jitter',jitter=.1,vertical=T,col='navyblue',pch=16,cex=1,add=T)
 ```
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-40-1.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-41-1.png)
 
 ``` r
 # dev.off()
@@ -4386,7 +4793,7 @@ boxplot(f,cex.axis=.5,main="Shannon Diversity by Sample Type and Patient Group",
 stripchart(f,method='jitter',jitter=.1,vertical=T,col=c('red','navyblue','red','navyblue'),pch=17,cex=1,add=T)
 ```
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-40-2.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-41-2.png)
 
 ``` r
 # dev.off()
@@ -4407,7 +4814,7 @@ stripchart(list(c(full_richness[[1]],full_richness[[3]],full_richness[[5]],full_
            ylab="Patient Group", xlab="Richness")
 ```
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-43-1.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-44-1.png)
 
 Recomputing after removing richness outlier in mBAL
 
@@ -4431,7 +4838,7 @@ print(wilcox.test(new_values,c(full_richness[[2]],full_richness[[4]],full_richne
 stripchart(list(new_values,c(full_richness[[2]],full_richness[[4]],full_richness[[6]],full_richness[[8]])),method='jitter',jitter=.1,vertical=F,col='navyblue',pch=16,cex=1.2,main="Richness by Patient Group",ylab="Patient Group", xlab="Richness")
 ```
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-44-1.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-45-1.png)
 
 Overall mBAL richness summary
 
@@ -4467,9 +4874,9 @@ Comparing genus-level richness between PNA-pos and PNA-neg patients in TA
 
 ### Evaluate the presence/absence of clinically-confirmed pathogens in Group 1 Patients
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-51-1.png)
-
 ![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-52-1.png)
+
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-53-1.png)
 
 | sample\_ids | cummulative\_pathos        | rank\_list\_mbal | rank\_list\_ta |
 |:------------|:---------------------------|:-----------------|:---------------|
@@ -4503,7 +4910,7 @@ Comparing genus-level richness between PNA-pos and PNA-neg patients in TA
 
 Oropharyngeal contaminant microbes were selected a. priori from this paper: Dickson, R. P. et al. Bacterial Topography of the Healthy Human Lower Respiratory Tract. mBio 8, (2017). In which they describe bacterial taxa identified by 16S amplicon sequencing in the airway from 1. Oral rinse, 2. Protected specimen brush, 3. Bronchoalveolar lavage.
 
-![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-53-1.png)
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-54-1.png)
 
 Summary of Microbial Abundances in Tracheal Aspriate Samples:
 
@@ -4668,3 +5075,159 @@ Summary of Microbial Abundances in mini-BAL Samples:
 </table>
 
 ------------------------------------------------------------------------
+
+#### Further investigation of the PNA-unk group based on thresholds identified for the Shannon diversity and Pearson correlations
+
+``` r
+names(full_correlations) <- c("Group 1","Group 2", "Group 3", "Group 4")
+plot(c(full_correlations$`Group 2`, full_correlations$`Group 3`), c(full_Shannons[[3]], full_Shannons[[5]]), col = bp, cex=1, pch=16, 
+     ylab = "Shannon Diversity", xlab = "Pearson Correlation") # MBAL
+abline(h = 1.7, add = TRUE)
+abline(v = .6, add = TRUE)
+text(c(full_correlations$`Group 2`, full_correlations$`Group 3`) + .04, c(full_Shannons[[3]], full_Shannons[[5]]) + .04, c(rownames(metadata[metadata$effective_group==2,]), rownames(metadata[metadata$effective_group==3,])), col = bp, cex=.8, pch=16)
+points(c(full_correlations$`Group 2`, full_correlations$`Group 3`), c(full_Shannons[[4]], full_Shannons[[6]]), col = bp, cex=1, pch = 15, add=TRUE)
+```
+
+![](mbal_v_ta_files/figure-markdown_github/unnamed-chunk-60-1.png)
+
+``` r
+# Same plot, but with spearman correlation - basically the same conclusion
+#names(full_spearman) <- c("Group 1","Group 2", "Group 3", "Group 4")
+#plot(c(full_spearman$`Group 2`, full_spearman$`Group 3`), c(full_Shannons[[3]], full_Shannons[[5]]), col = bp, cex=1, pch=16, 
+#     ylab = "Shannon Diversity", xlab = "Spearman Correlation") # MBAL
+#text(c(full_spearman$`Group 2`, full_spearman$`Group 3`) + .04, c(full_Shannons[[3]], full_Shannons[[5]]) + .04, c(rownames(metadata[metadata$effective_group==2,]), #rownames(metadata[metadata$effective_group==3,])), col = bp, cex=.8, pch=16)
+#points(c(full_spearman$`Group 2`, full_spearman$`Group 3`), c(full_Shannons[[4]], full_Shannons[[6]]), col = bp, cex=1, pch = 15, add=TRUE)
+
+#subset <- as.matrix(cbind(c(rownames(metadata[metadata$effective_group==2,]), rownames(metadata[metadata$effective_group==3,])),as.numeric(c(full_correlations$`Group 2`, full_correlations$`Group 3`)), as.numeric(c(full_Shannons[[3]], full_Shannons[[5]]))))
+
+
+all_microbe_data[,c("mBAL.217.DNA.B1","mBAL.217.DNA.TA1.B8")][names(sort(rowSums(all_microbe_data[,c("mBAL.217.DNA.B1","mBAL.217.DNA.TA1.B8")]), decreasing = TRUE))[1:5],]
+```
+
+    ##                         mBAL.217.DNA.B1 mBAL.217.DNA.TA1.B8
+    ## Streptococcus ( 1301 )       0.93228812          0.96289626
+    ## Other                        0.04658032          0.03710374
+    ## Rothia ( 32207 )             0.02113156          0.00000000
+    ## Abiotrophia ( 46123 )        0.00000000          0.00000000
+    ## Acetohalobium ( 28186 )      0.00000000          0.00000000
+
+``` r
+all_microbe_data[,c("mBAL.254.DNA.B3","mBAL.254.DNA.TA1.QIA.6517.B7")][names(sort(rowSums(all_microbe_data[,c("mBAL.254.DNA.B3","mBAL.254.DNA.TA1.QIA.6517.B7")]), decreasing = TRUE))[1:5],]
+```
+
+    ##                          mBAL.254.DNA.B3 mBAL.254.DNA.TA1.QIA.6517.B7
+    ## Pseudomonas ( 286 )           0.94117647                            1
+    ## Other                         0.03921569                            0
+    ## Methylobacterium ( 407 )      0.01960784                            0
+    ## Abiotrophia ( 46123 )         0.00000000                            0
+    ## Acetohalobium ( 28186 )       0.00000000                            0
+
+``` r
+all_microbe_data[,c("mBAL.274.DNA.B3","mBAL.274.DNA.TA1.ZYM.6717.B7")][names(sort(rowSums(all_microbe_data[,c("mBAL.274.DNA.B3","mBAL.274.DNA.TA1.ZYM.6717.B7")]), decreasing = TRUE))[1:5],]
+```
+
+    ##                        mBAL.274.DNA.B3 mBAL.274.DNA.TA1.ZYM.6717.B7
+    ## Klebsiella ( 570 )          0.94221241                   0.88904740
+    ## Other                       0.03322921                   0.03192377
+    ## Neisseria ( 482 )           0.01351788                   0.03951441
+    ## Enterobacter ( 547 )        0.01104050                   0.01216656
+    ## Streptococcus ( 1301 )      0.00000000                   0.01698474
+
+``` r
+all_microbe_data[,c("mBAL.236.DNA.B3","mBAL.236.DNA.TA1.QIA.6517.B7")][names(sort(rowSums(all_microbe_data[,c("mBAL.236.DNA.B3","mBAL.236.DNA.TA1.QIA.6517.B7")]), decreasing = TRUE))[1:5],]
+```
+
+    ##                          mBAL.236.DNA.B3 mBAL.236.DNA.TA1.QIA.6517.B7
+    ## Escherichia ( 561 )           0.81617290                   0.81295360
+    ## Shigella ( 620 )              0.07843613                   0.09544755
+    ## Corynebacterium ( 1716 )      0.02719767                   0.04376512
+    ## Other                         0.04031083                   0.01770398
+    ## Klebsiella ( 570 )            0.01117047                   0.01770398
+
+``` r
+all_microbe_data[,c("mBAL.255.DNA.B1","mBAL.255.DNA.TA1.QIA.6517.B7")][names(sort(rowSums(all_microbe_data[,c("mBAL.255.DNA.B1","mBAL.255.DNA.TA1.QIA.6517.B7")]), decreasing = TRUE))[1:5],]
+```
+
+    ##                        mBAL.255.DNA.B1 mBAL.255.DNA.TA1.QIA.6517.B7
+    ## Streptococcus ( 1301 )      0.71698787                   0.58734261
+    ## Prevotella ( 838 )          0.08879372                   0.25296857
+    ## Other                       0.10813704                   0.07150169
+    ## Haemophilus ( 724 )         0.03497502                   0.03037670
+    ## Neisseria ( 482 )           0.01613133                   0.02344150
+
+``` r
+all_microbe_data[,c("mBAL.237.DNA.B3","mBAL.237.DNA.TA1.B8")][names(sort(rowSums(all_microbe_data[,c("mBAL.237.DNA.B3","mBAL.237.DNA.TA1.B8")]), decreasing = TRUE))[1:5],]
+```
+
+    ##                            mBAL.237.DNA.B3 mBAL.237.DNA.TA1.B8
+    ## Neisseria ( 482 )               0.59111005          0.59180791
+    ## Staphylococcus ( 1279 )         0.14673199          0.19249395
+    ## Haemophilus ( 724 )             0.16274346          0.13054883
+    ## Other                           0.04767595          0.05084746
+    ## Stenotrophomonas ( 40323 )      0.05173856          0.03430186
+
+``` r
+all_microbe_data[,c("mBAL.272.DNA.B3","mBAL.272.DNA.TA2.QIA.6517.B7")][names(sort(rowSums(all_microbe_data[,c("mBAL.272.DNA.B3","mBAL.272.DNA.TA2.QIA.6517.B7")]), decreasing = TRUE))[1:5],]
+```
+
+    ##                        mBAL.272.DNA.B3 mBAL.272.DNA.TA2.QIA.6517.B7
+    ## Streptococcus ( 1301 )      0.59559835                   0.82137843
+    ## Lactobacillus ( 1578 )      0.17744154                   0.05449904
+    ## Veillonella ( 29465 )       0.09628611                   0.01994257
+    ## Other                       0.03301238                   0.04881940
+    ## Fusobacterium ( 848 )       0.02475928                   0.03012125
+
+``` r
+all_microbe_data[,c("mBAL.229.DNA.B1","mBAL.229.DNA.TA1.B8")][names(sort(rowSums(all_microbe_data[,c("mBAL.229.DNA.B1","mBAL.229.DNA.TA1.B8")]), decreasing = TRUE))[1:5],]
+```
+
+    ##                            mBAL.229.DNA.B1 mBAL.229.DNA.TA1.B8
+    ## Streptococcus ( 1301 )          0.45980126          0.47949716
+    ## Klebsiella ( 570 )              0.23486902          0.12780605
+    ## Other                           0.11743451          0.07153547
+    ## Aggregatibacter ( 416916 )      0.08401084          0.09099072
+    ## Prevotella ( 838 )              0.03794038          0.06076025
+
+``` r
+all_microbe_data[,c("mBAL.238.DNA.B3","mBAL.238.DNA.TA1.B10")][names(sort(rowSums(all_microbe_data[,c("mBAL.238.DNA.B3","mBAL.238.DNA.TA1.B10")]), decreasing = TRUE))[1:5],]
+```
+
+    ##                         mBAL.238.DNA.B3 mBAL.238.DNA.TA1.B10
+    ## Lactobacillus ( 1578 )       0.39092559           0.56954602
+    ## Streptococcus ( 1301 )       0.29001815           0.21957251
+    ## Nakaseomyces ( 374468 )      0.19092559           0.13531178
+    ## Other                        0.03629764           0.03239710
+    ## Porphyromonas ( 836 )        0.03593466           0.01614556
+
+``` r
+all_microbe_data[,c("mBAL.245.DNA.B3","mBAL.245.DNA.TA1.B8")][names(sort(rowSums(all_microbe_data[,c("mBAL.245.DNA.B3","mBAL.245.DNA.TA1.B8")]), decreasing = TRUE))[1:5],]
+```
+
+    ##                        mBAL.245.DNA.B3 mBAL.245.DNA.TA1.B8
+    ## Streptococcus ( 1301 )      0.41258741          0.58972047
+    ## Haemophilus ( 724 )         0.30769231          0.11441739
+    ## Neisseria ( 482 )           0.08671329          0.12123034
+    ## Rothia ( 32207 )            0.05594406          0.08766657
+    ## Other                       0.04615385          0.02524797
+
+``` r
+all_microbe_data[,c("mBAL.214.DNA.B3","mBAL.214.DNA.TA1.ZYM.6717.B7")][names(sort(rowSums(all_microbe_data[,c("mBAL.214.DNA.B3","mBAL.214.DNA.TA1.ZYM.6717.B7")]), decreasing = TRUE))[1:5],]
+```
+
+    ##                        mBAL.214.DNA.B3 mBAL.214.DNA.TA1.ZYM.6717.B7
+    ## Streptococcus ( 1301 )      0.42551595                   0.37204451
+    ## Haemophilus ( 724 )         0.12270169                   0.30771905
+    ## Neisseria ( 482 )           0.14596623                   0.13699583
+    ## Other                       0.11106942                   0.07649513
+    ## Rothia ( 32207 )            0.09380863                   0.00000000
+
+``` r
+all_microbe_data[,c("mBAL.216.DNA.B1","mBAL.216.DNA.TA1.B10")][names(sort(rowSums(all_microbe_data[,c("mBAL.216.DNA.B1","mBAL.216.DNA.TA1.B10")]), decreasing = TRUE))[1:5],]
+```
+
+    ##                        mBAL.216.DNA.B1 mBAL.216.DNA.TA1.B10
+    ## Fusobacterium ( 848 )       0.26053640           0.62508826
+    ## Streptococcus ( 1301 )      0.48659004           0.31254413
+    ## Prevotella ( 838 )          0.09961686           0.02635914
+    ## Other                       0.00000000           0.03600847
+    ## Porphyromonas ( 836 )       0.02681992           0.00000000
